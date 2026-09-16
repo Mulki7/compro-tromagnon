@@ -49,10 +49,10 @@ export function Header() {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-sm font-medium transition-all duration-200 ${
+                className={`text-sm font-medium transition-all duration-200 rounded-full ${
                   isActive
                     ? "bg-[#0A0A0A] text-white px-4 py-1.5 shadow-sm"
-                    : "text-[#0A0A0A] hover:text-neutral-500 px-3 py-1.5"
+                    : "text-[#0A0A0A] hover:text-neutral-500 hover:bg-neutral-100/60 px-3 py-1.5"
                 }`}
               >
                 {link.name}
@@ -90,7 +90,7 @@ export function Header() {
       </div>
 
       {mobileMenuOpen && (
-        <div className="md:hidden mt-3 p-4 bg-white border border-neutral-200 shadow-lg space-y-2">
+        <div className="md:hidden mt-3 p-4 bg-white border border-neutral-200 rounded-2xl shadow-lg space-y-2">
           {navLinks.map((link) => {
             const isActive = pathname === link.href;
             return (
@@ -98,7 +98,7 @@ export function Header() {
                 key={link.name}
                 href={link.href}
                 onClick={() => setMobileMenuOpen(false)}
-                className={`block px-4 py-2 text-sm font-medium transition ${
+                className={`block px-4 py-2 text-sm font-medium rounded-full transition ${
                   isActive
                     ? "bg-black text-white"
                     : "text-neutral-800 hover:bg-neutral-100"
