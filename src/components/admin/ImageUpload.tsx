@@ -63,11 +63,10 @@ export default function ImageUpload({
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`relative border border-dashed transition ${
-          dragOver
+        className={`relative border border-dashed transition ${dragOver
             ? "border-black bg-neutral-50"
             : "border-neutral-300 bg-neutral-50/50"
-        }`}
+          }`}
       >
         {displayUrl ? (
           <div className="relative aspect-video w-full">
