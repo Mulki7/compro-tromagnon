@@ -76,7 +76,7 @@ export function HeroBanner() {
   };
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev === 1 ? banners.length - 1 : prev - 1));
+    setCurrentIndex((prev) => (prev + 1) % banners.length);
   };
 
   return (
@@ -140,7 +140,7 @@ export function HeroBanner() {
               <ChevronLeft size={20} />
             </button>
             <button
-              onClick={() => setCurrentIndex((prev) => (prev + 1) % banners.length)}
+              onClick={nextSlide}
               aria-label="Next Banner"
               className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/40 hover:bg-black/80 text-white backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-200"
             >

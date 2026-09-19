@@ -12,6 +12,7 @@ interface ImageUploadProps {
   onChange: (file: File | null) => void;
   accept?: string;
   hint?: string;
+  maxSizeMB?: number;
 }
 
 export default function ImageUpload({
@@ -20,18 +21,26 @@ export default function ImageUpload({
   existingUrl,
   onChange,
   accept = "image/jpeg,image/png,image/webp,image/gif",
-  hint = "JPG, PNG, WebP — max 5 MB",
+  hint = "JPG, PNG, WebP — max 20 MB",
+  maxSizeMB = 20,
 }: ImageUploadProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [fileError, setFileError] = useState<string | null>(null);
 
   const displayUrl = preview || (existingUrl ? getMediaUrl(existingUrl) : null);
 
   const handleFile = useCallback(
     (file: File | null) => {
+      setFileError(null);
       if (preview) URL.revokeObjectURL(preview);
+
       if (file) {
+        if (file.size > maxSizeMB * 1024 * 1024) {
+          setFileError(`File size exceeds the ${maxSizeMB} MB limit.`);
+          return;
+        }
         setPreview(URL.createObjectURL(file));
         onChange(file);
       } else {
@@ -39,7 +48,7 @@ export default function ImageUpload({
         onChange(null);
       }
     },
-    [onChange, preview]
+    [maxSizeMB, onChange, preview]
   );
 
   const onDrop = (e: React.DragEvent) => {
@@ -124,6 +133,11 @@ export default function ImageUpload({
           </button>
         )}
       </div>
+      {fileError && (
+        <p className="mt-1.5 font-mono text-[11px] font-semibold text-red-600">
+          {fileError}
+        </p>
+      )}
     </div>
   );
 }
