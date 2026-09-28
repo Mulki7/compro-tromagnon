@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Disc, ExternalLink, ArrowUpRight } from "lucide-react";
+import { Disc, ExternalLink, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Release } from "@/types/models";
 import { getReleases } from "@/lib/api/releases";
 import { getMediaUrl } from "@/lib/utils";
@@ -246,7 +246,7 @@ export function LatestReleasesSection() {
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        className="relative w-full pt-10 pb-4 overflow-hidden flex flex-col items-center justify-center cursor-grab active:cursor-grabbing"
+        className="relative group w-full pt-10 pb-4 overflow-hidden flex flex-col items-center justify-center cursor-grab active:cursor-grabbing"
         style={{
           perspective: "1000px",
           perspectiveOrigin: "50% 50%",
@@ -254,11 +254,39 @@ export function LatestReleasesSection() {
           overscrollBehaviorX: "contain",
         }}
       >
-        {/* 3D Track Container */}
-        <div
-          className="relative w-full h-64 sm:h-72 md:h-80 flex items-center justify-center"
-          style={{ transformStyle: "preserve-3d" }}
-        >
+        {/* Container for Track and Arrows */}
+        <div className="relative w-full">
+          {/* Navigation Arrows */}
+          {total > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrev();
+                }}
+                className="absolute left-2 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/90 border-2 border-neutral-900 text-neutral-900 shadow-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 hover:bg-white flex items-center justify-center"
+                aria-label="Previous Release"
+              >
+                <ChevronLeft strokeWidth={2.5} className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
+                className="absolute right-2 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/90 border-2 border-neutral-900 text-neutral-900 shadow-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 hover:bg-white flex items-center justify-center"
+                aria-label="Next Release"
+              >
+                <ChevronRight strokeWidth={2.5} className="w-5 h-5 sm:w-6 sm:h-6" />
+              </button>
+            </>
+          )}
+
+          {/* 3D Track Container */}
+          <div
+            className="relative w-full h-64 sm:h-72 md:h-80 flex items-center justify-center"
+            style={{ transformStyle: "preserve-3d" }}
+          >
           {releases.map((rel, index) => {
             let diff = index - activeIndex;
 
@@ -347,6 +375,7 @@ export function LatestReleasesSection() {
               </div>
             );
           })}
+          </div>
         </div>
 
         {/* ─── DOTS INDICATOR (Under Album Covers) ────────────────────── */}
