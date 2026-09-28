@@ -264,20 +264,20 @@ export function LatestReleasesSection() {
                   e.stopPropagation();
                   handlePrev();
                 }}
-                className="absolute left-2 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/70 hover:bg-white text-black shadow-lg backdrop-blur-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95"
+                className="absolute left-2 sm:left-4 lg:left-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/90 border-2 border-neutral-900 text-neutral-900 shadow-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 hover:bg-white flex items-center justify-center"
                 aria-label="Previous Release"
               >
-                <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+                <ChevronLeft strokeWidth={2.5} className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleNext();
                 }}
-                className="absolute right-2 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/70 hover:bg-white text-black shadow-lg backdrop-blur-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95"
+                className="absolute right-2 sm:right-4 lg:right-8 top-1/2 -translate-y-1/2 z-50 p-2 sm:p-3 rounded-full bg-white/90 border-2 border-neutral-900 text-neutral-900 shadow-sm transition-all duration-300 md:opacity-0 group-hover:opacity-100 hover:scale-110 active:scale-95 hover:bg-white flex items-center justify-center"
                 aria-label="Next Release"
               >
-                <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                <ChevronRight strokeWidth={2.5} className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </>
           )}
