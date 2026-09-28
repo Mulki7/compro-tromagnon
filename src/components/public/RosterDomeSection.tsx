@@ -142,9 +142,6 @@ export function RosterDomeSection() {
         {/* Header */}
         <div className="flex items-baseline justify-between border-b border-neutral-200 pb-4 mb-6">
           <div>
-            <span className="text-[11px] font-mono tracking-widest text-[#D93829] uppercase font-semibold">
-              SECTION 02 // ARTISTS ROSTER
-            </span>
             <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-black mt-0.5">
               The Roster
             </h2>
