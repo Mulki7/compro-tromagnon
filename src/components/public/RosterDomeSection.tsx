@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useRef, useMemo } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Disc } from "lucide-react";
@@ -8,20 +8,11 @@ import { Artist } from "@/types/models";
 import { getArtists } from "@/lib/api/artists";
 import { getMediaUrl, formatGenre } from "@/lib/utils";
 
-const ROWS = 4;
-const CARD_SIZE = 120;
-const GAP = 12;
-const NUM_CARDS_PER_ROW = 24;
-
 export function RosterDomeSection() {
   const [artists, setArtists] = useState<Artist[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [hoveredArtist, setHoveredArtist] = useState<Artist | null>(null);
-
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<(HTMLAnchorElement | null)[]>([]);
-  const userScrollingRef = useRef(false);
-  const userScrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -39,89 +30,14 @@ export function RosterDomeSection() {
     return () => { isMounted = false; };
   }, []);
 
-  // Build row data
-  const rowsData = useMemo(() => {
-    if (artists.length === 0) return [];
-    return Array.from({ length: ROWS }, (_, rowIdx) =>
-      Array.from({ length: NUM_CARDS_PER_ROW }, (_, colIdx) =>
-        artists[(rowIdx * NUM_CARDS_PER_ROW + colIdx) % artists.length]
-      )
-    );
-  }, [artists]);
-
-  // Fisheye scale and auto-scroll
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-
-    let raf: number;
-
-    const onScroll = () => {
-      userScrollingRef.current = true;
-      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-      userScrollTimeoutRef.current = setTimeout(() => {
-        userScrollingRef.current = false;
-      }, 2500);
-    };
-
-    el.addEventListener("scroll", onScroll, { passive: true });
-
-    const updateFisheye = () => {
-      if (!userScrollingRef.current && el) {
-        el.scrollLeft += 0.4;
-      }
-
-      if (el) {
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width / 2;
-        const cy = rect.top + rect.height / 2;
-        const maxDist = Math.max(rect.width, rect.height) * 0.7;
-
-        cardsRef.current.forEach((card) => {
-          if (!card) return;
-          const cardRect = card.getBoundingClientRect();
-          const cardCx = cardRect.left + cardRect.width / 2;
-          const cardCy = cardRect.top + cardRect.height / 2;
-
-          const dx = cardCx - cx;
-          const dy = cardCy - cy;
-          // Apply an elliptical distance bias so edges shrink nicely
-          const dist = Math.sqrt(dx * dx + dy * dy * 1.5);
-          
-          // Fisheye formula: closer to center = scale 1, further = scale smaller, fade opacity
-          const factor = Math.max(0, 1 - Math.pow(dist / maxDist, 1.8));
-          const scale = 0.5 + 0.5 * factor;
-          const opacity = 0.1 + 0.9 * factor;
-
-          card.style.transform = `scale(${scale})`;
-          card.style.opacity = `${opacity}`;
-          // Add a subtle z-index adjustment so center items stay on top
-          card.style.zIndex = `${Math.round(factor * 100)}`;
-        });
-      }
-
-      raf = requestAnimationFrame(updateFisheye);
-    };
-    raf = requestAnimationFrame(updateFisheye);
-
-    // Start with some initial scroll offset so we're not at the very left edge
-    el.scrollLeft = 300;
-
-    return () => {
-      cancelAnimationFrame(raf);
-      el.removeEventListener("scroll", onScroll);
-      if (userScrollTimeoutRef.current) clearTimeout(userScrollTimeoutRef.current);
-    };
-  }, [artists]); // re-run if artists load
-
   if (loading) {
     return (
       <section className="w-full max-w-7xl mx-auto px-4 sm:px-8 mt-16 sm:mt-24">
-        <div className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-6">
-          <div className="h-5 w-40 bg-neutral-200 animate-pulse rounded" />
-          <div className="h-4 w-20 bg-neutral-100 animate-pulse rounded" />
+        <div className="flex items-center justify-between border-b border-black pb-3 mb-6">
+          <div className="h-8 w-48 bg-neutral-200 animate-pulse rounded" />
+          <div className="h-4 w-24 bg-neutral-100 animate-pulse rounded" />
         </div>
-        <div className="w-full h-96 flex items-center justify-center">
+        <div className="w-full h-[400px] flex items-center justify-center">
           <Disc className="w-8 h-8 text-neutral-300 animate-spin" />
         </div>
       </section>
@@ -130,145 +46,297 @@ export function RosterDomeSection() {
 
   if (artists.length === 0) return null;
 
-  const staggerOffset = (CARD_SIZE + GAP) / 2;
-  const totalWidth = NUM_CARDS_PER_ROW * (CARD_SIZE + GAP) + staggerOffset + 200;
-
   return (
     <section
+      ref={containerRef}
       aria-label="Artists Roster"
-      className="w-full bg-white text-[#0A0A0A] select-none pt-16 sm:pt-24 pb-12"
+      style={{
+        background: "linear-gradient(180deg, #080808 0%, #0f0f0f 50%, #080808 100%)",
+      }}
+      className="w-full select-none py-16 sm:py-24 relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-8">
-        {/* Header */}
-        <div className="flex items-baseline justify-between border-b border-neutral-200 pb-4 mb-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-black mt-0.5">
-              The Roster
-            </h2>
-          </div>
+      {/* Radial ambient glow */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 70% at 50% 50%, rgba(217,56,41,0.05) 0%, transparent 65%)",
+        }}
+      />
+      {/* Top/bottom shimmer lines (watch bezel effect) */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.07) 50%, transparent 95%)",
+        }}
+      />
+      <div
+        className="absolute bottom-0 left-0 right-0 h-px pointer-events-none"
+        style={{
+          background: "linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.07) 50%, transparent 95%)",
+        }}
+      />
+
+      {/* Header */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-10 relative z-10">
+        <div className="flex flex-col sm:flex-row sm:items-baseline justify-between pb-5 gap-4 border-b border-white/10">
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight uppercase"
+            style={{ color: "#f5f5f5", letterSpacing: "-0.02em" }}
+          >
+            The Roster
+          </h2>
           <Link
             href="/artists"
-            className="group flex items-center gap-1.5 text-xs font-mono font-bold uppercase tracking-wider text-black hover:text-[#D93829] transition-colors bg-neutral-100 hover:bg-neutral-200 px-3.5 py-1.5 rounded-full border border-neutral-200"
+            className="group flex items-center gap-2 text-sm font-mono font-bold uppercase tracking-wider"
+            style={{ color: "rgba(255,255,255,0.45)" }}
           >
-            <span>Explore All ({artists.length})</span>
-            <ArrowUpRight size={14} className="transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 text-[#D93829]" />
+            <span className="group-hover:text-white transition-colors duration-200">Explore All</span>
+            <span
+              className="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 group-hover:border-[#D93829] group-hover:text-[#D93829]"
+              style={{ border: "1px solid rgba(255,255,255,0.2)" }}
+            >
+              <ArrowUpRight size={16} />
+            </span>
           </Link>
         </div>
       </div>
 
-      {/* Honeycomb Fisheye Grid */}
-      <div className="relative h-[560px] sm:h-[600px] flex items-center overflow-hidden">
-        {/* Edge fades for seamless blend */}
-        <div className="absolute top-0 bottom-0 left-0 w-16 sm:w-32 bg-gradient-to-r from-white via-white/80 to-transparent pointer-events-none z-10" />
-        <div className="absolute top-0 bottom-0 right-0 w-16 sm:w-32 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none z-10" />
-        <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white via-white/80 to-transparent pointer-events-none z-10" />
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none z-10" />
+      {/* Apple Watch Honeycomb Grid */}
+      <HoneycombGrid artists={artists} hoveredIdx={hoveredIdx} setHoveredIdx={setHoveredIdx} />
 
-        <div
-          ref={scrollRef}
-          className="roster-scroll-container w-full h-full overflow-x-auto overflow-y-hidden cursor-grab active:cursor-grabbing flex items-center"
+      {/* Top gloss reflection */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: "30%",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.012) 0%, transparent 100%)",
+        }}
+      />
+    </section>
+  );
+}
+
+function HoneycombGrid({
+  artists,
+  hoveredIdx,
+  setHoveredIdx,
+}: {
+  artists: Artist[];
+  hoveredIdx: number | null;
+  setHoveredIdx: (v: number | null) => void;
+}) {
+  // Icon size and gap constants
+  const ICON_SIZE = 160; // px — big enough to feel watch-like
+  const GAP = 12; // px between icons
+  const STEP = ICON_SIZE + GAP; // horizontal step
+  const V_OVERLAP = 0.15; // vertical overlap ratio (honeycomb closeness)
+
+  // How many icons per row (responsive — we'll use CSS to scale)
+  const ITEMS_PER_ROW = 4;
+  const OFFSET_PER_ROW = ITEMS_PER_ROW - 1; // odd rows have one fewer
+
+  // Build rows
+  const rows: Artist[][] = [];
+  let i = 0;
+  let rowIdx = 0;
+  while (i < artists.length) {
+    const count = rowIdx % 2 === 0 ? ITEMS_PER_ROW : OFFSET_PER_ROW;
+    rows.push(artists.slice(i, i + count));
+    i += count;
+    rowIdx++;
+  }
+
+  const verticalStep = ICON_SIZE * (1 - V_OVERLAP);
+  const totalWidth = ITEMS_PER_ROW * STEP - GAP;
+  const totalHeight = rows.length * verticalStep + ICON_SIZE - verticalStep;
+
+  return (
+    <div className="relative z-10 w-full flex justify-center px-4">
+      <div
+        style={{
+          position: "relative",
+          width: `${totalWidth}px`,
+          height: `${totalHeight}px`,
+          maxWidth: "100%",
+        }}
+      >
+        {rows.map((row, rIdx) => {
+          const isOffsetRow = rIdx % 2 !== 0;
+          const yPos = rIdx * verticalStep;
+          const xOffset = isOffsetRow ? STEP / 2 : 0;
+
+          return row.map((artist, cIdx) => {
+            const globalIdx = artists.findIndex((a) => a.slug === artist.slug);
+            const xPos = xOffset + cIdx * STEP;
+
+            return (
+              <div
+                key={`${rIdx}-${cIdx}`}
+                style={{
+                  position: "absolute",
+                  left: `${xPos}px`,
+                  top: `${yPos}px`,
+                  width: `${ICON_SIZE}px`,
+                  height: `${ICON_SIZE}px`,
+                }}
+              >
+                <WatchAppIcon
+                  artist={artist}
+                  size={ICON_SIZE}
+                  isHovered={hoveredIdx === globalIdx}
+                  isNeighborHovered={hoveredIdx !== null && hoveredIdx !== globalIdx}
+                  onHover={() => setHoveredIdx(globalIdx)}
+                  onLeave={() => setHoveredIdx(null)}
+                />
+              </div>
+            );
+          });
+        })}
+      </div>
+    </div>
+  );
+}
+
+interface WatchAppIconProps {
+  artist: Artist;
+  size: number;
+  isHovered: boolean;
+  isNeighborHovered: boolean;
+  onHover: () => void;
+  onLeave: () => void;
+}
+
+function WatchAppIcon({ artist, isHovered, isNeighborHovered, onHover, onLeave }: WatchAppIconProps) {
+  const photo =
+    artist.photo_url && artist.photo_url.trim() !== ""
+      ? getMediaUrl(artist.photo_url)
+      : "/assets/placeholder-cover.jpg";
+
+  return (
+    <Link
+      href={`/artists/${artist.slug}`}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      className="relative block w-full h-full cursor-pointer"
+      style={{
+        transition: "transform 0.3s cubic-bezier(0.34,1.56,0.64,1), opacity 0.25s ease",
+        transform: isHovered ? "scale(1.18)" : isNeighborHovered ? "scale(0.92)" : "scale(1)",
+        opacity: isNeighborHovered ? 0.55 : 1,
+        zIndex: isHovered ? 30 : 1,
+      }}
+    >
+      {/* Glow ring */}
+      <div
+        className="absolute inset-0 rounded-full pointer-events-none"
+        style={{
+          transition: "box-shadow 0.3s ease",
+          boxShadow: isHovered
+            ? "0 0 0 2.5px rgba(217,56,41,1), 0 0 20px rgba(217,56,41,0.55), 0 0 50px rgba(217,56,41,0.2)"
+            : "0 0 0 1.5px rgba(255,255,255,0.09), 0 4px 16px rgba(0,0,0,0.9)",
+        }}
+      />
+
+      {/* Circle image */}
+      <div
+        className="relative w-full h-full rounded-full overflow-hidden"
+        style={{ background: "#181818" }}
+      >
+        <Image
+          src={photo}
+          alt={artist.name}
+          fill
+          sizes="160px"
+          className="object-cover"
           style={{
-            overscrollBehaviorX: "contain",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-          } as React.CSSProperties}
+            transition: "transform 0.4s ease, filter 0.3s ease",
+            transform: isHovered ? "scale(1.08)" : "scale(1)",
+            filter: isHovered
+              ? "brightness(1.1) saturate(1.15)"
+              : "brightness(0.8) saturate(0.85)",
+          }}
+          unoptimized={photo.startsWith("http")}
+        />
+
+        {/* Gradient overlay */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: isHovered
+              ? "linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.62) 100%)"
+              : "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.78) 100%)",
+            transition: "background 0.3s ease",
+          }}
+        />
+
+        {/* Text label */}
+        <div
+          className="absolute bottom-0 left-0 right-0 flex flex-col items-center justify-end px-2 pb-3"
+          style={{ pointerEvents: "none" }}
+        >
+          <span
+            className="text-white font-black text-center leading-tight"
+            style={{
+              fontSize: "9.5px",
+              letterSpacing: "0.05em",
+              textTransform: "uppercase",
+              textShadow: "0 1px 6px rgba(0,0,0,1)",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+            }}
+          >
+            {artist.name}
+          </span>
+          {artist.genre && (
+            <span
+              className="font-mono font-bold tracking-widest mt-0.5"
+              style={{
+                fontSize: "6.5px",
+                color: "#D93829",
+                textTransform: "uppercase",
+                textShadow: "0 0 8px rgba(217,56,41,0.7)",
+              }}
+            >
+              {formatGenre(artist.genre)}
+            </span>
+          )}
+        </div>
+
+        {/* Hover arrow */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            opacity: isHovered ? 1 : 0,
+            transition: "opacity 0.2s ease",
+            paddingBottom: "22px",
+          }}
         >
           <div
-            className="flex flex-col mx-auto"
-            style={{ width: `${totalWidth}px`, gap: `${GAP}px`, padding: "40px 0" }}
+            className="rounded-full flex items-center justify-center"
+            style={{
+              width: "32px",
+              height: "32px",
+              background: "rgba(255,255,255,0.15)",
+              backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,0.3)",
+            }}
           >
-            {rowsData.map((rowArtists, rowIdx) => {
-              const isOdd = rowIdx % 2 === 1;
-              return (
-                <div
-                  key={rowIdx}
-                  className="flex"
-                  style={{
-                    gap: `${GAP}px`,
-                    paddingLeft: isOdd ? `${staggerOffset}px` : "0",
-                  }}
-                >
-                  {rowArtists.map((artist, colIdx) => {
-                    const globalIdx = rowIdx * NUM_CARDS_PER_ROW + colIdx;
-                    const photo =
-                      artist.photo_url && artist.photo_url.trim() !== ""
-                        ? getMediaUrl(artist.photo_url)
-                        : "/assets/placeholder-cover.jpg";
-
-                    return (
-                      <Link
-                        key={`${rowIdx}-${colIdx}`}
-                        href={`/artists/${artist.slug}`}
-                        onMouseEnter={() => setHoveredArtist(artist)}
-                        onMouseLeave={() => setHoveredArtist(null)}
-                        ref={(el) => {
-                          cardsRef.current[globalIdx] = el;
-                        }}
-                        className="group relative block flex-shrink-0 rounded-[28px] sm:rounded-[32px] overflow-hidden bg-neutral-100 shadow-xl border border-neutral-200/80 will-change-transform transition-shadow duration-300 hover:shadow-2xl hover:border-black/30 cursor-pointer"
-                        style={{
-                          width: `${CARD_SIZE}px`,
-                          height: `${CARD_SIZE}px`,
-                          transformOrigin: "center center",
-                        }}
-                      >
-                        <Image
-                          src={photo}
-                          alt={artist.name}
-                          fill
-                          sizes="140px"
-                          className="object-cover pointer-events-none"
-                          unoptimized={photo.startsWith("http")}
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-                        <div className="absolute bottom-2 left-2 right-2 flex flex-col pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white line-clamp-1 drop-shadow-md">
-                            {artist.name}
-                          </span>
-                          <span className="text-[8px] font-mono text-neutral-300 line-clamp-1">
-                            {formatGenre(artist.genre)}
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              );
-            })}
+            <ArrowUpRight size={15} className="text-white" />
           </div>
         </div>
       </div>
 
-      {/* Bottom HUD */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-2 flex items-center justify-center min-h-[44px]">
-        {hoveredArtist ? (
-          <div className="flex items-center gap-3 bg-black text-white px-5 py-2.5 rounded-full shadow-2xl border border-neutral-800 z-20 relative">
-            <span className="w-2 h-2 rounded-full bg-[#D93829] animate-pulse" />
-            <div className="text-left pr-2">
-              <p className="text-xs font-mono font-bold uppercase tracking-wider">{hoveredArtist.name}</p>
-              <p className="text-[10px] text-neutral-400 font-mono">{formatGenre(hoveredArtist.genre)}</p>
-            </div>
-            <Link
-              href={`/artists/${hoveredArtist.slug}`}
-              className="text-[10px] font-mono font-bold uppercase tracking-wider text-black bg-white hover:bg-neutral-200 px-3.5 py-1.5 rounded-full transition-colors flex items-center gap-1"
-            >
-              <span>View</span>
-              <ArrowUpRight size={11} />
-            </Link>
-          </div>
-        ) : (
-          <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-400 bg-neutral-100 px-4 py-1.5 rounded-full border border-neutral-200 z-20 relative">
-            <span>Swipe left/right to explore the roster</span>
-          </div>
-        )}
-      </div>
-
-      {/* Hide scrollbar CSS */}
-      <style jsx>{`
-        .roster-scroll-container::-webkit-scrollbar {
-          display: none;
-        }
-      `}</style>
-    </section>
+      {/* Top gloss shine on icon */}
+      <div
+        className="absolute top-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: "45%",
+          background: "linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%)",
+          borderRadius: "50% 50% 0 0",
+        }}
+      />
+    </Link>
   );
 }

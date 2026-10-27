@@ -36,7 +36,7 @@ export function ManifestoBanner() {
             <div className="w-full max-w-xs space-y-2 text-center lg:text-right">
               <a
                 href="mailto:demos@tromagnon.com?subject=Tromagnon%20Records%20Demo%20Submission"
-                className="w-full inline-block bg-white hover:bg-neutral-200 text-black font-mono text-xs sm:text-sm font-bold tracking-wider uppercase px-6 py-4 transition-all shadow-md active:scale-95 text-center"
+                className="w-full inline-block bg-white hover:bg-neutral-200 text-black font-mono text-xs sm:text-sm font-bold tracking-wider uppercase px-6 py-4 transition-all shadow-md active:scale-95 text-center rounded"
               >
                 SEND DEMOS (SOUNDCLOUD LINK ONLY)
               </a>
