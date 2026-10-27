@@ -219,9 +219,6 @@ export function LatestReleasesSection() {
       {/* Clean Minimal Section Header */}
       <div className="flex items-baseline justify-between border-b border-neutral-200 pb-3">
         <div>
-          <span className="text-[11px] font-mono tracking-widest text-[#D93829] uppercase font-semibold">
-            Section 01 // Audio Archive
-          </span>
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight text-[#0A0A0A] mt-0.5">
             Latest Releases
           </h2>
