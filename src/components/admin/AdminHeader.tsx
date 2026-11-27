@@ -47,7 +47,7 @@ export default function AdminHeader({
         )}
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="font-admin text-balance text-[24px] font-bold leading-[1.1] tracking-[-0.02em] text-admin-ink sm:text-[28px]">
+          <h1 className="line-clamp-1 max-w-[26ch] font-display text-[24px] font-normal leading-[1.05] tracking-[-0.015em] text-admin-ink sm:max-w-[36ch] sm:text-[28px]">
             {title}
           </h1>
           {badge}

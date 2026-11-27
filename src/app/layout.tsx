@@ -11,6 +11,14 @@ const salmont = localFont({
   display: "swap",
 });
 
+const collisio = localFont({
+  src: "./fonts/Collisio_Beta.otf",
+  weight: "400",
+  style: "normal",
+  variable: "--font-collisio",
+  display: "swap",
+});
+
 const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
@@ -30,7 +38,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${salmont.variable} ${plusJakartaSans.variable}`}>
+    <html
+      lang="en"
+      className={`${salmont.variable} ${collisio.variable} ${plusJakartaSans.variable}`}
+    >
       <body className="min-h-screen bg-[#F1F2EE] text-[#111111] font-sans antialiased selection:bg-[#31605A] selection:text-[#F1F2EE]">
         {children}
       </body>

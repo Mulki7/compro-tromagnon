@@ -1,6 +1,7 @@
-/* DESIGN.md v1.4 aligned Admin primitives:
-   - 100% Plus Jakarta Sans (font-admin) across all Admin Console controls, inputs, headings, and buttons
-   - Salmont (font-display) is strictly reserved for >=28px display headlines & never used on forms, buttons, or tables
+/* DESIGN.md v1.6 aligned Admin primitives:
+   - Two-font Admin Console only: Salmont (font-display) + Plus Jakarta Sans (font-admin); no Collisio in Admin
+   - Salmont (font-display) reserved strictly for >=24px Page Title (H1) & sidebar/cover Brand Mark
+   - Plus Jakarta Sans (font-admin) across all operational controls, inputs, card titles, badges, KPI numbers, and tables
    - Subtle rounded corners: 6px (chips/badges), 8px (inputs/buttons), 12px (cards/panels)
    - Strong 1px borders (#767D75) on interactive inputs & secondary controls */
 

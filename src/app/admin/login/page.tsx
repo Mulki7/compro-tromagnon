@@ -70,7 +70,7 @@ export default function AdminLoginPage() {
                 className="object-contain"
               />
             </span>
-            <span className="font-admin text-[19px] font-bold tracking-[-0.025em]">
+            <span className="font-display text-[24px] font-normal leading-[1.05] tracking-[-0.015em]">
               tromagnon<span className="text-admin-lime">.</span>
             </span>
           </div>

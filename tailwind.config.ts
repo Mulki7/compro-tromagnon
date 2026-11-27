@@ -36,7 +36,7 @@ const config: Config = {
           "on-accent": "#F1F2EE",
           "accent-hover": "#224540",
         },
-        /* Admin semantic tokens mapped strictly to DESIGN.md v1.4 */
+        /* Admin semantic tokens mapped strictly to DESIGN.md v1.6 */
         admin: {
           canvas: "#F1F2EE",
           surface: "#FAFAF8",
@@ -67,6 +67,7 @@ const config: Config = {
       },
       fontFamily: {
         display: ["var(--font-salmont)", "Georgia", "serif"],
+        stamp: ["var(--font-collisio)", "ui-monospace", "monospace"],
         sans: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "-apple-system", "BlinkMacSystemFont", "sans-serif"],
         satelit: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "sans-serif"],
         admin: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "-apple-system", "BlinkMacSystemFont", "sans-serif"],

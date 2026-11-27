@@ -103,11 +103,11 @@ export default function AdminSidebar({
         )}
       >
         {/* Brand lockup */}
-        <div className="flex items-center justify-between px-4 pb-4 pt-5">
+        <div className="flex items-center justify-between px-3.5 pb-4 pt-5">
           <Link
             href="/admin"
             onClick={onClose}
-            className="inline-flex items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
+            className="inline-flex min-w-0 items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
           >
             <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F1F2EE] p-1">
               <Image
@@ -118,7 +118,7 @@ export default function AdminSidebar({
                 className="object-contain"
               />
             </span>
-            <span className="font-admin text-[18px] font-bold tracking-[-0.025em] text-[#F1F2EE]">
+            <span className="truncate font-display text-[24px] font-normal leading-[1.05] tracking-[-0.015em] text-[#F1F2EE]">
               tromagnon<span className="text-admin-lime">.</span>
             </span>
           </Link>
