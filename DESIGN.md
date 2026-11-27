@@ -1,6 +1,6 @@
 # Design System — Tromagnon Records
 
-> **Versi 1.3** · Diperbarui 28 November 2026 · Standar acuan: WCAG 2.2 (AA)
+> **Versi 1.4** · Diperbarui 28 November 2026 · Standar acuan: WCAG 2.2 (AA)
 
 Panduan visual resmi untuk ekosistem **Tromagnon Records** (Public Website & Label Admin Console): warna, tipografi, spasi, radius, komponen, pola layout, gerak, copywriting UI, dan aksesibilitas. Dirancang bergaya editorial bersih untuk membaca arsip rilisan, profil band, dan katalog fisik (*cassette* & *vinyl*), sekaligus menghadirkan konsol operasional bento yang tenang untuk tim label.
 
@@ -10,12 +10,12 @@ Panduan visual resmi untuk ekosistem **Tromagnon Records** (Public Website & Lab
 | :--- | :--- |
 | **DNA warna** | `#F1F2EE` Archival Off-White · `#111111` Matte Vinyl Ink · `#31605A` Pine Teal · `#224540` Deep Pine |
 | **Proporsi warna** | 60% Background · 25% Surface · 10% Aksen · 5% Hover/Aktif (lihat catatan di §1) |
-| **Font utama** | [Archivo Narrow](https://fonts.google.com/specimen/Archivo+Narrow): display, heading, nama artis/rilisan, navigasi, tombol, & UI operasional Admin |
-| **Font sekunder** | [EB Garamond](https://fonts.google.com/specimen/EB+Garamond): body editorial, bio band, *liner notes*, kutipan (*pull quote*), & aksen *all-caps* rapat bergaya cetak arsip |
+| **Font display** | `Salmont` (Versetype, dimuat lokal via `next/font/local`): hero display, judul seksi utama publik, & angka aksen besar |
+| **Font utama (UI & Body)** | [Plus Jakarta Sans](https://fonts.google.com/specimen/Plus+Jakarta+Sans): body, bio band, *liner notes*, navigasi, tombol, metadata, & seluruh Admin Console |
 | **Bentuk (Public)** | Sudut hampir tegas (`2px`–`4px`), garis tipis, terasa seperti cetakan fisik / *vinyl sleeve* |
 | **Bentuk (Admin)** | Sudut halus terstruktur (`6px` / `8px` / `12px`), bento full-height (`100dvh`), tanpa bayangan berat |
 | **Aksesibilitas** | Teks ≥ 4.5:1, komponen UI ≥ 3:1 (`#767D75`), fokus keyboard 2px, `prefers-reduced-motion` |
-| **Prinsip** | Konten arsip jadi pusat; dekorasi minimal; copywriting ringkas tanpa teks berulang |
+| **Prinsip** | Konten arsip jadi pusat; kontras tipografi berat-vs-ringan; copywriting ringkas tanpa teks berulang |
 
 ---
 
@@ -78,36 +78,34 @@ Aktif mengikuti `prefers-color-scheme` atau atribut `data-theme="dark"`.
 
 ---
 
-## 2. Tipografi — Archivo Narrow & EB Garamond
+## 2. Tipografi — Salmont & Plus Jakarta Sans
 
-Keduanya dimuat melalui `next/font/google` di `src/app/layout.tsx` (`--font-archivo-narrow` dan `--font-eb-garamond`, dengan `style: ["normal", "italic"]` untuk EB Garamond) serta `display: "swap"`:
-- **`Archivo Narrow` (`font-display` / `font-sans`)**: Judul halaman, heading kartu, nama artis, judul rilisan, navigasi, tombol aksi, serta seluruh UI struktural di Admin Console (sidebar, segmented tabs, input form, sel tabel, dan badge status).
-- **`EB Garamond` (`font-serif` / `font-editorial`)**: Paragraf editorial publik, bio band, *liner notes*, berita/artikel, kutipan (*pull quote* italic), dan aksen *all-caps* rapat bergaya cetak arsip.
+Kombinasi ini mengandalkan kontras bobot yang tegas antara *display* **Art Deco / Bauhaus *ultra-black*** dan *geometric sans* modern yang bersih:
+- **`Salmont` (`font-display`, via `next/font/local` → `--font-salmont`)**: Dimuat dari `src/app/fonts/Salmont.woff2` (`display: "swap"`). Digunakan khusus untuk *hero display*, judul seksi utama publik, dan angka aksen besar (seperti nomor edisi/tahun).
+- **`Plus Jakarta Sans` (`font-sans` / `font-admin`, via `next/font/google` → `--font-plus-jakarta-sans`)**: Dimuat dengan bobot `300`, `400`, `500`, `600`, `700` (`display: "swap"`). Meng-handle seluruh *body copy*, bio band, *liner notes*, navigasi, tombol, katalog, serta 100% antarmuka Admin Console.
 
 ### 2.1 Skala Tipografi
 
 | Peran | Konteks | Font | Ukuran | Weight | Line Height | Tracking |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Display / Hero (`H1`)** | Public | Archivo Narrow | `clamp(3rem, 2rem + 4vw, 4.5rem)` | `700` | `0.95` | `-0.02em` |
-| **Page Title (`H1`)** | Admin | Archivo Narrow | `26px` – `30px` | `700` | `1.0` | `-0.02em` |
-| **Section Heading (`H2`)** | Public | Archivo Narrow | `clamp(2rem, 1.5rem + 2vw, 2.5rem)` | `700` | `1.05` | `-0.015em` |
-| **Card Title (`H2`)** | Admin | Archivo Narrow | `19px` – `20px` | `700` | `1.15` | `-0.015em` |
-| **Editorial Stamp / Pull Quote** | Public | EB Garamond | `22px` – `32px` | `500`–`600` (Regular / Italic) | `1.15` | `-0.03em` (uppercase) · `0` (italic) |
-| **Roster / Row Title (`H3`)** | Public / Admin | Archivo Narrow | `24px–28px` (Public) · `16px` (Admin) | `600` | `1.15` | `-0.01em` |
-| **Body Editorial & Bio Band** | Public | EB Garamond | `17px` – `18px` | `400` | `1.65` | `0` |
-| **Input Form & Sel Tabel** | Admin | Archivo Narrow | `14.5px` – `15px` | `400`–`500` | `1.45` | `0.01em` |
-| **Tombol & Navigasi** | Public / Admin | Archivo Narrow | `13.5px` – `15px` | `600` | `1.0` | `0.06em` uppercase (Public) · `0.01em–0.02em` sentence case (Admin) |
-| **Metadata & Badge** | Public / Admin | Archivo Narrow | `12.5px` – `13px` | `500` | `1.35` | `0.06em` uppercase (Public) · sentence case (Admin) |
+| **Display / Hero (`H1`)** | Public | Salmont | `clamp(3rem, 2.2rem + 4.5vw, 5.25rem)` | `400` | `0.96` | `-0.02em` |
+| **Section Heading (`H2`)** | Public | Salmont | `clamp(2rem, 1.5rem + 2vw, 2.75rem)` | `400` | `1.04` | `-0.015em` |
+| **Page Title (`H1`)** | Admin | Plus Jakarta Sans | `24px` – `28px` | `700` | `1.1` | `-0.02em` |
+| **Card Title (`H2`)** | Admin | Plus Jakarta Sans | `18px` – `19px` | `700` | `1.2` | `-0.015em` |
+| **Roster / Row Title (`H3`)** | Public / Admin | Plus Jakarta Sans | `20px–24px` (Public) · `15px–16px` (Admin) | `600` | `1.25` | `-0.01em` |
+| **Body & Bio Band** | Public | Plus Jakarta Sans | `15px` – `16px` | `300`–`400` | `1.6` | `0` |
+| **Input Form & Sel Tabel** | Admin | Plus Jakarta Sans | `14px` – `15px` | `400`–`500` | `1.45` | `0` |
+| **Tombol & Navigasi** | Public / Admin | Plus Jakarta Sans | `13.5px` – `14.5px` | `500`–`600` | `1.0` | `0.06em` uppercase (Public) · sentence case (Admin) |
+| **Metadata & Badge** | Public / Admin | Plus Jakarta Sans | `12px` – `13px` | `500` | `1.35` | `0.06em` uppercase (Public) · sentence case (Admin) |
 
 ### 2.2 Aturan Tipografi & Copywriting UI
 
-- **Kompensasi *x-height* `EB Garamond`:** Karena serif klasik punya *x-height* lebih kecil daripada sans-serif, jaga ukuran body publik di **`17px`–`18px`** (`line-height: 1.65`) dan hindari memakai `EB Garamond` di bawah `15px`.
-- **Aksen Cetak Arsip:** Untuk karakter serif rapat ala poster/stempel fisik, gunakan `EB Garamond` bobot `500`–`600`, `uppercase`, dengan `tracking-[-0.03em]` hingga `tracking-[-0.04em]`.
-- **Tabular Numerals:** Selalu aktifkan `tabular-nums` pada `Archivo Narrow` untuk angka KPI, jumlah item, tahun rilis, urutan slide, dan tanggal.
+- **Disiplin Penggunaan `Salmont`:** Karena `Salmont` sangat tebal dengan lubang huruf (*counter*) mikro, gunakan hanya untuk **teks pendek berukuran `≥ 28px`** (`H1`, `H2` publik, atau angka besar). Jangan pernah dipakai untuk paragraf, label form, tombol kecil, atau tabel Admin.
+- **Kontras Bobot di Halaman Publik:** Pasangkan `Salmont` dengan `Plus Jakarta Sans` bobot `300` (Light) atau `400` (Regular) untuk teks pengantar/deskripsi agar komposisi terasa lapang dan elegan.
+- **Tabular Numerals:** Selalu aktifkan `tabular-nums` pada `Plus Jakarta Sans` untuk angka KPI, jumlah item, tahun rilis, urutan slide, dan tanggal.
 - **Lebar Baris:** Batasi teks panjang maksimal `68ch` agar bio dan *liner notes* nyaman dibaca.
 - **Anti-Noise di Admin Console:**
   - Gunakan **sentence case** pada tab, tombol, badge status, dan judul kartu di Admin supaya antarmuka terasa tenang dan tidak ramai oleh *ALL-CAPS*.
-  - Tetap gunakan `Archivo Narrow` untuk input form, sel tabel, dan badge di Admin agar antarmuka operasional tetap ringkas dan cepat dipindai; pakai `EB Garamond` hanya pada pratinjau teks editorial atau kutipan bila diperlukan.
   - **Hindari informasi ganda:** Jika tanggal sudah tampil di TopBar dan jumlah item sudah tampil di kartu KPI, jangan ulangi lagi di *eyebrow* header halaman.
   - Potong daftar tag/format panjang menjadi ringkas (contoh: `LP, EP +3`) agar baris tabel tetap bersih satu baris.
 
@@ -196,9 +194,10 @@ Sistem ini membedakan karakter sudut antara **Public Website** (cetakan fisik) d
 
 ### 6.1 File Referensi Utama
 
-- `src/app/layout.tsx` — Pemuatan `Archivo_Narrow` (`--font-archivo-narrow`) & `EB_Garamond` (`--font-eb-garamond`, normal & italic).
+- `src/app/fonts/Salmont.woff2` — File font lokal `Salmont` (dikonversi dari `.otf`/`.ttf` berlisensi resmi).
+- `src/app/layout.tsx` — Pemuatan `localFont` untuk `Salmont` (`--font-salmont`) & `Plus_Jakarta_Sans` (`--font-plus-jakarta-sans`).
 - `src/app/globals.css` — Variabel CSS `:root`, aturan fokus `:focus-visible`, scrollbar, dan `prefers-reduced-motion`.
-- `tailwind.config.ts` — Palet `tromagnon` dan `admin`, font family (`sans`, `display`, `serif` / `editorial`), shadow `admin-pop`, serta `ease-tromagnon`.
+- `tailwind.config.ts` — Palet `tromagnon` dan `admin`, font family (`display` → `--font-salmont`, `sans` & `admin` → `--font-plus-jakarta-sans`), shadow `admin-pop`, serta `ease-tromagnon`.
 - `src/components/admin/formStyles.ts` — Kelas standar `inputClass`, `textareaClass`, `labelClass`, `formSectionClass`, dan varian tombol admin.
 - `src/components/admin/ListControls.tsx` — `KpiFilterRow`, `SegmentedToggle`, `PrimaryCtaPill`, `SearchField`, `Thumb`, `RowActions`.
 - `src/components/admin/FormSummaryCard.tsx` — Panel ringkasan sticky Deep Pine & checklist kelengkapan aset.

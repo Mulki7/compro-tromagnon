@@ -155,7 +155,7 @@ export default function AdminLivePage() {
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-admin text-[12.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -163,7 +163,7 @@ export default function AdminLivePage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-admin text-[12.5px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
                 Delete
@@ -184,7 +184,7 @@ export default function AdminLivePage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-admin text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
                   Reset
@@ -222,7 +222,7 @@ export default function AdminLivePage() {
               header: "Artist",
               sortValue: (e) => e.artist?.name || "",
               render: (e) => (
-                <span className="font-display text-[16px] font-semibold text-admin-ink">
+                <span className="font-admin text-[15px] font-semibold tracking-[-0.01em] text-admin-ink">
                   {e.artist?.name || "Showcase"}
                 </span>
               ),
@@ -254,7 +254,7 @@ export default function AdminLivePage() {
                     href={e.ticket_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-md border border-admin-border-strong bg-admin-surface px-2.5 py-1 font-display text-[12.5px] font-semibold text-admin-forest-soft underline underline-offset-2 transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
+                    className="inline-flex items-center gap-1 rounded-md border border-admin-border-strong bg-admin-surface px-2.5 py-1 font-admin text-[12px] font-semibold text-admin-forest-soft underline underline-offset-2 transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
                   >
                     <span>Link</span>
                     <ExternalLink size={11} aria-hidden="true" />

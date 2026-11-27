@@ -84,7 +84,7 @@ export function KpiFilterRow<T extends string>({
             </span>
             <span
               className={cn(
-                "mt-1.5 font-display text-[28px] font-bold leading-none tracking-[-0.02em] tabular-nums",
+                "mt-1.5 font-admin text-[26px] font-bold leading-none tracking-[-0.025em] tabular-nums",
                 countClass
               )}
             >
@@ -121,7 +121,7 @@ export function FilterTabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(opt.key)}
             className={cn(
-              "inline-flex h-8 items-center gap-1.5 rounded-md px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
+              "inline-flex h-8 items-center gap-1.5 rounded-md px-3 font-admin text-[13px] font-semibold transition-colors duration-[120ms]",
               active
                 ? "bg-admin-forest-soft text-[#F1F2EE]"
                 : "text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
@@ -167,7 +167,7 @@ export function SearchField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-canvas pl-9 pr-8 font-admin text-[14px] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none"
+        className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-canvas pl-9 pr-8 font-admin text-[16px] tracking-[0.01em] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none sm:text-[15px]"
       />
       {value && (
         <button
@@ -209,7 +209,7 @@ export function Thumb({
           className="object-cover"
         />
       ) : (
-        <span className="flex h-full w-full items-center justify-center font-display text-[13.5px] font-bold text-admin-sub">
+        <span className="flex h-full w-full items-center justify-center font-admin text-[13px] font-bold text-admin-sub">
           {fallback ?? <Disc3 size={15} aria-hidden="true" />}
         </span>
       )}
@@ -227,7 +227,7 @@ export function RowActions({
   label: string;
 }) {
   return (
-    <div className="flex items-center justify-end gap-1.5">
+    <div className="flex items-center justify-end gap-2">
       <Link
         href={editHref}
         aria-label={`Edit ${label}`}
@@ -297,7 +297,7 @@ export function SegmentedToggle<T extends string>({
             aria-checked={active}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "h-8 rounded-md px-3.5 font-display text-[13.5px] font-semibold tracking-[0.01em] transition-colors duration-[120ms]",
+              "h-8 rounded-md px-3.5 font-admin text-[13px] font-semibold transition-colors duration-[120ms]",
               active
                 ? "bg-admin-forest-soft text-[#F1F2EE]"
                 : "text-admin-sub hover:bg-admin-surface hover:text-admin-ink"

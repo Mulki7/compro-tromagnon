@@ -99,13 +99,13 @@ export default function ConfirmDialog({
           <div className="min-w-0">
             <h2
               id={titleId}
-              className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink"
+              className="font-admin text-[18px] font-bold tracking-[-0.015em] text-admin-ink"
             >
               {title}
             </h2>
             <p
               id={messageId}
-              className="mt-1 font-admin text-[14.5px] leading-[1.55] text-admin-sub"
+              className="mt-1 font-admin text-[14px] leading-[1.55] text-admin-sub"
             >
               {message}
             </p>
@@ -118,7 +118,7 @@ export default function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={onCancel}
-            className="h-10 rounded-lg border border-admin-border-strong bg-admin-surface px-4 font-display text-[14px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled"
+            className="h-10 rounded-lg border border-admin-border-strong bg-admin-surface px-4 font-admin text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled"
           >
             {cancelLabel}
           </button>
@@ -126,7 +126,7 @@ export default function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={onConfirm}
-            className={`inline-flex h-10 items-center gap-2 rounded-lg px-4 font-display text-[14px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] disabled:bg-admin-elevated disabled:text-admin-disabled ${
+            className={`inline-flex h-10 items-center gap-2 rounded-lg px-4 font-admin text-[13.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] disabled:bg-admin-elevated disabled:text-admin-disabled ${
               danger
                 ? "bg-admin-danger hover:bg-[#821C16]"
                 : "bg-admin-forest-soft hover:bg-admin-forest"

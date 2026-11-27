@@ -70,17 +70,20 @@ export default function AdminLoginPage() {
                 className="object-contain"
               />
             </span>
-            <span className="font-display text-[21px] font-bold tracking-[-0.01em]">
+            <span className="font-admin text-[19px] font-bold tracking-[-0.025em]">
               tromagnon<span className="text-admin-lime">.</span>
             </span>
           </div>
 
           <div className="my-10 space-y-3">
-            <h1 className="font-display text-[30px] font-bold leading-[1.06] tracking-[-0.02em]">
-              Label catalog & archive console.
+            <p className="font-admin text-[12px] font-semibold uppercase tracking-[0.08em] text-admin-lime">
+              Tromagnon Archive
+            </p>
+            <h1 className="font-display text-[34px] font-normal leading-[0.98] tracking-[-0.02em]">
+              Label catalog & archive.
             </h1>
-            <p className="font-admin text-[14px] leading-[1.55] text-[#B8D0C9]">
-              Releases, artists, journal, and live dates.
+            <p className="font-admin text-[15px] font-light leading-[1.6] text-[#DCE5E1]">
+              Releases, artist roster, journal dispatches, and live dates.
             </p>
           </div>
 
@@ -91,7 +94,7 @@ export default function AdminLoginPage() {
 
         {/* Right Sign-In Form */}
         <div className="flex flex-col justify-center p-7 sm:p-9 md:col-span-7">
-          <h2 className="font-display text-[28px] font-bold leading-none tracking-[-0.02em] text-admin-ink">
+          <h2 className="font-admin text-[26px] font-bold leading-[1.1] tracking-[-0.02em] text-admin-ink">
             Sign in
           </h2>
 
@@ -172,7 +175,7 @@ export default function AdminLoginPage() {
           <div className="mt-6 border-t border-admin-border pt-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 transition-colors duration-[120ms] hover:text-admin-forest"
+              className="inline-flex items-center gap-1.5 font-admin text-[13.5px] font-semibold text-admin-forest-soft underline underline-offset-4 transition-colors duration-[120ms] hover:text-admin-forest"
             >
               <ArrowLeft size={14} aria-hidden="true" />
               Back to site

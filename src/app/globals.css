@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Tromagnon Records Design System v1.1 (DESIGN.md) */
+  /* Tromagnon Records Design System v1.4 (DESIGN.md) */
   --bg-primary: #F1F2EE;
   --bg-surface: #E4E6E0;
   --bg-elevated: #D8DBD3;
@@ -30,8 +30,8 @@
   --status-info: #2F5E8C;
   --status-info-bg: #DCE6F0;
 
-  --font-primary: var(--font-archivo-narrow), "Archivo Narrow", "Arial Narrow", Arial, sans-serif;
-  --font-secondary: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --font-display: var(--font-salmont), Georgia, serif;
+  --font-primary: var(--font-plus-jakarta-sans), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --tracking-display: -0.02em;
   --tracking-label: 0.06em;
 

@@ -12,13 +12,13 @@ import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnSecondary,
+  editorialTextareaClass,
   formErrorClass,
   formSectionClass,
   formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
-  textareaClass,
 } from "@/components/admin/formStyles";
 import { createArtist } from "@/lib/api/admin/artists";
 import { slugify } from "@/lib/utils";
@@ -180,7 +180,7 @@ export default function CreateArtistPage() {
                 required
                 rows={4}
                 placeholder="Short artist biography…"
-                className={textareaClass}
+                className={editorialTextareaClass}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
               />

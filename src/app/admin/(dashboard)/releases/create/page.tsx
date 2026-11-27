@@ -11,13 +11,13 @@ import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnSecondary,
+  editorialTextareaClass,
   formErrorClass,
   formSectionClass,
   formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
-  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { createRelease } from "@/lib/api/admin/releases";
@@ -226,7 +226,7 @@ export default function CreateReleasePage() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => toggleFormat(f)}
-                        className={`h-9 rounded-md border px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms] ${
+                        className={`h-9 rounded-md border px-3 font-admin text-[13px] font-semibold transition-colors duration-[120ms] ${
                           selected
                             ? "border-admin-forest bg-admin-forest-soft text-[#F1F2EE]"
                             : "border-admin-border-strong bg-admin-canvas text-admin-ink hover:bg-admin-elevated"
@@ -242,14 +242,14 @@ export default function CreateReleasePage() {
 
             <div>
               <label htmlFor="release-description" className={labelClass}>
-                Description
+                Description / Liner notes
               </label>
               <textarea
                 id="release-description"
                 required
                 rows={4}
                 placeholder="Release credits and notes…"
-                className={textareaClass}
+                className={editorialTextareaClass}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />

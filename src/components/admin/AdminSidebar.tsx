@@ -118,7 +118,7 @@ export default function AdminSidebar({
                 className="object-contain"
               />
             </span>
-            <span className="font-display text-[20px] font-bold tracking-[-0.01em] text-[#F1F2EE]">
+            <span className="font-admin text-[18px] font-bold tracking-[-0.025em] text-[#F1F2EE]">
               tromagnon<span className="text-admin-lime">.</span>
             </span>
           </Link>
@@ -144,9 +144,9 @@ export default function AdminSidebar({
                 onClick={onClose}
                 aria-current={active ? "page" : undefined}
                 className={cn(
-                  "group flex h-10 items-center justify-between gap-2.5 rounded-lg px-3 font-display text-[15px] font-semibold tracking-[0.01em] transition-colors duration-[120ms] ease-tromagnon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime",
+                  "group flex h-10 items-center justify-between gap-2.5 rounded-lg px-3 font-admin text-[14px] font-medium transition-colors duration-[120ms] ease-tromagnon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime",
                   active
-                    ? "bg-admin-lime text-admin-on-lime"
+                    ? "bg-admin-lime font-semibold text-admin-on-lime"
                     : "text-[#ECEEE9] hover:bg-admin-forest-soft hover:text-white"
                 )}
               >
@@ -165,7 +165,7 @@ export default function AdminSidebar({
                 {typeof badge === "number" && (
                   <span
                     className={cn(
-                      "flex h-5 min-w-[22px] shrink-0 items-center justify-center rounded-md px-1.5 font-admin text-[11.5px] font-semibold tabular-nums",
+                      "flex h-5 min-w-[22px] shrink-0 items-center justify-center rounded-md px-1.5 font-admin text-[12.5px] font-semibold tabular-nums",
                       active
                         ? "bg-admin-forest text-[#F1F2EE]"
                         : "bg-admin-forest-soft text-[#ECEEE9]"
@@ -185,7 +185,7 @@ export default function AdminSidebar({
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-10 items-center gap-2.5 rounded-lg px-3 font-display text-[14.5px] font-semibold text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-admin-forest-soft hover:text-white"
+            className="flex h-10 items-center gap-2.5 rounded-lg px-3 font-admin text-[13.5px] font-medium text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-admin-forest-soft hover:text-white"
           >
             <ExternalLink size={16} strokeWidth={1.75} aria-hidden="true" className="text-[#9CCBC1]" />
             <span>View site</span>
@@ -194,7 +194,7 @@ export default function AdminSidebar({
           <button
             type="button"
             onClick={onLogout}
-            className="flex h-10 w-full items-center gap-2.5 rounded-lg px-3 font-display text-[14.5px] font-semibold text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-[#A3261F]/25 hover:text-[#F0A29B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
+            className="flex h-10 w-full items-center gap-2.5 rounded-lg px-3 font-admin text-[13.5px] font-medium text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-[#A3261F]/25 hover:text-[#F0A29B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
           >
             <LogOut size={16} strokeWidth={1.75} aria-hidden="true" />
             <span>Sign out</span>

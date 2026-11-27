@@ -36,7 +36,7 @@ const config: Config = {
           "on-accent": "#F1F2EE",
           "accent-hover": "#224540",
         },
-        /* Admin semantic tokens mapped strictly to DESIGN.md v1.1 */
+        /* Admin semantic tokens mapped strictly to DESIGN.md v1.4 */
         admin: {
           canvas: "#F1F2EE",
           surface: "#FAFAF8",
@@ -66,10 +66,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        sans: ["var(--font-archivo-narrow)", '"Archivo Narrow"', '"Arial Narrow"', "Arial", "sans-serif"],
-        satelit: ["var(--font-archivo-narrow)", '"Archivo Narrow"', "sans-serif"],
-        display: ["var(--font-archivo-narrow)", '"Archivo Narrow"', '"Arial Narrow"', "Arial", "sans-serif"],
-        admin: ["var(--font-archivo)", '"Archivo"', '"Helvetica Neue"', "Arial", "system-ui", "sans-serif"],
+        display: ["var(--font-salmont)", "Georgia", "serif"],
+        sans: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "-apple-system", "BlinkMacSystemFont", "sans-serif"],
+        satelit: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "sans-serif"],
+        admin: ["var(--font-plus-jakarta-sans)", '"Plus Jakarta Sans"', "-apple-system", "BlinkMacSystemFont", "sans-serif"],
       },
       boxShadow: {
         "admin-card": "none",

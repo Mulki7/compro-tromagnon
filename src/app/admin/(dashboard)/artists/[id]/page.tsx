@@ -12,6 +12,7 @@ import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnSecondary,
+  editorialTextareaClass,
   formErrorClass,
   formLoadingClass,
   formSectionClass,
@@ -20,7 +21,6 @@ import {
   inputClass,
   labelClass,
   parseStringArray,
-  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtist, updateArtist } from "@/lib/api/admin/artists";
 import { slugify } from "@/lib/utils";
@@ -222,7 +222,7 @@ export default function EditArtistPage() {
                 id="artist-bio"
                 required
                 rows={4}
-                className={textareaClass}
+                className={editorialTextareaClass}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
               />

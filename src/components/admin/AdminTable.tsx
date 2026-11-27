@@ -158,7 +158,7 @@ export default function AdminTable<T>({
                           : undefined
                       }
                       className={cn(
-                        "sticky top-0 z-10 bg-admin-surface pb-1.5 pl-3 pr-3 font-admin text-[12px] font-medium text-admin-sub",
+                        "sticky top-0 z-10 bg-admin-surface pb-1.5 pl-3 pr-3 font-admin text-[12.5px] font-medium text-admin-sub",
                         col.className
                       )}
                     >
@@ -235,7 +235,7 @@ export default function AdminTable<T>({
                         <td
                           key={col.key}
                           className={cn(
-                            "border-y border-admin-border py-2.5 pl-3 pr-3 align-middle font-admin text-[14px] text-admin-ink",
+                            "border-y border-admin-border py-2.5 pl-3 pr-3 align-middle font-admin text-[14px] leading-[1.45] text-admin-ink",
                             isFirst && "rounded-l-lg border-l",
                             isLast && "rounded-r-lg border-r",
                             col.className

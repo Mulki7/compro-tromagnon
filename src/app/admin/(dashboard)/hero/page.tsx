@@ -139,7 +139,7 @@ export default function AdminHeroPage() {
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-admin text-[12.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -147,7 +147,7 @@ export default function AdminHeroPage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-admin text-[12.5px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
                 Delete
@@ -168,7 +168,7 @@ export default function AdminHeroPage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-admin text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
                   Reset
@@ -211,7 +211,7 @@ export default function AdminHeroPage() {
                     fallback={<ImageIcon size={15} aria-hidden="true" />}
                   />
                   <div className="min-w-0">
-                    <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
+                    <p className="truncate font-admin text-[15px] font-semibold leading-[1.25] tracking-[-0.01em] text-admin-ink group-hover:text-admin-forest-soft">
                       {h.title}
                     </p>
                     <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
@@ -226,7 +226,7 @@ export default function AdminHeroPage() {
               header: "CTA",
               render: (h) =>
                 h.cta_text ? (
-                  <span className="rounded-md border border-admin-border bg-admin-surface px-2.5 py-0.5 font-display text-[12.5px] font-semibold text-admin-ink">
+                  <span className="rounded-md border border-admin-border bg-admin-surface px-2.5 py-0.5 font-admin text-[12px] font-semibold text-admin-ink">
                     {h.cta_text}
                   </span>
                 ) : (

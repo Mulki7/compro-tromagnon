@@ -197,7 +197,7 @@ export default function AdminDashboardLayout({
       <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas text-admin-sub">
         <div className="flex items-center gap-2.5 rounded-xl border border-admin-border bg-admin-surface px-5 py-3">
           <Loader2 size={16} className="animate-spin text-admin-forest-soft" aria-hidden="true" />
-          <span className="font-display text-[15px] font-semibold text-admin-ink">
+          <span className="font-admin text-[14px] font-semibold text-admin-ink">
             Loading…
           </span>
         </div>
@@ -210,7 +210,7 @@ export default function AdminDashboardLayout({
       <div className="font-admin flex min-h-dvh bg-admin-canvas text-admin-ink selection:bg-admin-forest-soft selection:text-[#F1F2EE] lg:h-dvh lg:overflow-hidden lg:p-2.5 lg:gap-1">
         <a
           href="#admin-main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-admin-forest focus:px-4 focus:py-2 focus:font-display focus:text-[14px] focus:font-semibold focus:text-[#F1F2EE]"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-admin-forest focus:px-4 focus:py-2 focus:font-admin focus:text-[13.5px] focus:font-semibold focus:text-[#F1F2EE]"
         >
           Skip to content
         </a>

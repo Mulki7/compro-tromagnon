@@ -12,6 +12,7 @@ import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnSecondary,
+  editorialTextareaClass,
   formErrorClass,
   formLoadingClass,
   formSectionClass,
@@ -19,7 +20,6 @@ import {
   getErrorMessage,
   inputClass,
   labelClass,
-  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { getAdminReleases } from "@/lib/api/admin/releases";
@@ -221,7 +221,7 @@ export default function EditNewsPage() {
                 id="news-content"
                 required
                 rows={9}
-                className={textareaClass}
+                className={editorialTextareaClass}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />

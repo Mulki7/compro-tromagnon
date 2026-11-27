@@ -111,7 +111,7 @@ export default function AdminTopBar() {
             }}
             placeholder="Quick search…"
             aria-label="Search catalog across releases, artists, news, and shows"
-            className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-surface pl-9 pr-8 font-admin text-[14px] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:outline-none"
+            className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-surface pl-9 pr-8 font-admin text-[16px] tracking-[0.01em] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:outline-none sm:text-[15px]"
           />
           {query && (
             <button
@@ -151,14 +151,14 @@ export default function AdminTopBar() {
                         className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="min-w-0">
-                          <p className="truncate font-display text-[15px] font-semibold text-admin-ink">
+                          <p className="truncate font-admin text-[14px] font-semibold text-admin-ink">
                             {item.title}
                           </p>
                           <p className="truncate font-admin text-[12.5px] text-admin-sub">
                             {item.subtitle}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-md bg-admin-muted px-2 py-0.5 font-admin text-[11.5px] font-medium text-admin-forest-soft">
+                        <span className="shrink-0 rounded-md bg-admin-muted px-2 py-0.5 font-admin text-[12px] font-medium text-admin-forest-soft">
                           {item.type}
                         </span>
                       </button>
@@ -207,7 +207,7 @@ export default function AdminTopBar() {
               className="absolute right-0 top-[calc(100%+6px)] z-40 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-admin-border-strong bg-admin-surface p-3 shadow-admin-pop"
             >
               <div className="mb-2 flex items-center justify-between">
-                <p className="font-display text-[15px] font-bold text-admin-ink">
+                <p className="font-admin text-[14px] font-bold text-admin-ink">
                   Attention
                 </p>
                 <span className="rounded-md bg-admin-muted px-2 py-0.5 font-admin text-[12px] font-medium tabular-nums text-admin-sub">
@@ -233,14 +233,14 @@ export default function AdminTopBar() {
                         className="flex items-center justify-between gap-2.5 rounded-lg bg-admin-muted px-3 py-2 transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="min-w-0">
-                          <p className="truncate font-display text-[14.5px] font-semibold text-admin-ink">
+                          <p className="truncate font-admin text-[13.5px] font-semibold text-admin-ink">
                             {item.label}
                           </p>
                           <p className="truncate font-admin text-[12px] text-admin-sub">
                             {item.detail}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-md bg-admin-forest-soft px-2 py-0.5 font-display text-[12px] font-semibold text-[#F1F2EE]">
+                        <span className="shrink-0 rounded-md bg-admin-forest-soft px-2 py-0.5 font-admin text-[12px] font-semibold text-[#F1F2EE]">
                           {item.cta}
                         </span>
                       </Link>
@@ -256,11 +256,11 @@ export default function AdminTopBar() {
         <div className="inline-flex h-10 items-center gap-2 rounded-lg border border-admin-border bg-admin-surface pl-1.5 pr-3">
           <span
             aria-hidden="true"
-            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-admin-forest-soft font-display text-[12.5px] font-bold uppercase text-[#F1F2EE]"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-admin-forest-soft font-admin text-[12px] font-bold uppercase text-[#F1F2EE]"
           >
             {initials}
           </span>
-          <span className="hidden max-w-[110px] truncate font-display text-[14.5px] font-semibold capitalize text-admin-ink sm:inline">
+          <span className="hidden max-w-[110px] truncate font-admin text-[13.5px] font-semibold capitalize text-admin-ink sm:inline">
             {displayName}
           </span>
         </div>

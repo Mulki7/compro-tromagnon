@@ -57,7 +57,7 @@ export default function FormSummaryCard({
       <div className="rounded-xl border border-[#16302C] bg-admin-forest p-5 text-[#F1F2EE]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h2 className="font-display text-[19px] font-bold text-[#F1F2EE]">
+            <h2 className="font-admin text-[18px] font-bold tracking-[-0.015em] text-[#F1F2EE]">
               {title}
             </h2>
             {subtitle && (
@@ -85,16 +85,16 @@ export default function FormSummaryCard({
         </dl>
 
         <div className="mt-4">
-          <p className="font-admin text-[12px] font-medium text-[#B8D0C9]">
+          <p className="font-admin text-[12.5px] font-medium text-[#B8D0C9]">
             {highlightLabel}
           </p>
-          <p className="mt-0.5 truncate font-display text-[26px] font-bold leading-tight tracking-[-0.02em] text-admin-lime tabular-nums">
+          <p className="mt-0.5 truncate font-admin text-[24px] font-bold leading-tight tracking-[-0.025em] text-admin-lime tabular-nums">
             {highlightValue}
           </p>
         </div>
 
         {warningText && (
-          <div className="mt-4 flex items-start gap-2 rounded-lg border border-admin-danger/40 bg-admin-danger-soft px-3 py-2 font-admin text-[12.5px] font-medium text-admin-danger">
+          <div className="mt-4 flex items-start gap-2 rounded-lg border border-admin-danger/40 bg-admin-danger-soft px-3 py-2 font-admin text-[13px] font-medium text-admin-danger">
             <AlertCircle size={14} className="mt-0.5 shrink-0" aria-hidden="true" />
             <span>{warningText}</span>
           </div>
@@ -124,7 +124,7 @@ export default function FormSummaryCard({
               type="button"
               disabled={saving}
               onClick={onSecondaryAction.onClick}
-              className="flex h-10 w-full items-center justify-center rounded-lg border border-[#7DB4A9]/40 bg-admin-forest-soft font-display text-[14px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep disabled:bg-admin-elevated disabled:text-admin-disabled"
+              className="flex h-10 w-full items-center justify-center rounded-lg border border-[#7DB4A9]/40 bg-admin-forest-soft font-admin text-[13.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep disabled:bg-admin-elevated disabled:text-admin-disabled"
             >
               {onSecondaryAction.label}
             </button>
@@ -136,7 +136,7 @@ export default function FormSummaryCard({
       {checks && checks.length > 0 && (
         <div className="rounded-xl border border-admin-border bg-admin-muted p-4 text-admin-ink">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="font-display text-[16px] font-bold text-admin-ink">
+            <h3 className="font-admin text-[15px] font-bold tracking-[-0.01em] text-admin-ink">
               {checklistTitle}
             </h3>
             <span className="font-admin text-[12.5px] font-semibold tabular-nums text-admin-forest">

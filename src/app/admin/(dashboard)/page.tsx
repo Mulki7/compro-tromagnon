@@ -330,7 +330,7 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => setScope(key)}
                   className={cn(
-                    "h-8 rounded-md px-3.5 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
+                    "h-8 rounded-md px-3.5 font-admin text-[13px] font-semibold transition-colors duration-[120ms]",
                     scope === key
                       ? "bg-admin-forest-soft text-[#F1F2EE]"
                       : "text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
@@ -398,7 +398,7 @@ export default function AdminDashboardPage() {
               />
 
               <div className="relative z-10 flex items-center justify-between gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-[#101412]/50 px-2.5 py-1 font-admin text-[12px] font-medium text-[#ECEEE9]">
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-[#101412]/50 px-2.5 py-1 font-admin text-[12.5px] font-medium tracking-[0.015em] text-[#ECEEE9]">
                   <Radio size={13} className="text-admin-lime" aria-hidden="true" />
                   Archive
                 </span>
@@ -413,7 +413,7 @@ export default function AdminDashboardPage() {
 
               <div className="relative z-10 mt-3">
                 <div className="flex items-baseline gap-2.5">
-                  <span className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
+                  <span className="font-admin text-[40px] font-bold leading-none tracking-[-0.03em] tabular-nums">
                     {totalArchiveCount}
                   </span>
                   <span className="font-admin text-[13.5px] text-[#DCE5E1]">
@@ -459,7 +459,7 @@ export default function AdminDashboardPage() {
               className="group flex min-h-[168px] flex-col justify-between rounded-xl border border-admin-forest-soft bg-admin-lime p-4 text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover lg:col-span-3"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="font-display text-[17px] font-bold text-admin-on-lime">
+                <p className="font-admin text-[15px] font-bold tracking-[-0.01em] text-admin-on-lime">
                   Published
                 </p>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-admin-forest text-[#F1F2EE]">
@@ -468,7 +468,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <p className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
+                <p className="font-admin text-[40px] font-bold leading-none tracking-[-0.03em] tabular-nums">
                   {publishedReleases.length}
                 </p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -490,7 +490,7 @@ export default function AdminDashboardPage() {
               className="group flex min-h-[168px] flex-col justify-between rounded-xl border border-[#16302C] bg-admin-forest p-4 text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep lg:col-span-3"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="font-display text-[17px] font-bold text-[#F1F2EE]">
+                <p className="font-admin text-[15px] font-bold tracking-[-0.01em] text-[#F1F2EE]">
                   Upcoming shows
                 </p>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-admin-forest-soft text-admin-lime">
@@ -499,7 +499,7 @@ export default function AdminDashboardPage() {
               </div>
 
               <div>
-                <p className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
+                <p className="font-admin text-[40px] font-bold leading-none tracking-[-0.03em] tabular-nums">
                   {upcomingShows.length}
                 </p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
@@ -518,7 +518,7 @@ export default function AdminDashboardPage() {
             {/* Activity List Card (7 cols) */}
             <section className="flex min-h-0 flex-col rounded-xl border border-admin-border bg-admin-surface p-4 lg:col-span-7">
               <div className="flex shrink-0 flex-wrap items-center justify-between gap-2.5 pb-3">
-                <h2 className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink">
+                <h2 className="font-admin text-[18px] font-bold leading-[1.2] tracking-[-0.015em] text-admin-ink">
                   Recent
                 </h2>
 
@@ -542,7 +542,7 @@ export default function AdminDashboardPage() {
                         aria-selected={feedTab === key}
                         onClick={() => setFeedTab(key)}
                         className={cn(
-                          "h-7 rounded-md px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
+                          "h-7 rounded-md px-3 font-admin text-[13px] font-semibold transition-colors duration-[120ms]",
                           feedTab === key
                             ? "bg-admin-forest-soft text-[#F1F2EE]"
                             : "text-admin-sub hover:bg-admin-surface hover:text-admin-ink"
@@ -561,7 +561,7 @@ export default function AdminDashboardPage() {
                           ? "/admin/live"
                           : "/admin/news"
                     }
-                    className="inline-flex h-9 items-center gap-1 rounded-lg border border-admin-border-strong px-3 font-display text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
+                    className="inline-flex h-9 items-center gap-1 rounded-lg border border-admin-border-strong px-3 font-admin text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                   >
                     <span>All</span>
                     <ArrowRight size={13} aria-hidden="true" />
@@ -578,7 +578,7 @@ export default function AdminDashboardPage() {
                       </p>
                       <Link
                         href="/admin/releases/create"
-                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
+                        className="font-admin text-[13.5px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
                         + Add release
                       </Link>
@@ -596,7 +596,7 @@ export default function AdminDashboardPage() {
                             className="aspect-square h-11 w-11 rounded-md"
                           />
                           <div className="min-w-0">
-                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
+                            <p className="truncate font-admin text-[15px] font-semibold leading-[1.25] tracking-[-0.01em] text-admin-ink group-hover:text-admin-forest-soft">
                               {r.title}
                             </p>
                             <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
@@ -628,7 +628,7 @@ export default function AdminDashboardPage() {
                       </p>
                       <Link
                         href="/admin/live/create"
-                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
+                        className="font-admin text-[13.5px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
                         + Schedule show
                       </Link>
@@ -645,7 +645,7 @@ export default function AdminDashboardPage() {
                             <CalendarDays size={16} aria-hidden="true" />
                           </span>
                           <div className="min-w-0">
-                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink">
+                            <p className="truncate font-admin text-[15px] font-semibold leading-[1.25] tracking-[-0.01em] text-admin-ink">
                               {ev.artist?.name || "Showcase"}
                             </p>
                             <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
@@ -677,7 +677,7 @@ export default function AdminDashboardPage() {
                       </p>
                       <Link
                         href="/admin/news/create"
-                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
+                        className="font-admin text-[13.5px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
                         + Write article
                       </Link>
@@ -696,7 +696,7 @@ export default function AdminDashboardPage() {
                             fallback={<Newspaper size={15} aria-hidden="true" />}
                           />
                           <div className="min-w-0">
-                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink">
+                            <p className="truncate font-admin text-[15px] font-semibold leading-[1.25] tracking-[-0.01em] text-admin-ink">
                               {n.title}
                             </p>
                             <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
@@ -748,7 +748,7 @@ export default function AdminDashboardPage() {
                 <div className="flex items-center gap-1.5">
                   <Link
                     href="/admin/artists"
-                    className="inline-flex h-8 items-center rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
+                    className="inline-flex h-8 items-center rounded-lg border border-admin-border-strong px-3 font-admin text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                   >
                     Roster
                   </Link>
@@ -766,7 +766,7 @@ export default function AdminDashboardPage() {
             {/* Health / Readiness Card (5 cols) */}
             <aside className="flex min-h-0 flex-col rounded-xl border border-admin-border bg-admin-muted p-4 text-admin-ink lg:col-span-5">
               <div className="flex shrink-0 items-center justify-between gap-3">
-                <h2 className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink">
+                <h2 className="font-admin text-[18px] font-bold leading-[1.2] tracking-[-0.015em] text-admin-ink">
                   Catalog health
                 </h2>
                 <Link
@@ -810,7 +810,7 @@ export default function AdminDashboardPage() {
                 </div>
 
                 <div className="min-w-0">
-                  <p className="font-display text-[38px] font-bold leading-none tracking-[-0.02em] text-admin-ink tabular-nums">
+                  <p className="font-admin text-[36px] font-bold leading-none tracking-[-0.03em] text-admin-ink tabular-nums">
                     {readiness.score}%
                   </p>
                   <p className="mt-1 font-admin text-[12.5px] font-medium text-admin-sub tabular-nums">
@@ -845,7 +845,7 @@ export default function AdminDashboardPage() {
                           className="h-9 w-9 rounded-md"
                         />
                         <div className="min-w-0">
-                          <p className="truncate font-display text-[15px] font-semibold leading-tight text-admin-ink">
+                          <p className="truncate font-admin text-[14.5px] font-semibold leading-[1.25] tracking-[-0.01em] text-admin-ink">
                             {item.title}
                           </p>
                           <p className="truncate font-admin text-[12px] text-admin-sub">
@@ -855,7 +855,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <span
                         className={cn(
-                          "shrink-0 rounded-md px-2.5 py-1 font-display text-[12.5px] font-semibold transition-colors duration-[120ms]",
+                          "shrink-0 rounded-md px-2.5 py-1 font-admin text-[12px] font-semibold transition-colors duration-[120ms]",
                           item.urgent
                             ? "bg-admin-amber-soft text-admin-amber group-hover:bg-admin-forest-soft group-hover:text-[#F1F2EE]"
                             : "bg-admin-forest-soft text-[#F1F2EE] group-hover:bg-admin-forest"

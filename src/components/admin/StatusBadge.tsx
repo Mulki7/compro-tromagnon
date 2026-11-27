@@ -70,7 +70,7 @@ export default function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-0.5 font-admin text-[12px] font-medium capitalize",
+        "inline-flex items-center gap-1.5 whitespace-nowrap rounded-md border px-2.5 py-0.5 font-admin text-[12px] font-medium capitalize leading-[1.35]",
         config.pill,
         className
       )}

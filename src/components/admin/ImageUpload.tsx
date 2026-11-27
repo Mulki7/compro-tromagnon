@@ -115,7 +115,7 @@ export default function ImageUpload({
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-admin-forest-soft text-[#F1F2EE]">
               <Upload size={17} strokeWidth={2} aria-hidden="true" />
             </div>
-            <span className="font-display text-[15px] font-semibold text-admin-ink">
+            <span className="font-admin text-[14px] font-semibold text-admin-ink">
               Drop image or click to browse
             </span>
             <span className="font-admin text-[12.5px] text-admin-sub">{hint}</span>
@@ -133,7 +133,7 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="h-10 w-full border-t border-admin-border bg-admin-surface font-display text-[13.5px] font-semibold text-admin-forest-soft transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
+            className="h-10 w-full border-t border-admin-border bg-admin-surface font-admin text-[13px] font-semibold text-admin-forest-soft transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
           >
             Replace image
           </button>
