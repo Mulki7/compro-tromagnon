@@ -14,7 +14,6 @@ import {
   Newspaper,
   Plus,
   Radio,
-  Users,
 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import StatusBadge from "@/components/admin/StatusBadge";
@@ -53,6 +52,13 @@ function getGreeting(): string {
   return "Good evening";
 }
 
+function formatShortFormats(raw: string | string[] | null | undefined): string {
+  const list = parseStringArray(raw);
+  if (list.length === 0) return "No format";
+  if (list.length <= 2) return list.join(", ");
+  return `${list.slice(0, 2).join(", ")} +${list.length - 2}`;
+}
+
 export default function AdminDashboardPage() {
   const { user, refreshShellData } = useAdminShell();
   const [artists, setArtists] = useState<Artist[]>([]);
@@ -85,9 +91,7 @@ export default function AdminDashboardPage() {
         refreshShellData();
       } catch {
         if (!cancelled) {
-          setError(
-            "Could not load dashboard metrics. Verify that the backend API is running."
-          );
+          setError("Could not load dashboard. Make sure the API is running.");
         }
       } finally {
         if (!cancelled) setLoading(false);
@@ -99,22 +103,15 @@ export default function AdminDashboardPage() {
     };
   }, [refreshShellData]);
 
-  const operatorName = useMemo(() => {
-    const raw = user?.name || user?.email?.split("@")[0] || "Operator";
-    return raw.charAt(0).toUpperCase() + raw.slice(1);
+  const greetingTitle = useMemo(() => {
+    const base = getGreeting();
+    const raw = (user?.name || user?.email?.split("@")[0] || "")
+      .replace(/tromagnon|admin/gi, "")
+      .trim();
+    if (!raw) return base;
+    const first = raw.split(/[\s._-]+/)[0];
+    return first ? `${base}, ${first.charAt(0).toUpperCase() + first.slice(1)}` : base;
   }, [user]);
-
-  const todayLong = useMemo(() => {
-    try {
-      return new Intl.DateTimeFormat("en-US", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-      }).format(new Date());
-    } catch {
-      return "Today";
-    }
-  }, []);
 
   const publishedReleases = useMemo(
     () => releases.filter((r) => r.status === "published"),
@@ -159,7 +156,6 @@ export default function AdminDashboardPage() {
     return [...base].sort((a, b) => (b.release_year || 0) - (a.release_year || 0));
   }, [releases, scope]);
 
-  // Readiness calculation based on real catalog completeness
   const readiness = useMemo(() => {
     let totalChecks = 0;
     let passedChecks = 0;
@@ -172,10 +168,10 @@ export default function AdminDashboardPage() {
         issues.push({
           key: `ra-${r.id}`,
           title: r.title,
-          subtitle: "Missing cover artwork",
+          subtitle: "No cover artwork",
           thumb: r.artwork_url,
           href: `/admin/releases/${r.id}`,
-          cta: "Add art",
+          cta: "Upload",
           urgent: true,
         });
       }
@@ -185,7 +181,7 @@ export default function AdminDashboardPage() {
         issues.push({
           key: `rd-${r.id}`,
           title: r.title,
-          subtitle: `${r.artist?.name || "Tromagnon"} · Draft`,
+          subtitle: "Draft release",
           thumb: r.artwork_url,
           href: `/admin/releases/${r.id}`,
           cta: "Review",
@@ -200,7 +196,7 @@ export default function AdminDashboardPage() {
         issues.push({
           key: `ap-${a.id}`,
           title: a.name,
-          subtitle: "Artist missing profile photo",
+          subtitle: "No artist photo",
           thumb: a.photo_url,
           href: `/admin/artists/${a.id}`,
           cta: "Upload",
@@ -216,7 +212,7 @@ export default function AdminDashboardPage() {
         issues.push({
           key: `nd-${n.id}`,
           title: n.title,
-          subtitle: "Unpublished journal draft",
+          subtitle: "Draft article",
           thumb: n.cover_image_url,
           href: `/admin/news/${n.id}`,
           cta: "Publish",
@@ -229,10 +225,10 @@ export default function AdminDashboardPage() {
     else {
       issues.push({
         key: "hero-missing",
-        title: "Homepage Hero Banner",
-        subtitle: "No active banner currently shown",
+        title: "Homepage banner",
+        subtitle: "No active slide",
         href: "/admin/hero/create",
-        cta: "Add slide",
+        cta: "Add",
         urgent: true,
       });
     }
@@ -240,12 +236,7 @@ export default function AdminDashboardPage() {
     const score =
       totalChecks > 0 ? Math.round((passedChecks / totalChecks) * 100) : 100;
 
-    return {
-      score,
-      passedChecks,
-      totalChecks,
-      issues,
-    };
+    return { score, passedChecks, totalChecks, issues };
   }, [releases, artists, news, activeBanners]);
 
   const totalArchiveCount =
@@ -258,8 +249,8 @@ export default function AdminDashboardPage() {
         label: "Releases",
         count: releases.length,
         pct: Math.max((releases.length / safeTotal) * 100, releases.length ? 8 : 0),
-        color: "bg-white",
-        dot: "bg-white",
+        color: "bg-[#F1F2EE]",
+        dot: "bg-[#F1F2EE]",
       },
       {
         label: "Artists",
@@ -272,15 +263,15 @@ export default function AdminDashboardPage() {
         label: "Journal",
         count: news.length,
         pct: Math.max((news.length / safeTotal) * 100, news.length ? 8 : 0),
-        color: "bg-[#6EE7B7]",
-        dot: "bg-[#6EE7B7]",
+        color: "bg-[#9CCBC1]",
+        dot: "bg-[#9CCBC1]",
       },
       {
         label: "Shows",
         count: live.length,
         pct: Math.max((live.length / safeTotal) * 100, live.length ? 8 : 0),
-        color: "bg-[#9DC0A9]",
-        dot: "bg-[#9DC0A9]",
+        color: "bg-[#CFD3CA]",
+        dot: "bg-[#CFD3CA]",
       },
       {
         label: "Banners",
@@ -311,23 +302,21 @@ export default function AdminDashboardPage() {
     );
   };
 
-  // SVG Donut dimensions
-  const ringRadius = 46;
+  const ringRadius = 38;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const ringOffset =
     ringCircumference - (readiness.score / 100) * ringCircumference;
 
   return (
-    <div className="flex flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${todayLong} · ${totalArchiveCount} catalog items tracked`}
-        title={`${getGreeting()}, ${operatorName}`}
+        title={greetingTitle}
         actions={
           <>
             <div
               role="group"
-              aria-label="Filter dashboard release scope"
-              className="hidden items-center rounded-full border border-admin-border/80 bg-white p-1 shadow-admin-card sm:inline-flex"
+              aria-label="Filter releases"
+              className="hidden items-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-surface p-1 sm:inline-flex"
             >
               {(
                 [
@@ -341,10 +330,10 @@ export default function AdminDashboardPage() {
                   type="button"
                   onClick={() => setScope(key)}
                   className={cn(
-                    "rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors",
+                    "h-8 rounded-md px-3.5 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
                     scope === key
-                      ? "bg-admin-forest text-white"
-                      : "text-admin-sub hover:text-admin-ink"
+                      ? "bg-admin-forest-soft text-[#F1F2EE]"
+                      : "text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
                   )}
                 >
                   {label}
@@ -370,7 +359,7 @@ export default function AdminDashboardPage() {
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
@@ -379,20 +368,20 @@ export default function AdminDashboardPage() {
       {loading ? (
         <div
           aria-busy="true"
-          className="grid gap-4 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+          className="grid flex-1 gap-3.5 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
         >
-          <div className="h-56 animate-pulse rounded-[24px] bg-white/80 motion-reduce:animate-none lg:col-span-6" />
-          <div className="h-56 animate-pulse rounded-[24px] bg-admin-lime/60 motion-reduce:animate-none lg:col-span-3" />
-          <div className="h-56 animate-pulse rounded-[24px] bg-admin-forest/80 motion-reduce:animate-none lg:col-span-3" />
-          <div className="h-80 animate-pulse rounded-[24px] bg-white/80 motion-reduce:animate-none lg:col-span-7" />
-          <div className="h-80 animate-pulse rounded-[24px] bg-admin-sage/80 motion-reduce:animate-none lg:col-span-5" />
+          <div className="h-44 animate-pulse rounded-xl bg-admin-muted motion-reduce:animate-none lg:col-span-6" />
+          <div className="h-44 animate-pulse rounded-xl bg-admin-muted motion-reduce:animate-none lg:col-span-3" />
+          <div className="h-44 animate-pulse rounded-xl bg-admin-forest/80 motion-reduce:animate-none lg:col-span-3" />
+          <div className="min-h-[260px] animate-pulse rounded-xl bg-admin-surface motion-reduce:animate-none lg:col-span-7" />
+          <div className="min-h-[260px] animate-pulse rounded-xl bg-admin-muted motion-reduce:animate-none lg:col-span-5" />
         </div>
       ) : (
-        <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+        <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
           {/* TOP BENTO ROW */}
-          <div className="grid gap-4 lg:grid-cols-12">
-            {/* Hero Photographic Catalog Pulse Card (6 cols) */}
-            <section className="relative flex min-h-[218px] flex-col justify-between overflow-hidden rounded-[26px] bg-admin-forest p-5 text-white shadow-admin-card lg:col-span-6">
+          <div className="grid shrink-0 gap-3.5 lg:grid-cols-12">
+            {/* Hero Archive Card (6 cols) */}
+            <section className="relative flex min-h-[168px] flex-col justify-between overflow-hidden rounded-xl border border-[#16302C] bg-admin-forest p-4 text-[#F1F2EE] lg:col-span-6">
               {heroBackdrop && (
                 <Image
                   src={heroBackdrop}
@@ -400,60 +389,55 @@ export default function AdminDashboardPage() {
                   fill
                   unoptimized
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover opacity-50"
+                  className="object-cover opacity-40"
                 />
               )}
               <div
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#072211]/95 via-[#0A2D17]/65 to-[#0D3B1E]/40"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#101412]/95 via-[#16302C]/75 to-[#224540]/50"
               />
 
               <div className="relative z-10 flex items-center justify-between gap-3">
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-[12px] font-semibold text-white backdrop-blur-md">
+                <span className="inline-flex items-center gap-1.5 rounded-md border border-white/20 bg-[#101412]/50 px-2.5 py-1 font-admin text-[12px] font-medium text-[#ECEEE9]">
                   <Radio size={13} className="text-admin-lime" aria-hidden="true" />
-                  Label archive pulse
+                  Archive
                 </span>
                 <Link
                   href="/admin/releases"
-                  aria-label="Open full release catalog"
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition hover:bg-admin-lime hover:text-admin-forest"
+                  aria-label="Open releases"
+                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/25 bg-[#101412]/45 text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-lime hover:text-admin-on-lime"
                 >
-                  <ArrowUpRight size={17} aria-hidden="true" />
+                  <ArrowUpRight size={16} aria-hidden="true" />
                 </Link>
               </div>
 
-              <div className="relative z-10 mt-6">
-                <div className="flex flex-wrap items-baseline gap-3">
-                  <span className="text-[46px] font-bold leading-none tracking-[-0.04em] tabular-nums">
+              <div className="relative z-10 mt-3">
+                <div className="flex items-baseline gap-2.5">
+                  <span className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
                     {totalArchiveCount}
                   </span>
-                  <div className="space-y-1">
-                    <span className="inline-flex items-center rounded-full bg-admin-lime px-2.5 py-0.5 text-[11.5px] font-bold text-admin-forest tabular-nums">
-                      {activeBanners.length} active hero
-                    </span>
-                    <p className="text-[13px] font-medium text-[#D6E8DC]">
-                      entries across Tromagnon Records
-                    </p>
-                  </div>
+                  <span className="font-admin text-[13.5px] text-[#DCE5E1]">
+                    catalog entries
+                  </span>
                 </div>
 
                 {/* Segmented distribution bar */}
                 <div
                   aria-hidden="true"
-                  className="mt-4 flex h-2 w-full gap-1 overflow-hidden rounded-full bg-white/15 p-0.5"
+                  className="mt-3 flex h-2 w-full gap-1 overflow-hidden rounded-full bg-white/15 p-0.5"
                 >
                   {segments.map((seg) =>
                     seg.count > 0 ? (
                       <div
                         key={seg.label}
-                        className={cn("h-full rounded-full transition-all", seg.color)}
+                        className={cn("h-full rounded-full", seg.color)}
                         style={{ width: `${seg.pct}%` }}
                       />
                     ) : null
                   )}
                 </div>
 
-                <ul className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11.5px] font-medium text-[#D2E4D8]">
+                <ul className="mt-2 flex flex-wrap items-center gap-x-3.5 gap-y-1 font-admin text-[12px] text-[#DCE5E1]">
                   {segments.map((seg) => (
                     <li key={seg.label} className="inline-flex items-center gap-1.5 tabular-nums">
                       <span
@@ -461,7 +445,7 @@ export default function AdminDashboardPage() {
                         className={cn("h-1.5 w-1.5 rounded-full", seg.dot)}
                       />
                       <span>
-                        {seg.label} <strong className="font-bold text-white">{seg.count}</strong>
+                        {seg.label} <strong className="font-semibold text-white">{seg.count}</strong>
                       </span>
                     </li>
                   ))}
@@ -469,100 +453,80 @@ export default function AdminDashboardPage() {
               </div>
             </section>
 
-            {/* Vibrant Acid-Lime KPI Card (3 cols) */}
+            {/* Published KPI Card (3 cols) */}
             <Link
               href="/admin/releases"
-              className="group flex min-h-[218px] flex-col justify-between rounded-[26px] bg-admin-lime p-5 text-admin-forest shadow-admin-card transition-transform duration-150 hover:-translate-y-0.5 lg:col-span-3"
+              className="group flex min-h-[168px] flex-col justify-between rounded-xl border border-admin-forest-soft bg-admin-lime p-4 text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover lg:col-span-3"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[13.5px] font-bold text-admin-forest/85">
-                    Published Catalog
-                  </p>
-                  <p className="text-[12px] font-medium text-admin-forest/65">
-                    Vinyl, tape & digital
-                  </p>
-                </div>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/75 text-admin-forest shadow-sm transition-transform group-hover:scale-105">
-                  <Disc3 size={18} aria-hidden="true" />
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-display text-[17px] font-bold text-admin-on-lime">
+                  Published
+                </p>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-admin-forest text-[#F1F2EE]">
+                  <Disc3 size={17} aria-hidden="true" />
                 </span>
               </div>
 
               <div>
-                <p className="text-[44px] font-bold leading-none tracking-[-0.04em] tabular-nums">
+                <p className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
                   {publishedReleases.length}
                 </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-admin-forest px-2.5 py-1 text-[11.5px] font-bold text-admin-lime tabular-nums">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-md bg-admin-forest px-2 py-0.5 font-admin text-[12px] font-semibold text-[#F1F2EE] tabular-nums">
                     {publishRate}% live
                   </span>
-                  <span className="text-[12px] font-semibold text-admin-forest/80 tabular-nums">
-                    {draftReleases.length} in draft
-                  </span>
+                  {draftReleases.length > 0 && (
+                    <span className="font-admin text-[12.5px] font-medium text-admin-on-lime/80 tabular-nums">
+                      {draftReleases.length} draft
+                    </span>
+                  )}
                 </div>
               </div>
             </Link>
 
-            {/* Deep Forest KPI Card (3 cols) */}
+            {/* Upcoming Shows KPI Card (3 cols) */}
             <Link
               href="/admin/live"
-              className="group flex min-h-[218px] flex-col justify-between rounded-[26px] bg-admin-forest p-5 text-white shadow-admin-card transition-transform duration-150 hover:-translate-y-0.5 lg:col-span-3"
+              className="group flex min-h-[168px] flex-col justify-between rounded-xl border border-[#16302C] bg-admin-forest p-4 text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep lg:col-span-3"
             >
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[13.5px] font-bold text-white">
-                    Upcoming Shows
-                  </p>
-                  <p className="text-[12px] font-medium text-[#9DC0A9]">
-                    Live calendar & tours
-                  </p>
-                </div>
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-admin-forest-soft text-admin-lime transition-transform group-hover:scale-105">
-                  <CalendarDays size={18} aria-hidden="true" />
+              <div className="flex items-center justify-between gap-2">
+                <p className="font-display text-[17px] font-bold text-[#F1F2EE]">
+                  Upcoming shows
+                </p>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-admin-forest-soft text-admin-lime">
+                  <CalendarDays size={17} aria-hidden="true" />
                 </span>
               </div>
 
               <div>
-                <p className="text-[44px] font-bold leading-none tracking-[-0.04em] tabular-nums">
+                <p className="font-display text-[42px] font-bold leading-none tracking-[-0.02em] tabular-nums">
                   {upcomingShows.length}
                 </p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-admin-lime px-2.5 py-1 text-[11.5px] font-bold text-admin-forest">
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <span className="rounded-md bg-admin-lime px-2 py-0.5 font-admin text-[12px] font-semibold text-admin-on-lime">
                     {upcomingShows[0]
                       ? formatDate(upcomingShows[0].event_date)
-                      : "No dates yet"}
-                  </span>
-                  <span className="text-[12px] font-medium text-[#B5D2BF] tabular-nums">
-                    {activeArtists.length} active roster
+                      : "None scheduled"}
                   </span>
                 </div>
               </div>
             </Link>
           </div>
 
-          {/* LOWER BENTO ROW */}
-          <div className="grid gap-4 lg:grid-cols-12">
-            {/* Catalog & Activity List Card (7 cols) */}
-            <section className="flex flex-col rounded-[26px] border border-admin-border/80 bg-white p-5 shadow-admin-card lg:col-span-7">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-[18px] font-bold tracking-[-0.02em] text-admin-ink">
-                    Label catalog & schedule
-                  </h2>
-                  <p className="mt-0.5 text-[12.5px] text-admin-sub">
-                    {feedTab === "releases"
-                      ? `Showing ${Math.min(filteredReleases.length, 6)} of ${filteredReleases.length} releases`
-                      : feedTab === "shows"
-                        ? `${upcomingShows.length} upcoming live dates`
-                        : `${news.length} journal dispatches`}
-                  </p>
-                </div>
+          {/* LOWER BENTO ROW (Full-height flex-1 on desktop) */}
+          <div className="grid min-h-0 flex-1 gap-3.5 lg:grid-cols-12">
+            {/* Activity List Card (7 cols) */}
+            <section className="flex min-h-0 flex-col rounded-xl border border-admin-border bg-admin-surface p-4 lg:col-span-7">
+              <div className="flex shrink-0 flex-wrap items-center justify-between gap-2.5 pb-3">
+                <h2 className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink">
+                  Recent
+                </h2>
 
                 <div className="flex flex-wrap items-center gap-2">
                   <div
                     role="tablist"
-                    aria-label="Dashboard activity tabs"
-                    className="inline-flex rounded-full bg-admin-muted p-1"
+                    aria-label="Activity tabs"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-muted p-1"
                   >
                     {(
                       [
@@ -578,10 +542,10 @@ export default function AdminDashboardPage() {
                         aria-selected={feedTab === key}
                         onClick={() => setFeedTab(key)}
                         className={cn(
-                          "rounded-full px-3 py-1 text-[12px] font-semibold transition-colors",
+                          "h-7 rounded-md px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
                           feedTab === key
-                            ? "bg-admin-forest text-white"
-                            : "text-admin-sub hover:text-admin-ink"
+                            ? "bg-admin-forest-soft text-[#F1F2EE]"
+                            : "text-admin-sub hover:bg-admin-surface hover:text-admin-ink"
                         )}
                       >
                         {label}
@@ -597,7 +561,7 @@ export default function AdminDashboardPage() {
                           ? "/admin/live"
                           : "/admin/news"
                     }
-                    className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-muted px-3 text-[12.5px] font-semibold text-admin-forest transition hover:bg-admin-lime-soft"
+                    className="inline-flex h-9 items-center gap-1 rounded-lg border border-admin-border-strong px-3 font-display text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                   >
                     <span>All</span>
                     <ArrowRight size={13} aria-hidden="true" />
@@ -605,18 +569,18 @@ export default function AdminDashboardPage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex-1 space-y-2">
+              <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
                 {feedTab === "releases" &&
                   (filteredReleases.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-admin-muted/60 py-12 text-center">
-                      <p className="text-[14px] text-admin-sub">
-                        No releases match this filter yet.
+                    <div className="flex h-full min-h-[140px] flex-col items-center justify-center gap-2 rounded-lg border border-admin-border bg-admin-canvas p-6 text-center">
+                      <p className="font-admin text-[14px] text-admin-sub">
+                        No releases yet.
                       </p>
                       <Link
                         href="/admin/releases/create"
-                        className="text-[13px] font-bold text-admin-forest hover:underline"
+                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
-                        + Add first release
+                        + Add release
                       </Link>
                     </div>
                   ) : (
@@ -624,41 +588,33 @@ export default function AdminDashboardPage() {
                       <Link
                         key={r.id}
                         href={`/admin/releases/${r.id}`}
-                        className="group flex items-center justify-between gap-3 rounded-2xl bg-admin-muted/65 p-2.5 pr-3 transition-colors hover:bg-admin-lime-soft/55"
+                        className="group flex items-center justify-between gap-3 rounded-lg border border-admin-border bg-admin-canvas p-2.5 pr-3 transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                           <Thumb
                             src={r.artwork_url}
-                            className="h-12 w-12 rounded-xl"
+                            className="aspect-square h-11 w-11 rounded-md"
                           />
                           <div className="min-w-0">
-                            <p className="truncate text-[14px] font-bold text-admin-ink">
+                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
                               {r.title}
                             </p>
-                            <p className="truncate text-[12.5px] text-admin-sub">
-                              {r.artist?.name || "Tromagnon"} ·{" "}
-                              {parseStringArray(r.format).join(", ") || "Format TBD"}
+                            <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                              {r.artist?.name || "Tromagnon"} · {formatShortFormats(r.format)}
                             </p>
                           </div>
                         </div>
 
-                        <div className="hidden text-right sm:block">
-                          <p className="text-[13px] font-bold tabular-nums text-admin-ink">
+                        <div className="flex shrink-0 items-center gap-2.5">
+                          <span className="hidden font-admin text-[13px] font-medium tabular-nums text-admin-sub sm:inline">
                             {r.release_year}
-                          </p>
-                          <p className="text-[11.5px] text-admin-sub">
-                            {r.artwork_url ? "Artwork ok" : "No artwork"}
-                          </p>
-                        </div>
-
-                        <div className="flex shrink-0 items-center gap-2">
-                          <StatusBadge status={r.status} />
-                          <span
-                            aria-hidden="true"
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-admin-sub shadow-sm transition group-hover:bg-admin-forest group-hover:text-admin-lime"
-                          >
-                            <ChevronRight size={15} />
                           </span>
+                          <StatusBadge status={r.status} />
+                          <ChevronRight
+                            size={15}
+                            aria-hidden="true"
+                            className="text-admin-sub transition-transform duration-[120ms] group-hover:translate-x-0.5 group-hover:text-admin-ink"
+                          />
                         </div>
                       </Link>
                     ))
@@ -666,13 +622,13 @@ export default function AdminDashboardPage() {
 
                 {feedTab === "shows" &&
                   (upcomingShows.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-admin-muted/60 py-12 text-center">
-                      <p className="text-[14px] text-admin-sub">
-                        No upcoming shows scheduled.
+                    <div className="flex h-full min-h-[140px] flex-col items-center justify-center gap-2 rounded-lg border border-admin-border bg-admin-canvas p-6 text-center">
+                      <p className="font-admin text-[14px] text-admin-sub">
+                        No upcoming shows.
                       </p>
                       <Link
                         href="/admin/live/create"
-                        className="text-[13px] font-bold text-admin-forest hover:underline"
+                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
                         + Schedule show
                       </Link>
@@ -682,33 +638,32 @@ export default function AdminDashboardPage() {
                       <Link
                         key={ev.id}
                         href={`/admin/live/${ev.id}`}
-                        className="group flex items-center justify-between gap-3 rounded-2xl bg-admin-muted/65 p-3 transition-colors hover:bg-admin-lime-soft/55"
+                        className="group flex items-center justify-between gap-3 rounded-lg border border-admin-border bg-admin-canvas p-2.5 pr-3 transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="flex min-w-0 items-center gap-3">
-                          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-admin-forest shadow-sm">
-                            <CalendarDays size={18} aria-hidden="true" />
+                          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-admin-border bg-admin-surface text-admin-forest-soft">
+                            <CalendarDays size={16} aria-hidden="true" />
                           </span>
                           <div className="min-w-0">
-                            <p className="truncate text-[14px] font-bold text-admin-ink">
-                              {ev.artist?.name || "Tromagnon Showcase"}
+                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink">
+                              {ev.artist?.name || "Showcase"}
                             </p>
-                            <p className="truncate text-[12.5px] text-admin-sub">
-                              {ev.venue} · {ev.city}, {ev.country}
+                            <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                              {ev.venue}, {ev.city}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex shrink-0 items-center gap-2.5">
-                          <span className="hidden text-[13px] font-semibold tabular-nums text-admin-ink sm:inline">
+                          <span className="hidden font-admin text-[13px] tabular-nums text-admin-sub sm:inline">
                             {formatDate(ev.event_date)}
                           </span>
                           <StatusBadge status={ev.status} />
-                          <span
+                          <ChevronRight
+                            size={15}
                             aria-hidden="true"
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-admin-sub shadow-sm transition group-hover:bg-admin-forest group-hover:text-admin-lime"
-                          >
-                            <ChevronRight size={15} />
-                          </span>
+                            className="text-admin-sub transition-transform duration-[120ms] group-hover:translate-x-0.5 group-hover:text-admin-ink"
+                          />
                         </div>
                       </Link>
                     ))
@@ -716,15 +671,15 @@ export default function AdminDashboardPage() {
 
                 {feedTab === "journal" &&
                   (news.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-admin-muted/60 py-12 text-center">
-                      <p className="text-[14px] text-admin-sub">
-                        No journal dispatches yet.
+                    <div className="flex h-full min-h-[140px] flex-col items-center justify-center gap-2 rounded-lg border border-admin-border bg-admin-canvas p-6 text-center">
+                      <p className="font-admin text-[14px] text-admin-sub">
+                        No articles yet.
                       </p>
                       <Link
                         href="/admin/news/create"
-                        className="text-[13px] font-bold text-admin-forest hover:underline"
+                        className="font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 hover:text-admin-forest"
                       >
-                        + Write first article
+                        + Write article
                       </Link>
                     </div>
                   ) : (
@@ -732,191 +687,178 @@ export default function AdminDashboardPage() {
                       <Link
                         key={n.id}
                         href={`/admin/news/${n.id}`}
-                        className="group flex items-center justify-between gap-3 rounded-2xl bg-admin-muted/65 p-2.5 pr-3 transition-colors hover:bg-admin-lime-soft/55"
+                        className="group flex items-center justify-between gap-3 rounded-lg border border-admin-border bg-admin-canvas p-2.5 pr-3 transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="flex min-w-0 flex-1 items-center gap-3">
                           <Thumb
                             src={n.cover_image_url}
-                            className="h-12 w-16 rounded-xl"
-                            fallback={<Newspaper size={16} aria-hidden="true" />}
+                            className="h-11 w-14 rounded-md"
+                            fallback={<Newspaper size={15} aria-hidden="true" />}
                           />
                           <div className="min-w-0">
-                            <p className="truncate text-[14px] font-bold text-admin-ink">
+                            <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink">
                               {n.title}
                             </p>
-                            <p className="truncate text-[12.5px] text-admin-sub">
+                            <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
                               {n.author || "Tromagnon"} ·{" "}
-                              {formatDate(n.published_at || n.created_at) || "Unscheduled"}
+                              {formatDate(n.published_at || n.created_at) || "Draft"}
                             </p>
                           </div>
                         </div>
 
                         <div className="flex shrink-0 items-center gap-2">
                           <StatusBadge status={n.status} />
-                          <span
+                          <ChevronRight
+                            size={15}
                             aria-hidden="true"
-                            className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-admin-sub shadow-sm transition group-hover:bg-admin-forest group-hover:text-admin-lime"
-                          >
-                            <ChevronRight size={15} />
-                          </span>
+                            className="text-admin-sub transition-transform duration-[120ms] group-hover:translate-x-0.5 group-hover:text-admin-ink"
+                          />
                         </div>
                       </Link>
                     ))
                   ))}
               </div>
 
-              {/* Compact Roster Strip */}
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-admin-border/70 pt-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex -space-x-2">
+              {/* Compact Roster Strip — always anchored cleanly at bottom */}
+              <div className="mt-3 flex shrink-0 items-center justify-between gap-3 border-t border-admin-border pt-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex -space-x-1.5">
                     {artists.slice(0, 6).map((a) => (
                       <Link
                         key={a.id}
                         href={`/admin/artists/${a.id}`}
                         title={a.name}
-                        aria-label={`Edit artist ${a.name}`}
-                        className="transition-transform hover:z-10 hover:scale-105"
+                        aria-label={`Edit ${a.name}`}
+                        className="transition-transform duration-[120ms] hover:z-10 hover:scale-105"
                       >
                         <Thumb
                           src={a.photo_url}
-                          className="h-9 w-9 rounded-full border-2 border-white"
+                          className="h-8 w-8 rounded-md border-2 border-admin-surface"
                           fallback={a.name[0]?.toUpperCase()}
                         />
                       </Link>
                     ))}
                   </div>
-                  <div className="text-[12.5px]">
-                    <p className="font-bold text-admin-ink tabular-nums">
-                      {artists.length} Artists on roster
-                    </p>
-                    <p className="text-admin-sub tabular-nums">
-                      {activeArtists.length} active · {artists.length - activeArtists.length} archived
-                    </p>
-                  </div>
+                  <span className="font-admin text-[13px] font-medium text-admin-sub tabular-nums">
+                    <strong className="font-semibold text-admin-ink">{activeArtists.length}</strong>{" "}
+                    artists on roster
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5">
                   <Link
                     href="/admin/artists"
-                    className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-ink transition hover:bg-admin-sage/60"
+                    className="inline-flex h-8 items-center rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                   >
-                    <Users size={14} aria-hidden="true" />
                     Roster
                   </Link>
                   <Link
                     href="/admin/artists/create"
                     aria-label="Add artist"
-                    className="flex h-9 w-9 items-center justify-center rounded-full bg-admin-forest text-admin-lime transition hover:bg-admin-forest-deep"
+                    className="flex h-8 w-8 items-center justify-center rounded-lg bg-admin-forest-soft text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest"
                   >
-                    <Plus size={16} aria-hidden="true" />
+                    <Plus size={15} aria-hidden="true" />
                   </Link>
                 </div>
               </div>
             </section>
 
-            {/* Sage Catalog Readiness Radar Card (5 cols) */}
-            <aside className="flex flex-col rounded-[26px] bg-admin-sage p-5 text-admin-forest shadow-admin-card lg:col-span-5">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <h2 className="text-[18px] font-bold tracking-[-0.02em] text-admin-forest">
-                    Catalog readiness
-                  </h2>
-                  <p className="mt-0.5 text-[12.5px] font-medium text-admin-forest/75 tabular-nums">
-                    {readiness.totalChecks} quality checks across archive
-                  </p>
-                </div>
+            {/* Health / Readiness Card (5 cols) */}
+            <aside className="flex min-h-0 flex-col rounded-xl border border-admin-border bg-admin-muted p-4 text-admin-ink lg:col-span-5">
+              <div className="flex shrink-0 items-center justify-between gap-3">
+                <h2 className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink">
+                  Catalog health
+                </h2>
                 <Link
                   href="/admin/releases"
                   aria-label="Review catalog"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-admin-forest shadow-sm transition hover:bg-admin-forest hover:text-admin-lime"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-admin-border-strong bg-admin-surface text-admin-ink transition-colors duration-[120ms] hover:bg-admin-forest-soft hover:text-[#F1F2EE]"
                 >
-                  <ArrowUpRight size={16} aria-hidden="true" />
+                  <ArrowUpRight size={15} aria-hidden="true" />
                 </Link>
               </div>
 
-              {/* Donut Chart + Big Percentage */}
-              <div className="mt-5 flex items-center gap-5">
+              {/* Compact Donut + Percentage */}
+              <div className="mt-3 flex shrink-0 items-center gap-4 border-b border-admin-border pb-3.5">
                 <div
                   role="img"
-                  aria-label={`Catalog readiness score ${readiness.score} percent (${readiness.passedChecks} of ${readiness.totalChecks} checks complete)`}
-                  className="relative h-28 w-28 shrink-0"
+                  aria-label={`Catalog health ${readiness.score} percent`}
+                  className="relative h-20 w-20 shrink-0"
                 >
-                  <svg viewBox="0 0 112 112" className="h-full w-full -rotate-90">
+                  <svg viewBox="0 0 92 92" className="h-full w-full -rotate-90">
                     <circle
-                      cx="56"
-                      cy="56"
+                      cx="46"
+                      cy="46"
                       r={ringRadius}
                       fill="none"
-                      stroke="rgba(255,255,255,0.65)"
-                      strokeWidth="12"
+                      stroke="#CFD3CA"
+                      strokeWidth="10"
                     />
                     <circle
-                      cx="56"
-                      cy="56"
+                      cx="46"
+                      cy="46"
                       r={ringRadius}
                       fill="none"
-                      stroke="#0D3B1E"
-                      strokeWidth="12"
+                      stroke="#31605A"
+                      strokeWidth="10"
                       strokeLinecap="round"
                       strokeDasharray={ringCircumference}
                       strokeDashoffset={ringOffset}
-                      className="transition-all duration-500"
+                      className="transition-all duration-[320ms] ease-tromagnon"
                     />
                   </svg>
                 </div>
 
                 <div className="min-w-0">
-                  <p className="text-[44px] font-bold leading-none tracking-[-0.04em] text-admin-forest tabular-nums">
+                  <p className="font-display text-[38px] font-bold leading-none tracking-[-0.02em] text-admin-ink tabular-nums">
                     {readiness.score}%
                   </p>
-                  <p className="mt-1 text-[13px] font-semibold text-admin-forest/80">
-                    Readiness index
+                  <p className="mt-1 font-admin text-[12.5px] font-medium text-admin-sub tabular-nums">
+                    {readiness.passedChecks} of {readiness.totalChecks} checks complete
                   </p>
-                  <span className="mt-2 inline-flex items-center rounded-full bg-white/85 px-3 py-1 text-[12px] font-bold text-admin-forest tabular-nums shadow-sm">
-                    {readiness.passedChecks} / {readiness.totalChecks} complete
-                  </span>
                 </div>
               </div>
 
-              {/* Attention Queue Sub-cards */}
-              <div className="mt-5 flex-1 space-y-2">
+              {/* Issues / Status */}
+              <div className="mt-3 min-h-0 flex-1 space-y-2 overflow-y-auto pr-0.5">
                 {readiness.issues.length === 0 ? (
-                  <div className="flex items-center gap-3 rounded-2xl bg-white/85 p-4 text-admin-forest">
-                    <CheckCircle2 size={20} className="shrink-0" aria-hidden="true" />
-                    <div>
-                      <p className="text-[14px] font-bold">Everything is in order</p>
-                      <p className="text-[12.5px] text-admin-sub">
-                        All releases, artists, and banners have full assets.
-                      </p>
-                    </div>
+                  <div className="flex items-center gap-2.5 rounded-lg border border-admin-border bg-admin-surface px-3.5 py-3 text-admin-ink">
+                    <CheckCircle2
+                      size={18}
+                      className="shrink-0 text-admin-success"
+                      aria-hidden="true"
+                    />
+                    <p className="font-admin text-[13.5px] font-medium text-admin-ink">
+                      All catalog assets complete.
+                    </p>
                   </div>
                 ) : (
-                  readiness.issues.slice(0, 4).map((item) => (
+                  readiness.issues.map((item) => (
                     <Link
                       key={item.key}
                       href={item.href}
-                      className="group flex items-center justify-between gap-3 rounded-2xl bg-white/85 p-2.5 pr-3 transition hover:bg-white"
+                      className="group flex items-center justify-between gap-3 rounded-lg border border-admin-border bg-admin-surface p-2.5 pr-3 transition-colors duration-[120ms] hover:bg-admin-elevated"
                     >
                       <div className="flex min-w-0 items-center gap-2.5">
                         <Thumb
                           src={item.thumb}
-                          className="h-10 w-10 rounded-xl"
+                          className="h-9 w-9 rounded-md"
                         />
                         <div className="min-w-0">
-                          <p className="truncate text-[13.5px] font-bold text-admin-ink">
+                          <p className="truncate font-display text-[15px] font-semibold leading-tight text-admin-ink">
                             {item.title}
                           </p>
-                          <p className="truncate text-[12px] text-admin-sub">
+                          <p className="truncate font-admin text-[12px] text-admin-sub">
                             {item.subtitle}
                           </p>
                         </div>
                       </div>
                       <span
                         className={cn(
-                          "shrink-0 rounded-full px-3 py-1 text-[11.5px] font-bold transition",
+                          "shrink-0 rounded-md px-2.5 py-1 font-display text-[12.5px] font-semibold transition-colors duration-[120ms]",
                           item.urgent
-                            ? "bg-admin-amber-soft text-admin-amber group-hover:bg-admin-forest group-hover:text-admin-lime"
-                            : "bg-admin-forest text-admin-lime"
+                            ? "bg-admin-amber-soft text-admin-amber group-hover:bg-admin-forest-soft group-hover:text-[#F1F2EE]"
+                            : "bg-admin-forest-soft text-[#F1F2EE] group-hover:bg-admin-forest"
                         )}
                       >
                         {item.cta}

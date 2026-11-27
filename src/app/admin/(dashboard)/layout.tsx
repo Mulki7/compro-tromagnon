@@ -78,9 +78,9 @@ export default function AdminDashboardLayout({
           nextAttention.push({
             key: `rd-${r.id}`,
             label: r.title,
-            detail: "Release is still in draft",
+            detail: "Draft release",
             href: `/admin/releases/${r.id}`,
-            cta: "Review",
+            cta: "Edit",
             severity: "info",
           });
         }
@@ -88,9 +88,9 @@ export default function AdminDashboardLayout({
           nextAttention.push({
             key: `ra-${r.id}`,
             label: r.title,
-            detail: "Missing cover artwork",
+            detail: "No artwork",
             href: `/admin/releases/${r.id}`,
-            cta: "Add art",
+            cta: "Upload",
             severity: "warning",
           });
         }
@@ -100,7 +100,7 @@ export default function AdminDashboardLayout({
           nextAttention.push({
             key: `ap-${a.id}`,
             label: a.name,
-            detail: "Artist profile missing photo",
+            detail: "No artist photo",
             href: `/admin/artists/${a.id}`,
             cta: "Upload",
             severity: "warning",
@@ -112,9 +112,9 @@ export default function AdminDashboardLayout({
           nextAttention.push({
             key: `nd-${n.id}`,
             label: n.title,
-            detail: "Unpublished journal dispatch",
+            detail: "Draft article",
             href: `/admin/news/${n.id}`,
-            cta: "Publish",
+            cta: "Edit",
             severity: "info",
           });
         }
@@ -122,10 +122,10 @@ export default function AdminDashboardLayout({
       if (activeHero === 0) {
         nextAttention.push({
           key: "hero-none",
-          label: "Homepage Hero",
-          detail: "No active hero banner live",
+          label: "Homepage banner",
+          detail: "No active slide",
           href: "/admin/hero/create",
-          cta: "Add slide",
+          cta: "Add",
           severity: "warning",
         });
       }
@@ -143,14 +143,14 @@ export default function AdminDashboardLayout({
           id: a.id,
           type: "Artist" as const,
           title: a.name,
-          subtitle: `/${a.slug} · ${a.status}`,
+          subtitle: `/${a.slug}`,
           href: `/admin/artists/${a.id}`,
         })),
         ...news.map((n) => ({
           id: n.id,
           type: "News" as const,
           title: n.title,
-          subtitle: `${n.author || "Tromagnon"} · ${n.status}`,
+          subtitle: n.author || "Tromagnon",
           href: `/admin/news/${n.id}`,
         })),
         ...live.map((e) => ({
@@ -164,7 +164,7 @@ export default function AdminDashboardLayout({
           id: h.id,
           type: "Banner" as const,
           title: h.title,
-          subtitle: h.subtitle || `Order #${h.order}`,
+          subtitle: h.subtitle || `Slide #${h.order}`,
           href: `/admin/hero/${h.id}`,
         })),
       ];
@@ -195,10 +195,10 @@ export default function AdminDashboardLayout({
   if (loading || !authenticated) {
     return (
       <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas text-admin-sub">
-        <div className="flex items-center gap-3 rounded-full border border-admin-border bg-white px-5 py-3 shadow-admin-card">
-          <Loader2 size={16} className="animate-spin text-admin-forest" aria-hidden="true" />
-          <span className="text-[14px] font-semibold text-admin-ink">
-            Verifying label session…
+        <div className="flex items-center gap-2.5 rounded-xl border border-admin-border bg-admin-surface px-5 py-3">
+          <Loader2 size={16} className="animate-spin text-admin-forest-soft" aria-hidden="true" />
+          <span className="font-display text-[15px] font-semibold text-admin-ink">
+            Loading…
           </span>
         </div>
       </div>
@@ -207,12 +207,12 @@ export default function AdminDashboardLayout({
 
   return (
     <AdminShellContext.Provider value={contextValue}>
-      <div className="font-admin flex min-h-dvh bg-admin-canvas text-admin-ink selection:bg-admin-lime selection:text-admin-forest lg:h-dvh lg:overflow-hidden lg:p-3.5 lg:gap-1">
+      <div className="font-admin flex min-h-dvh bg-admin-canvas text-admin-ink selection:bg-admin-forest-soft selection:text-[#F1F2EE] lg:h-dvh lg:overflow-hidden lg:p-2.5 lg:gap-1">
         <a
           href="#admin-main-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-full focus:bg-admin-forest focus:px-4 focus:py-2 focus:text-[13px] focus:font-semibold focus:text-white"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[200] focus:rounded-lg focus:bg-admin-forest focus:px-4 focus:py-2 focus:font-display focus:text-[14px] focus:font-semibold focus:text-[#F1F2EE]"
         >
-          Skip to main content
+          Skip to content
         </a>
 
         <AdminSidebar

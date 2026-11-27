@@ -109,9 +109,8 @@ export default function EditHeroPage() {
     <div className="pb-12">
       <AdminHeader
         backHref="/admin/hero"
-        backLabel="Hero Banners"
-        eyebrow={`Slide order #${order}`}
-        title={title || "Edit Banner"}
+        backLabel="Banners"
+        title={title || "Edit banner"}
         badge={<StatusBadge status={String(isActive)} />}
         actions={
           <Link href="/admin/hero" className={btnSecondary}>
@@ -122,9 +121,9 @@ export default function EditHeroPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -133,7 +132,7 @@ export default function EditHeroPage() {
 
           <div className={formSectionClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className={formSectionTitleClass}>Hero visual & copy</h2>
+              <h2 className={formSectionTitleClass}>Slide</h2>
               <SegmentedToggle
                 ariaLabel="Banner homepage visibility"
                 value={isActive ? "active" : "hidden"}
@@ -146,7 +145,7 @@ export default function EditHeroPage() {
             </div>
 
             <ImageUpload
-              label="Banner Image"
+              label="Image"
               value={bannerImage}
               existingUrl={existingImage}
               onChange={setBannerImage}
@@ -154,7 +153,7 @@ export default function EditHeroPage() {
 
             <div>
               <label htmlFor="hero-title" className={labelClass}>
-                Headline
+                Title
               </label>
               <input
                 id="hero-title"
@@ -167,7 +166,7 @@ export default function EditHeroPage() {
 
             <div>
               <label htmlFor="hero-subtitle" className={labelClass}>
-                Subtitle / Caption
+                Subtitle
               </label>
               <input
                 id="hero-subtitle"
@@ -180,19 +179,19 @@ export default function EditHeroPage() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div>
                 <label htmlFor="hero-cta-text" className={labelClass}>
-                  CTA Label
+                  Button text
                 </label>
                 <input
                   id="hero-cta-text"
                   className={inputClass}
                   value={ctaText}
                   onChange={(e) => setCtaText(e.target.value)}
-                  placeholder="Explore Releases"
+                  placeholder="Explore"
                 />
               </div>
               <div>
                 <label htmlFor="hero-cta-link" className={labelClass}>
-                  CTA Destination
+                  Button link
                 </label>
                 <input
                   id="hero-cta-link"
@@ -204,7 +203,7 @@ export default function EditHeroPage() {
               </div>
               <div>
                 <label htmlFor="hero-order" className={labelClass}>
-                  Slide Order
+                  Order
                 </label>
                 <input
                   id="hero-order"
@@ -221,27 +220,22 @@ export default function EditHeroPage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Slide summary"
-            subtitle={`Homepage slot #${order}`}
+            title="Summary"
             rows={[
-              { label: "Headline", value: title || "Untitled slide" },
-              { label: "CTA Button", value: ctaText || "None" },
-              { label: "Target Link", value: ctaLink || "None" },
-              { label: "Sort Order", value: `#${order}` },
+              { label: "Title", value: title || "—" },
+              { label: "Button", value: ctaText || "—" },
+              { label: "Link", value: ctaLink || "—" },
+              { label: "Order", value: `#${order}` },
             ]}
             highlightLabel="Visibility"
-            highlightValue={isActive ? "Live on Home" : "Hidden"}
-            warningText={
-              !hasImage
-                ? "This banner currently has no image attached."
-                : undefined
-            }
-            submitLabel={saving ? "Saving..." : "Save Changes"}
+            highlightValue={isActive ? "Visible" : "Hidden"}
+            warningText={!hasImage ? "No banner image uploaded." : undefined}
+            submitLabel={saving ? "Saving…" : "Save changes"}
             saving={saving}
             checks={[
-              { label: "Hero image attached", done: hasImage },
-              { label: "Headline entered", done: Boolean(title.trim()) },
-              { label: "CTA text & link set", done: Boolean(ctaText.trim() && ctaLink.trim()) },
+              { label: "Image", done: hasImage },
+              { label: "Title", done: Boolean(title.trim()) },
+              { label: "Button & link", done: Boolean(ctaText.trim() && ctaLink.trim()) },
             ]}
           />
         </div>

@@ -19,6 +19,7 @@ import {
   getErrorMessage,
   inputClass,
   labelClass,
+  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { getAdminReleases } from "@/lib/api/admin/releases";
@@ -129,8 +130,7 @@ export default function EditNewsPage() {
       <AdminHeader
         backHref="/admin/news"
         backLabel="Journal"
-        eyebrow={slug ? `/news/${slug}` : "Editorial dispatch"}
-        title={title || "Edit Article"}
+        title={title || "Edit article"}
         badge={<StatusBadge status={status} />}
         actions={
           <Link href="/admin/news" className={btnSecondary}>
@@ -144,9 +144,9 @@ export default function EditNewsPage() {
           e.preventDefault();
           submit(status);
         }}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -155,7 +155,7 @@ export default function EditNewsPage() {
 
           <div className={formSectionClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className={formSectionTitleClass}>Editorial content</h2>
+              <h2 className={formSectionTitleClass}>Article</h2>
               <SegmentedToggle
                 ariaLabel="Article publish status"
                 value={status}
@@ -168,7 +168,7 @@ export default function EditNewsPage() {
             </div>
 
             <ImageUpload
-              label="Cover Image"
+              label="Cover image"
               value={cover}
               existingUrl={existingCover}
               onChange={setCover}
@@ -203,7 +203,7 @@ export default function EditNewsPage() {
 
             <div>
               <label htmlFor="news-author" className={labelClass}>
-                Author / Byline
+                Author
               </label>
               <input
                 id="news-author"
@@ -215,13 +215,13 @@ export default function EditNewsPage() {
 
             <div>
               <label htmlFor="news-content" className={labelClass}>
-                Article Body
+                Content
               </label>
               <textarea
                 id="news-content"
                 required
-                rows={11}
-                className={inputClass}
+                rows={9}
+                className={textareaClass}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
@@ -229,16 +229,11 @@ export default function EditNewsPage() {
           </div>
 
           <div className={formSectionClass}>
-            <div>
-              <h2 className={formSectionTitleClass}>Catalog cross-links</h2>
-              <p className="mt-0.5 text-[12.5px] text-admin-sub">
-                Optionally associate this story with an artist or pressing
-              </p>
-            </div>
+            <h2 className={formSectionTitleClass}>Related</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="news-artist" className={labelClass}>
-                  Related Artist
+                  Artist
                 </label>
                 <select
                   id="news-artist"
@@ -256,7 +251,7 @@ export default function EditNewsPage() {
               </div>
               <div>
                 <label htmlFor="news-release" className={labelClass}>
-                  Related Release
+                  Release
                 </label>
                 <select
                   id="news-release"
@@ -278,42 +273,40 @@ export default function EditNewsPage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Dispatch summary"
-            subtitle={slug ? `/news/${slug}` : "Editorial dispatch"}
+            title="Summary"
+            subtitle={slug ? `/news/${slug}` : undefined}
             rows={[
               { label: "Author", value: author || "Tromagnon" },
-              { label: "Word count", value: `${wordCount} words` },
+              { label: "Words", value: String(wordCount) },
               {
-                label: "Artist link",
-                value: artists.find((a) => a.id === relatedArtistId)?.name || "None",
+                label: "Artist",
+                value: artists.find((a) => a.id === relatedArtistId)?.name || "—",
               },
               {
-                label: "Release link",
-                value: releases.find((r) => r.id === relatedReleaseId)?.title || "None",
+                label: "Release",
+                value: releases.find((r) => r.id === relatedReleaseId)?.title || "—",
               },
             ]}
-            highlightLabel="Publish state"
+            highlightLabel="Status"
             highlightValue={status === "published" ? "Published" : "Draft"}
-            warningText={
-              !hasCover ? "No cover image is attached to this dispatch." : undefined
-            }
-            submitLabel={saving ? "Saving..." : "Save Changes"}
+            warningText={!hasCover ? "No cover image uploaded." : undefined}
+            submitLabel={saving ? "Saving…" : "Save changes"}
             saving={saving}
             onSecondaryAction={
               status === "draft"
                 ? {
-                    label: "Publish Immediately",
+                    label: "Publish now",
                     onClick: () => submit("published"),
                   }
                 : {
-                    label: "Revert to Draft",
+                    label: "Move to draft",
                     onClick: () => submit("draft"),
                   }
             }
             checks={[
-              { label: "Cover image uploaded", done: hasCover },
-              { label: "Headline & slug set", done: Boolean(title.trim() && slug.trim()) },
-              { label: "Article body written", done: wordCount >= 15 },
+              { label: "Cover image", done: hasCover },
+              { label: "Headline & slug", done: Boolean(title.trim() && slug.trim()) },
+              { label: "Content", done: wordCount >= 15 },
             ]}
           />
         </div>

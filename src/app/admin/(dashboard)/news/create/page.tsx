@@ -16,6 +16,7 @@ import {
   getErrorMessage,
   inputClass,
   labelClass,
+  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { getAdminReleases } from "@/lib/api/admin/releases";
@@ -86,8 +87,7 @@ export default function CreateNewsPage() {
       <AdminHeader
         backHref="/admin/news"
         backLabel="Journal"
-        eyebrow="New editorial dispatch"
-        title={title.trim() || "Write Article"}
+        title={title.trim() || "Write article"}
         badge={<StatusBadge status="draft" />}
         actions={
           <Link href="/admin/news" className={btnSecondary}>
@@ -101,9 +101,9 @@ export default function CreateNewsPage() {
           e.preventDefault();
           submit("published");
         }}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -111,8 +111,8 @@ export default function CreateNewsPage() {
           )}
 
           <div className={formSectionClass}>
-            <h2 className={formSectionTitleClass}>Editorial content</h2>
-            <ImageUpload label="Cover Image" value={cover} onChange={setCover} />
+            <h2 className={formSectionTitleClass}>Article</h2>
+            <ImageUpload label="Cover image" value={cover} onChange={setCover} />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
@@ -122,7 +122,7 @@ export default function CreateNewsPage() {
                 <input
                   id="news-title"
                   required
-                  placeholder="e.g. Satelit Compilation Vinyl Pre-Order"
+                  placeholder="Article title"
                   className={inputClass}
                   value={title}
                   onChange={(e) => {
@@ -150,7 +150,7 @@ export default function CreateNewsPage() {
 
             <div>
               <label htmlFor="news-author" className={labelClass}>
-                Author / Byline
+                Author
               </label>
               <input
                 id="news-author"
@@ -162,14 +162,14 @@ export default function CreateNewsPage() {
 
             <div>
               <label htmlFor="news-content" className={labelClass}>
-                Article Body
+                Content
               </label>
               <textarea
                 id="news-content"
                 required
-                rows={11}
-                placeholder="Write label announcement, interview, or release dispatch..."
-                className={inputClass}
+                rows={9}
+                placeholder="Write article…"
+                className={textareaClass}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
               />
@@ -177,16 +177,11 @@ export default function CreateNewsPage() {
           </div>
 
           <div className={formSectionClass}>
-            <div>
-              <h2 className={formSectionTitleClass}>Catalog cross-links</h2>
-              <p className="mt-0.5 text-[12.5px] text-admin-sub">
-                Optionally associate this story with an artist or pressing
-              </p>
-            </div>
+            <h2 className={formSectionTitleClass}>Related</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="news-artist" className={labelClass}>
-                  Related Artist
+                  Artist
                 </label>
                 <select
                   id="news-artist"
@@ -204,7 +199,7 @@ export default function CreateNewsPage() {
               </div>
               <div>
                 <label htmlFor="news-release" className={labelClass}>
-                  Related Release
+                  Release
                 </label>
                 <select
                   id="news-release"
@@ -226,35 +221,33 @@ export default function CreateNewsPage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Dispatch summary"
-            subtitle={slug ? `/news/${slug}` : "New journal post"}
+            title="Summary"
+            subtitle={slug ? `/news/${slug}` : undefined}
             rows={[
               { label: "Author", value: author || "Tromagnon" },
-              { label: "Word count", value: `${wordCount} words` },
+              { label: "Words", value: String(wordCount) },
               {
-                label: "Artist link",
-                value: artists.find((a) => a.id === relatedArtistId)?.name || "None",
+                label: "Artist",
+                value: artists.find((a) => a.id === relatedArtistId)?.name || "—",
               },
               {
-                label: "Release link",
-                value: releases.find((r) => r.id === relatedReleaseId)?.title || "None",
+                label: "Release",
+                value: releases.find((r) => r.id === relatedReleaseId)?.title || "—",
               },
             ]}
-            highlightLabel="Estimated read"
+            highlightLabel="Read time"
             highlightValue={`${Math.max(1, Math.ceil(wordCount / 200))} min`}
-            warningText={
-              !cover ? "Add a cover image to make this dispatch stand out." : undefined
-            }
-            submitLabel={saving ? "Publishing..." : "Publish Article"}
+            warningText={!cover ? "No cover image yet." : undefined}
+            submitLabel={saving ? "Publishing…" : "Publish"}
             saving={saving}
             onSecondaryAction={{
-              label: "Save as Draft",
+              label: "Save draft",
               onClick: () => submit("draft"),
             }}
             checks={[
-              { label: "Cover image uploaded", done: Boolean(cover) },
-              { label: "Headline & slug set", done: Boolean(title.trim() && slug.trim()) },
-              { label: "Article body written", done: wordCount >= 15 },
+              { label: "Cover image", done: Boolean(cover) },
+              { label: "Headline & slug", done: Boolean(title.trim() && slug.trim()) },
+              { label: "Content", done: wordCount >= 15 },
             ]}
           />
         </div>

@@ -7,17 +7,15 @@ import {
   Bell,
   Calendar,
   CheckCircle2,
-  Disc3,
   Menu,
   Search,
-  Sparkles,
   X,
 } from "lucide-react";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 
 export default function AdminTopBar() {
   const router = useRouter();
-  const { onMenuClick, user, counts, attention, searchEntries } = useAdminShell();
+  const { onMenuClick, user, attention, searchEntries } = useAdminShell();
   const [query, setQuery] = useState("");
   const [searchOpen, setSearchOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
@@ -72,32 +70,36 @@ export default function AdminTopBar() {
     };
   }, []);
 
-  const displayName = user?.name || user?.email?.split("@")[0] || "Label Admin";
-  const initials = displayName
-    .split(/[\s._-]+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase())
-    .join("") || "TR";
+  const rawName = (user?.name || user?.email?.split("@")[0] || "Admin")
+    .replace(/^tromagnon\s+/i, "")
+    .trim();
+  const displayName = rawName || "Admin";
+  const initials =
+    displayName
+      .split(/[\s._-]+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase())
+      .join("") || "A";
 
   return (
-    <div className="flex shrink-0 flex-wrap items-center justify-between gap-3 px-4 pt-3 sm:px-6 lg:px-7 lg:pt-4">
-      {/* Left: Mobile trigger + Global search pill */}
-      <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:max-w-md">
+    <div className="flex shrink-0 items-center justify-between gap-3 px-4 pt-2 sm:px-5 lg:px-6">
+      {/* Left: Mobile drawer button + Global catalog search */}
+      <div className="flex min-w-0 flex-1 items-center gap-2.5 sm:max-w-sm">
         <button
           type="button"
           onClick={onMenuClick}
           aria-label="Open navigation menu"
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-admin-border bg-white text-admin-ink shadow-sm transition hover:bg-admin-muted lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-admin-border-strong bg-admin-surface text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated lg:hidden"
         >
           <Menu size={18} aria-hidden="true" />
         </button>
 
         <div ref={searchRef} className="relative min-w-0 flex-1">
           <Search
-            size={16}
+            size={15}
             aria-hidden="true"
-            className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-admin-sub"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-admin-sub"
           />
           <input
             type="search"
@@ -107,9 +109,9 @@ export default function AdminTopBar() {
               setQuery(e.target.value);
               setSearchOpen(true);
             }}
-            placeholder="Search releases, artists, shows..."
+            placeholder="Quick search…"
             aria-label="Search catalog across releases, artists, news, and shows"
-            className="h-11 w-full rounded-full border border-admin-border/80 bg-white pl-11 pr-9 text-[13.5px] text-admin-ink shadow-admin-card placeholder:text-admin-sub/75 transition focus:border-admin-forest focus:outline-none focus:ring-2 focus:ring-admin-forest/15"
+            className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-surface pl-9 pr-8 font-admin text-[14px] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:outline-none"
           />
           {query && (
             <button
@@ -118,10 +120,10 @@ export default function AdminTopBar() {
                 setQuery("");
                 setSearchOpen(false);
               }}
-              aria-label="Clear global search"
-              className="absolute right-2.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-admin-sub hover:bg-admin-muted hover:text-admin-ink"
+              aria-label="Clear search"
+              className="absolute right-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
             >
-              <X size={14} aria-hidden="true" />
+              <X size={13} aria-hidden="true" />
             </button>
           )}
 
@@ -129,11 +131,11 @@ export default function AdminTopBar() {
             <div
               role="region"
               aria-label="Search results"
-              className="absolute left-0 right-0 top-[calc(100%+8px)] z-40 overflow-hidden rounded-[22px] border border-admin-border bg-white p-2 shadow-admin-float"
+              className="absolute left-0 right-0 top-[calc(100%+6px)] z-40 overflow-hidden rounded-xl border border-admin-border-strong bg-admin-surface p-1.5 shadow-admin-pop"
             >
               {searchResults.length === 0 ? (
-                <p className="px-3 py-4 text-center text-[13px] text-admin-sub">
-                  No catalog matches for &ldquo;{query}&rdquo;
+                <p className="px-3 py-3 text-center font-admin text-[13.5px] text-admin-sub">
+                  No results for &ldquo;{query}&rdquo;
                 </p>
               ) : (
                 <ul className="space-y-0.5">
@@ -146,17 +148,17 @@ export default function AdminTopBar() {
                           setQuery("");
                           router.push(item.href);
                         }}
-                        className="flex w-full items-center justify-between gap-3 rounded-2xl px-3 py-2.5 text-left transition hover:bg-admin-muted"
+                        className="flex w-full items-center justify-between gap-3 rounded-lg px-3 py-2 text-left transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="min-w-0">
-                          <p className="truncate text-[13.5px] font-semibold text-admin-ink">
+                          <p className="truncate font-display text-[15px] font-semibold text-admin-ink">
                             {item.title}
                           </p>
-                          <p className="truncate text-[12px] text-admin-sub">
+                          <p className="truncate font-admin text-[12.5px] text-admin-sub">
                             {item.subtitle}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-admin-lime-soft px-2.5 py-0.5 text-[11px] font-semibold text-admin-forest">
+                        <span className="shrink-0 rounded-md bg-admin-muted px-2 py-0.5 font-admin text-[11.5px] font-medium text-admin-forest-soft">
                           {item.type}
                         </span>
                       </button>
@@ -169,24 +171,14 @@ export default function AdminTopBar() {
         </div>
       </div>
 
-      {/* Right utility pills */}
+      {/* Right utility controls */}
       <div className="flex items-center gap-2">
-        <div className="hidden h-11 items-center gap-2 rounded-full border border-admin-border/80 bg-white px-4 text-[13px] font-medium text-admin-ink shadow-admin-card md:inline-flex">
-          <Calendar size={15} aria-hidden="true" className="text-admin-sub" />
-          <span className="tabular-nums">{todayLabel}</span>
+        <div className="hidden h-10 items-center gap-2 rounded-lg border border-admin-border bg-admin-surface px-3 font-admin text-[13px] font-medium text-admin-sub sm:inline-flex">
+          <Calendar size={14} aria-hidden="true" className="text-admin-forest-soft" />
+          <span className="tabular-nums text-admin-ink">{todayLabel}</span>
         </div>
 
-        <Link
-          href="/admin/releases"
-          className="hidden h-11 items-center gap-2 rounded-full border border-admin-border/80 bg-white px-4 text-[13px] font-medium text-admin-ink shadow-admin-card transition hover:border-admin-forest/30 xl:inline-flex"
-        >
-          <Disc3 size={15} aria-hidden="true" className="text-admin-forest" />
-          <span className="tabular-nums">
-            {counts.publishedReleases} live · {counts.activeArtists} roster
-          </span>
-        </Link>
-
-        {/* Attention notifications popover */}
+        {/* Attention popover */}
         <div ref={bellRef} className="relative">
           <button
             type="button"
@@ -194,16 +186,16 @@ export default function AdminTopBar() {
             aria-expanded={bellOpen}
             aria-label={
               attention.length > 0
-                ? `${attention.length} catalog items need attention`
-                : "Catalog notifications"
+                ? `${attention.length} items need attention`
+                : "Notifications"
             }
-            className="relative flex h-11 w-11 items-center justify-center rounded-full border border-admin-border/80 bg-white text-admin-ink shadow-admin-card transition hover:bg-admin-muted"
+            className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-admin-border-strong bg-admin-surface text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
           >
-            <Bell size={17} aria-hidden="true" />
+            <Bell size={16} aria-hidden="true" />
             {attention.length > 0 && (
               <span
                 aria-hidden="true"
-                className="absolute right-2.5 top-2.5 h-2.5 w-2.5 rounded-full bg-admin-danger ring-2 ring-white"
+                className="absolute right-2 top-2 h-2 w-2 rounded-full bg-admin-danger"
               />
             )}
           </button>
@@ -211,40 +203,44 @@ export default function AdminTopBar() {
           {bellOpen && (
             <div
               role="region"
-              aria-label="Catalog attention items"
-              className="absolute right-0 top-[calc(100%+8px)] z-40 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-[22px] border border-admin-border bg-white p-3 shadow-admin-float"
+              aria-label="Items needing attention"
+              className="absolute right-0 top-[calc(100%+6px)] z-40 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-xl border border-admin-border-strong bg-admin-surface p-3 shadow-admin-pop"
             >
-              <div className="mb-2 flex items-center justify-between px-2">
-                <p className="text-[13px] font-bold text-admin-ink">
-                  Catalog Queue
+              <div className="mb-2 flex items-center justify-between">
+                <p className="font-display text-[15px] font-bold text-admin-ink">
+                  Attention
                 </p>
-                <span className="rounded-full bg-admin-muted px-2 py-0.5 text-[11.5px] font-semibold tabular-nums text-admin-sub">
-                  {attention.length} open
+                <span className="rounded-md bg-admin-muted px-2 py-0.5 font-admin text-[12px] font-medium tabular-nums text-admin-sub">
+                  {attention.length}
                 </span>
               </div>
               {attention.length === 0 ? (
-                <div className="flex items-center gap-2 rounded-2xl bg-admin-muted/70 px-3 py-4 text-[13px] text-admin-sub">
-                  <CheckCircle2 size={16} className="shrink-0 text-admin-forest" aria-hidden="true" />
-                  <span>All catalog assets are complete.</span>
+                <div className="flex items-center gap-2 rounded-lg bg-admin-muted px-3 py-3 font-admin text-[13.5px] text-admin-sub">
+                  <CheckCircle2
+                    size={15}
+                    className="shrink-0 text-admin-success"
+                    aria-hidden="true"
+                  />
+                  <span>All good — nothing pending.</span>
                 </div>
               ) : (
-                <ul className="max-h-72 space-y-1.5 overflow-y-auto">
+                <ul className="max-h-64 space-y-1.5 overflow-y-auto">
                   {attention.slice(0, 6).map((item) => (
                     <li key={item.key}>
                       <Link
                         href={item.href}
                         onClick={() => setBellOpen(false)}
-                        className="flex items-center justify-between gap-2.5 rounded-2xl bg-admin-muted/65 px-3 py-2.5 transition hover:bg-admin-lime-soft/60"
+                        className="flex items-center justify-between gap-2.5 rounded-lg bg-admin-muted px-3 py-2 transition-colors duration-[120ms] hover:bg-admin-elevated"
                       >
                         <div className="min-w-0">
-                          <p className="truncate text-[13px] font-semibold text-admin-ink">
+                          <p className="truncate font-display text-[14.5px] font-semibold text-admin-ink">
                             {item.label}
                           </p>
-                          <p className="truncate text-[12px] text-admin-sub">
+                          <p className="truncate font-admin text-[12px] text-admin-sub">
                             {item.detail}
                           </p>
                         </div>
-                        <span className="shrink-0 rounded-full bg-white px-2.5 py-1 text-[11.5px] font-semibold text-admin-forest shadow-sm">
+                        <span className="shrink-0 rounded-md bg-admin-forest-soft px-2 py-0.5 font-display text-[12px] font-semibold text-[#F1F2EE]">
                           {item.cta}
                         </span>
                       </Link>
@@ -256,23 +252,17 @@ export default function AdminTopBar() {
           )}
         </div>
 
-        {/* User profile pill */}
-        <div className="inline-flex h-11 items-center gap-2.5 rounded-full border border-admin-border/80 bg-white pl-1.5 pr-3.5 shadow-admin-card">
+        {/* User profile chip */}
+        <div className="inline-flex h-10 items-center gap-2 rounded-lg border border-admin-border bg-admin-surface pl-1.5 pr-3">
           <span
             aria-hidden="true"
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-admin-sage text-[12px] font-bold text-admin-forest"
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-admin-forest-soft font-display text-[12.5px] font-bold uppercase text-[#F1F2EE]"
           >
             {initials}
           </span>
-          <div className="hidden min-w-0 leading-tight sm:block">
-            <p className="max-w-[130px] truncate text-[13px] font-bold capitalize text-admin-ink">
-              {displayName}
-            </p>
-            <p className="flex items-center gap-1 text-[11px] font-medium text-admin-sub">
-              <Sparkles size={10} aria-hidden="true" className="text-admin-forest" />
-              Label Admin
-            </p>
-          </div>
+          <span className="hidden max-w-[110px] truncate font-display text-[14.5px] font-semibold capitalize text-admin-ink sm:inline">
+            {displayName}
+          </span>
         </div>
       </div>
     </div>

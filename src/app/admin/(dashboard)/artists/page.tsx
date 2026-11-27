@@ -115,9 +115,8 @@ export default function AdminArtistsPage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${items.length} artists signed · ${activeCount} active on roster`}
         title="Artists"
         actions={
           <>
@@ -128,7 +127,7 @@ export default function AdminArtistsPage() {
               className={btnSecondary}
             >
               <Download size={14} aria-hidden="true" />
-              Export CSV
+              Export
             </button>
             <PrimaryCtaPill href="/admin/artists/create" label="Add artist" />
           </>
@@ -138,23 +137,23 @@ export default function AdminArtistsPage() {
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
       )}
 
-      <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
         <KpiFilterRow
           value={filter}
           onChange={setFilter}
           options={[
-            { key: "all", label: "All Artists", count: items.length },
+            { key: "all", label: "All", count: items.length },
             {
               key: "active",
-              label: "Active Roster",
+              label: "Active",
               count: activeCount,
-              dotColor: "bg-admin-forest",
+              dotColor: "bg-admin-success",
               tone: "lime",
             },
             {
@@ -165,9 +164,9 @@ export default function AdminArtistsPage() {
             },
             {
               key: "missing_photo",
-              label: "Missing Photo",
+              label: "No photo",
               count: missingPhotoCount,
-              dotColor: "bg-amber-500",
+              dotColor: "bg-admin-amber",
             },
           ]}
         />
@@ -180,13 +179,12 @@ export default function AdminArtistsPage() {
           onToggleSelect={toggleSelect}
           onToggleAll={setSelectedIds}
           rowTone={(a) => (!a.photo_url ? "warning" : "default")}
-          bulkSummary="roster entries"
           bulkActions={
             <>
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-forest-soft px-3 text-[12.5px] font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -194,10 +192,10 @@ export default function AdminArtistsPage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-admin-lime px-3.5 text-[12.5px] font-bold text-admin-forest transition hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
-                Delete selected
+                Delete
               </button>
             </>
           }
@@ -206,7 +204,7 @@ export default function AdminArtistsPage() {
               <SearchField
                 value={query}
                 onChange={setQuery}
-                placeholder="Search artist name or genre..."
+                placeholder="Search name or genre…"
               />
               {(filter !== "all" || query) && (
                 <button
@@ -215,20 +213,20 @@ export default function AdminArtistsPage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-sub transition hover:bg-admin-sage/60 hover:text-admin-ink"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
-                  Reset filters
+                  Reset
                 </button>
               )}
             </>
           }
           emptyMessage={
-            items.length === 0 ? "No artists on the roster yet." : "No artists match your filters."
+            items.length === 0 ? "No artists yet." : "No matching artists."
           }
           emptyAction={
             items.length === 0 && (
-              <PrimaryCtaPill href="/admin/artists/create" label="Add first artist" />
+              <PrimaryCtaPill href="/admin/artists/create" label="Add artist" />
             )
           }
           columns={[
@@ -243,14 +241,16 @@ export default function AdminArtistsPage() {
                 >
                   <Thumb
                     src={a.photo_url}
-                    className="h-11 w-11 rounded-full"
+                    className="aspect-square h-10 w-10 rounded-md"
                     fallback={a.name[0]?.toUpperCase()}
                   />
                   <div className="min-w-0">
-                    <p className="truncate text-[14.5px] font-bold text-admin-ink group-hover:text-admin-forest">
+                    <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
                       {a.name}
                     </p>
-                    <p className="truncate text-[12.5px] text-admin-sub">/{a.slug}</p>
+                    <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                      /{a.slug}
+                    </p>
                   </div>
                 </Link>
               ),
@@ -265,13 +265,13 @@ export default function AdminArtistsPage() {
                     {list.slice(0, 3).map((g) => (
                       <span
                         key={g}
-                        className="rounded-full bg-white px-2.5 py-0.5 text-[11.5px] font-semibold text-admin-ink shadow-sm ring-1 ring-admin-border/70"
+                        className="rounded-md border border-admin-border bg-admin-surface px-2 py-0.5 font-admin text-[12px] font-medium text-admin-ink"
                       >
                         {g}
                       </span>
                     ))}
                     {list.length > 3 && (
-                      <span className="rounded-full bg-admin-sage/70 px-2 py-0.5 text-[11.5px] font-semibold text-admin-forest">
+                      <span className="rounded-md bg-admin-muted px-1.5 py-0.5 font-admin text-[12px] font-semibold text-admin-sub">
                         +{list.length - 3}
                       </span>
                     )}
@@ -283,12 +283,12 @@ export default function AdminArtistsPage() {
             },
             {
               key: "socials",
-              header: "Channels",
+              header: "Links",
               render: (a) => {
                 const count = Object.values(a.social_links || {}).filter(Boolean).length;
                 return (
-                  <span className="text-[13px] font-semibold tabular-nums text-admin-sub">
-                    {count > 0 ? `${count} linked` : "None"}
+                  <span className="font-admin text-[13px] tabular-nums text-admin-sub">
+                    {count > 0 ? count : "—"}
                   </span>
                 );
               },
@@ -322,11 +322,7 @@ export default function AdminArtistsPage() {
             ? `Delete ${deleteIds.length} artists?`
             : "Delete artist?"
         }
-        message={
-          deleteIds.length > 1
-            ? "This removes the selected artists from the label roster."
-            : "This removes the artist from the label roster."
-        }
+        message="This removes the artist from the roster."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteIds([])}

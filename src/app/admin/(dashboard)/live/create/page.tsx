@@ -80,9 +80,8 @@ export default function CreateLivePage() {
     <div className="pb-12">
       <AdminHeader
         backHref="/admin/live"
-        backLabel="Live Shows"
-        eyebrow="New tour / showcase booking"
-        title={venue.trim() ? `${selectedArtist?.name || "Show"} @ ${venue}` : "Schedule Live Show"}
+        backLabel="Shows"
+        title={venue.trim() ? `${selectedArtist?.name || "Show"} @ ${venue}` : "Schedule show"}
         badge={<StatusBadge status={status} />}
         actions={
           <Link href="/admin/live" className={btnSecondary}>
@@ -93,9 +92,9 @@ export default function CreateLivePage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -104,7 +103,7 @@ export default function CreateLivePage() {
 
           <div className={formSectionClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className={formSectionTitleClass}>Show details & routing</h2>
+              <h2 className={formSectionTitleClass}>Details</h2>
               <SegmentedToggle
                 ariaLabel="Show status"
                 value={status}
@@ -120,7 +119,7 @@ export default function CreateLivePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="live-artist" className={labelClass}>
-                  Performing Artist
+                  Artist
                 </label>
                 <select
                   id="live-artist"
@@ -128,7 +127,7 @@ export default function CreateLivePage() {
                   value={artistId}
                   onChange={(e) => setArtistId(e.target.value)}
                 >
-                  <option value="">Label Showcase / Various</option>
+                  <option value="">Showcase / Various</option>
                   {artists.map((a) => (
                     <option key={a.id} value={a.id}>
                       {a.name}
@@ -139,7 +138,7 @@ export default function CreateLivePage() {
 
               <div>
                 <label htmlFor="live-date" className={labelClass}>
-                  Event Date
+                  Date
                 </label>
                 <input
                   id="live-date"
@@ -154,7 +153,7 @@ export default function CreateLivePage() {
 
             <div>
               <label htmlFor="live-venue" className={labelClass}>
-                Venue Name
+                Venue
               </label>
               <input
                 id="live-venue"
@@ -197,7 +196,7 @@ export default function CreateLivePage() {
 
             <div>
               <label htmlFor="live-ticket" className={labelClass}>
-                Ticket / RSVP Link
+                Ticket URL
               </label>
               <input
                 id="live-ticket"
@@ -213,25 +212,24 @@ export default function CreateLivePage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Show summary"
-            subtitle="Live calendar listing"
+            title="Summary"
             rows={[
-              { label: "Bill", value: selectedArtist?.name || "Label Showcase" },
-              { label: "Venue", value: venue || "TBD" },
+              { label: "Artist", value: selectedArtist?.name || "Showcase" },
+              { label: "Venue", value: venue || "—" },
               {
                 label: "Location",
-                value: [city, country].filter(Boolean).join(", ") || "TBD",
+                value: [city, country].filter(Boolean).join(", ") || "—",
               },
-              { label: "Tickets", value: ticketUrl ? "Online link set" : "At door / free" },
+              { label: "Tickets", value: ticketUrl ? "Online" : "Door" },
             ]}
-            highlightLabel="Scheduled date"
-            highlightValue={eventDate ? formatDate(eventDate) : "Pick date"}
-            submitLabel={saving ? "Scheduling..." : "Schedule Show"}
+            highlightLabel="Date"
+            highlightValue={eventDate ? formatDate(eventDate) : "Select date"}
+            submitLabel={saving ? "Saving…" : "Schedule show"}
             saving={saving}
             checks={[
-              { label: "Event date chosen", done: Boolean(eventDate) },
-              { label: "Venue & city entered", done: Boolean(venue.trim() && city.trim()) },
-              { label: "Ticket / RSVP URL added", done: Boolean(ticketUrl.trim()) },
+              { label: "Date", done: Boolean(eventDate) },
+              { label: "Venue & city", done: Boolean(venue.trim() && city.trim()) },
+              { label: "Ticket link", done: Boolean(ticketUrl.trim()) },
             ]}
           />
         </div>

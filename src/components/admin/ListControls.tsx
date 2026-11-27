@@ -26,32 +26,30 @@ export function KpiFilterRow<T extends string>({
   return (
     <div
       role="tablist"
-      aria-label="Filter items by status"
-      className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
+      aria-label="Filter by status"
+      className="grid shrink-0 grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5"
     >
       {options.map((opt) => {
         const active = opt.key === value;
         const tone = opt.tone || "default";
 
         let cardClass =
-          "border-admin-border/80 bg-white text-admin-ink hover:border-admin-forest/35";
+          "border-admin-border bg-admin-surface text-admin-ink hover:bg-admin-elevated";
         let labelClass = "text-admin-sub";
         let countClass = "text-admin-ink";
 
         if (active && tone === "lime") {
-          cardClass =
-            "border-admin-lime bg-admin-lime text-admin-forest shadow-admin-card";
-          labelClass = "text-admin-forest/80";
-          countClass = "text-admin-forest";
+          cardClass = "border-admin-forest bg-admin-lime text-admin-on-lime";
+          labelClass = "text-admin-on-lime/80";
+          countClass = "text-admin-on-lime";
         } else if (active) {
-          cardClass =
-            "border-admin-forest bg-admin-forest text-white shadow-admin-card";
-          labelClass = "text-[#B8D4C2]";
-          countClass = "text-white";
+          cardClass = "border-admin-forest bg-admin-forest text-[#F1F2EE]";
+          labelClass = "text-[#B8D0C9]";
+          countClass = "text-[#F1F2EE]";
         } else if (tone === "lime") {
           cardClass =
-            "border-admin-lime/60 bg-admin-lime/80 text-admin-forest hover:bg-admin-lime";
-          labelClass = "text-admin-forest/80";
+            "border-admin-forest-soft/30 bg-admin-success-soft text-admin-ink hover:bg-admin-lime/45";
+          labelClass = "text-admin-forest";
           countClass = "text-admin-forest";
         }
 
@@ -63,11 +61,16 @@ export function KpiFilterRow<T extends string>({
             aria-selected={active}
             onClick={() => onChange(opt.key)}
             className={cn(
-              "group flex flex-col items-start justify-between rounded-[20px] border p-4 text-left transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2",
+              "group flex flex-col items-start justify-between rounded-xl border px-4 py-3 text-left transition-colors duration-[120ms] ease-tromagnon",
               cardClass
             )}
           >
-            <span className={cn("flex items-center gap-1.5 text-[12.5px] font-semibold", labelClass)}>
+            <span
+              className={cn(
+                "flex items-center gap-1.5 font-admin text-[12.5px] font-medium",
+                labelClass
+              )}
+            >
               {opt.dotColor && (
                 <span
                   aria-hidden="true"
@@ -81,7 +84,7 @@ export function KpiFilterRow<T extends string>({
             </span>
             <span
               className={cn(
-                "mt-2.5 text-[28px] font-bold leading-none tracking-[-0.03em] tabular-nums",
+                "mt-1.5 font-display text-[28px] font-bold leading-none tracking-[-0.02em] tabular-nums",
                 countClass
               )}
             >
@@ -104,7 +107,10 @@ export function FilterTabs<T extends string>({
   onChange: (key: T) => void;
 }) {
   return (
-    <div role="tablist" className="flex flex-wrap items-center gap-1.5">
+    <div
+      role="tablist"
+      className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-muted p-1"
+    >
       {options.map((opt) => {
         const active = opt.key === value;
         return (
@@ -115,17 +121,17 @@ export function FilterTabs<T extends string>({
             aria-selected={active}
             onClick={() => onChange(opt.key)}
             className={cn(
-              "inline-flex h-9 items-center gap-1.5 rounded-full px-3.5 text-[13px] font-semibold transition-colors",
+              "inline-flex h-8 items-center gap-1.5 rounded-md px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms]",
               active
-                ? "bg-admin-forest text-white"
-                : "bg-admin-muted text-admin-sub hover:bg-admin-sage/60 hover:text-admin-ink"
+                ? "bg-admin-forest-soft text-[#F1F2EE]"
+                : "text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
             )}
           >
             {opt.label}
             <span
               className={cn(
-                "rounded-full px-1.5 py-0.5 text-[11px] tabular-nums",
-                active ? "bg-white/15 text-admin-lime" : "bg-white text-admin-sub"
+                "rounded px-1.5 py-0.5 font-admin text-[11.5px] tabular-nums",
+                active ? "bg-admin-forest text-admin-lime" : "bg-admin-surface text-admin-sub"
               )}
             >
               {opt.count}
@@ -153,7 +159,7 @@ export function SearchField({
       <Search
         size={15}
         aria-hidden="true"
-        className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-admin-sub"
+        className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-admin-sub"
       />
       <input
         type="search"
@@ -161,14 +167,14 @@ export function SearchField({
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         aria-label={placeholder}
-        className="h-10 w-full rounded-full border border-admin-border/70 bg-admin-muted pl-10 pr-8 text-[13.5px] text-admin-ink placeholder:text-admin-sub/75 transition focus:border-admin-forest focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin-forest/15"
+        className="h-10 w-full rounded-lg border border-admin-border-strong bg-admin-canvas pl-9 pr-8 font-admin text-[14px] text-admin-ink placeholder:text-admin-sub/75 transition-colors duration-[120ms] hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none"
       />
       {value && (
         <button
           type="button"
           onClick={() => onChange("")}
           aria-label="Clear search"
-          className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center rounded-full text-admin-sub hover:bg-admin-border/50 hover:text-admin-ink"
+          className="absolute right-1.5 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-md text-admin-sub hover:bg-admin-elevated hover:text-admin-ink"
         >
           <X size={13} aria-hidden="true" />
         </button>
@@ -189,7 +195,7 @@ export function Thumb({
   return (
     <div
       className={cn(
-        "relative shrink-0 overflow-hidden border border-admin-border/70 bg-admin-muted",
+        "relative shrink-0 overflow-hidden border border-admin-border bg-admin-muted",
         className
       )}
     >
@@ -203,8 +209,8 @@ export function Thumb({
           className="object-cover"
         />
       ) : (
-        <span className="flex h-full w-full items-center justify-center text-[13px] font-bold text-admin-sub">
-          {fallback ?? <Disc3 size={16} aria-hidden="true" />}
+        <span className="flex h-full w-full items-center justify-center font-display text-[13.5px] font-bold text-admin-sub">
+          {fallback ?? <Disc3 size={15} aria-hidden="true" />}
         </span>
       )}
     </div>
@@ -225,17 +231,17 @@ export function RowActions({
       <Link
         href={editHref}
         aria-label={`Edit ${label}`}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-admin-border/80 bg-white text-admin-sub transition hover:border-admin-forest hover:bg-admin-forest hover:text-white"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-admin-border-strong bg-admin-surface text-admin-ink transition-colors duration-[120ms] hover:border-admin-forest hover:bg-admin-forest-soft hover:text-[#F1F2EE]"
       >
-        <Pencil size={15} aria-hidden="true" />
+        <Pencil size={14} aria-hidden="true" />
       </Link>
       <button
         type="button"
         onClick={onDelete}
         aria-label={`Delete ${label}`}
-        className="flex h-9 w-9 items-center justify-center rounded-full border border-admin-border/80 bg-white text-admin-sub transition hover:border-admin-danger/40 hover:bg-admin-danger-soft hover:text-admin-danger"
+        className="flex h-9 w-9 items-center justify-center rounded-lg border border-admin-border-strong bg-admin-surface text-admin-ink transition-colors duration-[120ms] hover:border-admin-danger hover:bg-admin-danger-soft hover:text-admin-danger"
       >
-        <Trash2 size={15} aria-hidden="true" />
+        <Trash2 size={14} aria-hidden="true" />
       </button>
     </div>
   );
@@ -256,7 +262,7 @@ export function PrimaryCtaPill({
       <span>{label}</span>
       <span
         aria-hidden="true"
-        className="flex h-7 w-7 items-center justify-center rounded-full bg-admin-lime text-admin-forest transition-transform duration-150 group-hover:translate-x-0.5"
+        className="flex h-7 w-7 items-center justify-center rounded-md bg-admin-lime text-admin-on-lime transition-transform duration-[120ms] ease-tromagnon group-hover:translate-x-0.5"
       >
         <ArrowRight size={14} strokeWidth={2.2} />
       </span>
@@ -279,7 +285,7 @@ export function SegmentedToggle<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="inline-flex flex-wrap gap-1.5 rounded-2xl bg-admin-muted p-1.5"
+      className="inline-flex flex-wrap items-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-muted p-1"
     >
       {options.map((opt) => {
         const active = opt.value === value;
@@ -291,10 +297,10 @@ export function SegmentedToggle<T extends string>({
             aria-checked={active}
             onClick={() => onChange(opt.value)}
             className={cn(
-              "rounded-full px-4 py-1.5 text-[13px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest",
+              "h-8 rounded-md px-3.5 font-display text-[13.5px] font-semibold tracking-[0.01em] transition-colors duration-[120ms]",
               active
-                ? "bg-admin-forest text-white shadow-sm"
-                : "text-admin-sub hover:bg-white hover:text-admin-ink"
+                ? "bg-admin-forest-soft text-[#F1F2EE]"
+                : "text-admin-sub hover:bg-admin-surface hover:text-admin-ink"
             )}
           >
             {opt.label}

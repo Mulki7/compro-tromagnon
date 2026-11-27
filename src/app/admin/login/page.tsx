@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ArrowRight, Disc3, Eye, EyeOff, Loader2, Radio } from "lucide-react";
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 import { useAuth } from "@/hooks/useAuth";
 import { btnPrimaryPill, inputClass, labelClass } from "@/components/admin/formStyles";
@@ -50,78 +50,64 @@ export default function AdminLoginPage() {
   if (authLoading || authenticated) {
     return (
       <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas">
-        <Loader2 size={22} className="animate-spin text-admin-forest" aria-hidden="true" />
+        <Loader2 size={20} className="animate-spin text-admin-forest-soft" aria-hidden="true" />
       </div>
     );
   }
 
   return (
-    <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas px-4 py-10 text-admin-ink selection:bg-admin-lime selection:text-admin-forest">
-      <div className="grid w-full max-w-4xl overflow-hidden rounded-[30px] border border-admin-border/80 bg-white shadow-admin-float md:grid-cols-12">
-        {/* Left Forest Brand Panel */}
-        <div className="relative flex flex-col justify-between bg-admin-forest p-7 text-white md:col-span-5 md:p-9">
+    <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas px-4 py-8 text-admin-ink selection:bg-admin-forest-soft selection:text-[#F1F2EE]">
+      <div className="grid w-full max-w-3xl overflow-hidden rounded-xl border border-admin-border-strong bg-admin-surface md:grid-cols-12">
+        {/* Left Brand Panel */}
+        <div className="flex flex-col justify-between bg-admin-forest p-7 text-[#F1F2EE] md:col-span-5">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-admin-lime p-1.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-[#F1F2EE] p-1">
               <Image
                 src="/assets/logo-tromagnon-nobg.png"
                 alt="Tromagnon Records"
-                width={28}
-                height={28}
+                width={26}
+                height={26}
                 className="object-contain"
               />
             </span>
-            <span className="flex items-center gap-1.5 text-[20px] font-bold tracking-[-0.03em]">
-              tromagnon
-              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-admin-lime" />
+            <span className="font-display text-[21px] font-bold tracking-[-0.01em]">
+              tromagnon<span className="text-admin-lime">.</span>
             </span>
           </div>
 
-          <div className="my-10 space-y-4">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-admin-forest-soft px-3 py-1 text-[12px] font-semibold text-admin-lime">
-              <Radio size={13} aria-hidden="true" />
-              Record Label Console
-            </span>
-            <h1 className="text-[28px] font-bold leading-[1.12] tracking-[-0.03em]">
-              Manage releases, roster, and live archives.
+          <div className="my-10 space-y-3">
+            <h1 className="font-display text-[30px] font-bold leading-[1.06] tracking-[-0.02em]">
+              Label catalog & archive console.
             </h1>
-            <p className="text-[13.5px] leading-relaxed text-[#B2D0BC]">
-              Centralized catalog control for Tromagnon Records pressings, artist
-              profiles, dispatches, and tour schedules.
+            <p className="font-admin text-[14px] leading-[1.55] text-[#B8D0C9]">
+              Releases, artists, journal, and live dates.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 rounded-2xl bg-admin-forest-soft/80 p-3.5 text-[12.5px] text-[#CBE2D3]">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-admin-lime text-admin-forest">
-              <Disc3 size={17} aria-hidden="true" />
-            </span>
-            <span>Satelit Archive & Independent Audio Catalog</span>
-          </div>
+          <p className="font-admin text-[12px] text-[#9CCBC1]">
+            Tromagnon Records
+          </p>
         </div>
 
         {/* Right Sign-In Form */}
-        <div className="flex flex-col justify-center p-7 sm:p-10 md:col-span-7">
-          <div>
-            <p className="text-[12.5px] font-semibold text-admin-sub">
-              Admin authentication
-            </p>
-            <h2 className="mt-1 text-[28px] font-bold tracking-[-0.03em] text-admin-ink">
-              Sign in to Tromagnon
-            </h2>
-          </div>
+        <div className="flex flex-col justify-center p-7 sm:p-9 md:col-span-7">
+          <h2 className="font-display text-[28px] font-bold leading-none tracking-[-0.02em] text-admin-ink">
+            Sign in
+          </h2>
 
           {error && (
             <div
               role="alert"
-              className="mt-5 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger"
+              className="mt-4 rounded-lg border border-admin-danger bg-admin-danger-soft px-3.5 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger"
             >
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <form onSubmit={handleSubmit} className="mt-5 space-y-4">
             <div>
               <label htmlFor="email" className={labelClass}>
-                Email address
+                Email
               </label>
               <input
                 id="email"
@@ -152,7 +138,7 @@ export default function AdminLoginPage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? "Hide password" : "Show password"}
-                  className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-admin-sub transition hover:bg-admin-muted hover:text-admin-ink"
+                  className="absolute right-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-md text-admin-sub transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-ink"
                 >
                   {showPassword ? (
                     <EyeOff size={16} aria-hidden="true" />
@@ -166,30 +152,30 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`${btnPrimaryPill} mt-2 h-12 w-full justify-between px-2 pl-5`}
+              className={`${btnPrimaryPill} mt-1 h-11 w-full justify-between px-2 pl-4`}
             >
               <span className="flex items-center gap-2">
                 {loading && (
-                  <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+                  <Loader2 size={14} className="animate-spin" aria-hidden="true" />
                 )}
-                {loading ? "Signing in..." : "Sign in to console"}
+                {loading ? "Signing in…" : "Sign in"}
               </span>
               <span
                 aria-hidden="true"
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-admin-lime text-admin-forest transition-transform group-hover:translate-x-0.5"
+                className="flex h-7 w-7 items-center justify-center rounded-md bg-admin-lime text-admin-on-lime transition-transform duration-[120ms] group-hover:translate-x-0.5"
               >
-                <ArrowRight size={15} strokeWidth={2.2} />
+                <ArrowRight size={14} strokeWidth={2.2} />
               </span>
             </button>
           </form>
 
-          <div className="mt-7 border-t border-admin-border/70 pt-5">
+          <div className="mt-6 border-t border-admin-border pt-4">
             <Link
               href="/"
-              className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-admin-sub transition hover:text-admin-forest"
+              className="inline-flex items-center gap-1.5 font-display text-[14px] font-semibold text-admin-forest-soft underline underline-offset-4 transition-colors duration-[120ms] hover:text-admin-forest"
             >
-              <ArrowLeft size={15} aria-hidden="true" />
-              Back to public website
+              <ArrowLeft size={14} aria-hidden="true" />
+              Back to site
             </Link>
           </div>
         </div>

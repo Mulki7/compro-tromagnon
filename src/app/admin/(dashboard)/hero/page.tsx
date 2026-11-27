@@ -90,33 +90,32 @@ export default function AdminHeroPage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${items.length} homepage hero slides · ${activeCount} visible`}
-        title="Hero Banners"
+        title="Banners"
         actions={<PrimaryCtaPill href="/admin/hero/create" label="Add banner" />}
       />
 
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
       )}
 
-      <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
         <KpiFilterRow
           value={filter}
           onChange={setFilter}
           options={[
-            { key: "all", label: "All Slides", count: items.length },
+            { key: "all", label: "All", count: items.length },
             {
               key: "active",
-              label: "Active on Home",
+              label: "Visible",
               count: activeCount,
-              dotColor: "bg-admin-forest",
+              dotColor: "bg-admin-success",
               tone: "lime",
             },
             {
@@ -135,13 +134,12 @@ export default function AdminHeroPage() {
           selectedIds={selectedIds}
           onToggleSelect={toggleSelect}
           onToggleAll={setSelectedIds}
-          bulkSummary="hero banners"
           bulkActions={
             <>
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-forest-soft px-3 text-[12.5px] font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -149,10 +147,10 @@ export default function AdminHeroPage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-admin-lime px-3.5 text-[12.5px] font-bold text-admin-forest transition hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
-                Delete selected
+                Delete
               </button>
             </>
           }
@@ -161,7 +159,7 @@ export default function AdminHeroPage() {
               <SearchField
                 value={query}
                 onChange={setQuery}
-                placeholder="Search banner title or subtitle..."
+                placeholder="Search title or subtitle…"
               />
               {(filter !== "all" || query) && (
                 <button
@@ -170,20 +168,20 @@ export default function AdminHeroPage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-sub transition hover:bg-admin-sage/60 hover:text-admin-ink"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
-                  Reset filters
+                  Reset
                 </button>
               )}
             </>
           }
           emptyMessage={
-            items.length === 0 ? "No hero banners created yet." : "No banners match your filters."
+            items.length === 0 ? "No banners yet." : "No matching banners."
           }
           emptyAction={
             items.length === 0 && (
-              <PrimaryCtaPill href="/admin/hero/create" label="Add first banner" />
+              <PrimaryCtaPill href="/admin/hero/create" label="Add banner" />
             )
           }
           columns={[
@@ -193,7 +191,7 @@ export default function AdminHeroPage() {
               className: "w-20",
               sortValue: (h) => h.order ?? 0,
               render: (h) => (
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-[13px] font-bold tabular-nums text-admin-forest shadow-sm ring-1 ring-admin-border/70">
+                <span className="inline-flex h-7 w-7 items-center justify-center rounded-md border border-admin-border bg-admin-surface font-admin text-[12.5px] font-semibold tabular-nums text-admin-forest">
                   {h.order}
                 </span>
               ),
@@ -209,15 +207,15 @@ export default function AdminHeroPage() {
                 >
                   <Thumb
                     src={h.image_url}
-                    className="h-12 w-20 rounded-xl"
-                    fallback={<ImageIcon size={16} aria-hidden="true" />}
+                    className="h-11 w-16 rounded-md"
+                    fallback={<ImageIcon size={15} aria-hidden="true" />}
                   />
                   <div className="min-w-0">
-                    <p className="truncate text-[14.5px] font-bold text-admin-ink group-hover:text-admin-forest">
+                    <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
                       {h.title}
                     </p>
-                    <p className="truncate text-[12.5px] text-admin-sub">
-                      {h.subtitle || "No subtitle"}
+                    <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                      {h.subtitle || "—"}
                     </p>
                   </div>
                 </Link>
@@ -228,7 +226,7 @@ export default function AdminHeroPage() {
               header: "CTA",
               render: (h) =>
                 h.cta_text ? (
-                  <span className="rounded-full bg-white px-3 py-1 text-[12px] font-semibold text-admin-ink shadow-sm ring-1 ring-admin-border/70">
+                  <span className="rounded-md border border-admin-border bg-admin-surface px-2.5 py-0.5 font-display text-[12.5px] font-semibold text-admin-ink">
                     {h.cta_text}
                   </span>
                 ) : (
@@ -237,7 +235,7 @@ export default function AdminHeroPage() {
             },
             {
               key: "status",
-              header: "Visibility",
+              header: "Status",
               sortValue: (h) => (isActive(h) ? 1 : 0),
               render: (h) => <StatusBadge status={String(isActive(h))} />,
             },
@@ -264,7 +262,7 @@ export default function AdminHeroPage() {
             ? `Delete ${deleteIds.length} banners?`
             : "Delete banner?"
         }
-        message="This permanently removes the hero slide from the homepage."
+        message="This removes the slide from the homepage."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteIds([])}

@@ -1,41 +1,49 @@
+/* Refined Tromagnon Admin primitives:
+   - Subtle rounded corners: 6px (chips/badges), 8px (inputs/buttons), 12px (cards/panels)
+   - Calm sentence-case labels (less visual noise)
+   - Strong 1px borders (#767D75) on interactive inputs & secondary controls */
+
 export const inputClass =
-  "w-full rounded-2xl border border-admin-border bg-admin-muted/70 px-4 py-2.5 text-[14px] text-admin-ink placeholder:text-admin-sub/70 transition-colors hover:border-admin-forest/30 focus:border-admin-forest focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin-forest/15";
+  "h-10 w-full rounded-lg border border-admin-border-strong bg-admin-canvas px-3.5 py-2 font-admin text-[15px] leading-[1.4] text-admin-ink placeholder:text-admin-sub/70 transition-colors duration-[120ms] ease-tromagnon hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-forest";
+
+export const textareaClass =
+  "w-full rounded-lg border border-admin-border-strong bg-admin-canvas px-3.5 py-2.5 font-admin text-[15px] leading-[1.55] text-admin-ink placeholder:text-admin-sub/70 transition-colors duration-[120ms] ease-tromagnon hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-forest";
 
 export const labelClass =
-  "mb-1.5 block text-[12px] font-semibold tracking-[0.02em] text-admin-sub";
+  "mb-1.5 block font-admin text-[13px] font-medium text-admin-sub";
 
 export const formSectionClass =
-  "space-y-5 rounded-[24px] border border-admin-border/80 bg-white p-5 shadow-admin-card sm:p-6";
+  "space-y-4 rounded-xl border border-admin-border bg-admin-surface p-5";
 
 export const formSectionTitleClass =
-  "text-[16px] font-bold tracking-[-0.015em] text-admin-ink";
+  "font-display text-[19px] font-bold leading-tight tracking-[-0.01em] text-admin-ink";
 
 export const formErrorClass =
-  "rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger";
+  "rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger";
 
 export const formLoadingClass =
-  "flex flex-1 items-center justify-center gap-2.5 py-24 text-[14px] font-medium text-admin-sub";
+  "flex flex-1 items-center justify-center gap-2.5 py-20 font-admin text-[14px] font-medium text-admin-sub";
 
 export const btnPrimary =
-  "inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-forest px-5 text-[14px] font-semibold text-white transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-admin-forest-soft px-4 font-display text-[14px] font-semibold tracking-[0.02em] text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnPrimaryPill =
-  "group inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-forest pl-4 pr-1.5 text-[13.5px] font-semibold text-white shadow-sm transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-forest-soft pl-3.5 pr-1.5 font-display text-[14px] font-semibold tracking-[0.02em] text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnPrimarySm =
-  "group inline-flex h-10 items-center justify-center gap-2 rounded-full bg-admin-forest pl-4 pr-1.5 text-[13.5px] font-semibold text-white shadow-sm transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-forest-soft pl-3.5 pr-1.5 font-display text-[14px] font-semibold tracking-[0.02em] text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnLime =
-  "group inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-lime pl-5 pr-2 text-[14px] font-bold text-admin-forest transition hover:bg-admin-lime-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime focus-visible:ring-offset-2 focus-visible:ring-offset-admin-forest disabled:opacity-50";
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-lime pl-4 pr-1.5 font-display text-[14px] font-semibold tracking-[0.02em] text-admin-on-lime transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-lime-hover disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnSecondary =
-  "inline-flex h-10 items-center justify-center gap-2 rounded-full border border-admin-border bg-white px-4 text-[13.5px] font-semibold text-admin-ink transition hover:border-admin-forest/30 hover:bg-admin-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-admin-border-strong bg-admin-surface px-3.5 font-display text-[14px] font-semibold tracking-[0.02em] text-admin-ink transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-elevated disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnDanger =
-  "inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-admin-danger/25 bg-admin-danger-soft px-4 text-[13.5px] font-semibold text-admin-danger transition hover:bg-admin-danger hover:text-white disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-admin-danger bg-admin-danger-soft px-3.5 font-display text-[14px] font-semibold tracking-[0.02em] text-admin-danger transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-danger hover:text-[#F1F2EE] disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnEdit =
-  "inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[13px] font-semibold text-admin-ink transition hover:bg-admin-lime-soft";
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-muted px-3 font-display text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-elevated";
 
 export function parseStringArray(value: string | string[] | null | undefined): string[] {
   if (!value) return [];
@@ -64,13 +72,20 @@ export function getErrorMessage(err: unknown, fallback = "Something went wrong")
   return e?.response?.data?.message || e?.message || fallback;
 }
 
-export function downloadCsv(filename: string, headers: string[], rows: (string | number | undefined | null)[][]) {
+export function downloadCsv(
+  filename: string,
+  headers: string[],
+  rows: (string | number | undefined | null)[][]
+) {
   const escape = (val: string | number | undefined | null) => {
     const s = String(val ?? "");
     if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
     return s;
   };
-  const csv = [headers.map(escape).join(","), ...rows.map((r) => r.map(escape).join(","))].join("\n");
+  const csv = [
+    headers.map(escape).join(","),
+    ...rows.map((r) => r.map(escape).join(",")),
+  ].join("\n");
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");

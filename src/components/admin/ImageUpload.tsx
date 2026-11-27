@@ -22,7 +22,7 @@ export default function ImageUpload({
   existingUrl,
   onChange,
   accept = "image/jpeg,image/png,image/webp,image/gif",
-  hint = "JPG, PNG, WebP · max 20 MB",
+  hint = "JPG, PNG, WebP · up to 20 MB",
   maxSizeMB = 20,
 }: ImageUploadProps) {
   const inputId = useId();
@@ -40,7 +40,7 @@ export default function ImageUpload({
 
       if (file) {
         if (file.size > maxSizeMB * 1024 * 1024) {
-          setFileError(`File size exceeds the ${maxSizeMB} MB limit.`);
+          setFileError(`File exceeds ${maxSizeMB} MB.`);
           return;
         }
         setPreview(URL.createObjectURL(file));
@@ -74,10 +74,10 @@ export default function ImageUpload({
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`relative overflow-hidden rounded-[20px] border-2 border-dashed transition-colors ${
+        className={`relative overflow-hidden rounded-xl border border-dashed transition-colors duration-[120ms] ${
           dragOver
-            ? "border-admin-forest bg-admin-lime-soft/40"
-            : "border-admin-border bg-admin-muted/60"
+            ? "border-admin-forest bg-admin-elevated"
+            : "border-admin-border-strong bg-admin-canvas"
         }`}
       >
         {displayUrl ? (
@@ -95,13 +95,13 @@ export default function ImageUpload({
                 handleFile(null);
                 if (inputRef.current) inputRef.current.value = "";
               }}
-              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-admin-forest/85 text-white backdrop-blur-sm transition hover:bg-admin-danger"
+              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-admin-ink/85 text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-danger"
               aria-label={`Remove ${label.toLowerCase()}`}
             >
               <X size={15} aria-hidden="true" />
             </button>
             {value && (
-              <span className="absolute bottom-3 left-3 rounded-full bg-admin-forest/85 px-3 py-1 text-[12px] font-medium text-white backdrop-blur-sm">
+              <span className="absolute bottom-3 left-3 rounded-md bg-admin-ink/85 px-2.5 py-1 font-admin text-[12.5px] font-medium text-[#F1F2EE]">
                 {value.name}
               </span>
             )}
@@ -110,15 +110,15 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center gap-2.5 px-4 py-10 text-admin-sub transition hover:text-admin-forest"
+            className="flex w-full flex-col items-center justify-center gap-2 px-4 py-8 text-admin-sub transition-colors duration-[120ms] hover:bg-admin-elevated/60 hover:text-admin-forest"
           >
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-admin-lime text-admin-forest shadow-sm">
-              <Upload size={19} strokeWidth={2} aria-hidden="true" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-admin-forest-soft text-[#F1F2EE]">
+              <Upload size={17} strokeWidth={2} aria-hidden="true" />
             </div>
-            <span className="text-[14px] font-semibold text-admin-ink">
-              Drop artwork here or click to browse
+            <span className="font-display text-[15px] font-semibold text-admin-ink">
+              Drop image or click to browse
             </span>
-            <span className="text-[12.5px] text-admin-sub">{hint}</span>
+            <span className="font-admin text-[12.5px] text-admin-sub">{hint}</span>
           </button>
         )}
         <input
@@ -133,14 +133,14 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="w-full border-t border-admin-border/80 bg-white py-2.5 text-[12.5px] font-semibold text-admin-forest transition hover:bg-admin-muted"
+            className="h-10 w-full border-t border-admin-border bg-admin-surface font-display text-[13.5px] font-semibold text-admin-forest-soft transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
           >
-            Replace {label.toLowerCase()}
+            Replace image
           </button>
         )}
       </div>
       {fileError && (
-        <p role="alert" className="mt-1.5 text-[12.5px] font-semibold text-admin-danger">
+        <p role="alert" className="mt-1.5 font-admin text-[12.5px] font-medium text-admin-danger">
           {fileError}
         </p>
       )}

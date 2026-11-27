@@ -17,6 +17,7 @@ import {
   getErrorMessage,
   inputClass,
   labelClass,
+  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { createRelease } from "@/lib/api/admin/releases";
@@ -106,8 +107,7 @@ export default function CreateReleasePage() {
       <AdminHeader
         backHref="/admin/releases"
         backLabel="Releases"
-        eyebrow="New catalog pressing"
-        title={title.trim() || "New Release"}
+        title={title.trim() || "New release"}
         badge={<StatusBadge status={status} />}
         actions={
           <Link href="/admin/releases" className={btnSecondary}>
@@ -118,9 +118,9 @@ export default function CreateReleasePage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -129,7 +129,7 @@ export default function CreateReleasePage() {
 
           <div className={formSectionClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className={formSectionTitleClass}>Release identity & artwork</h2>
+              <h2 className={formSectionTitleClass}>Details</h2>
               <SegmentedToggle
                 ariaLabel="Release publish status"
                 value={status}
@@ -141,7 +141,7 @@ export default function CreateReleasePage() {
               />
             </div>
 
-            <ImageUpload label="Cover Artwork" value={artwork} onChange={setArtwork} />
+            <ImageUpload label="Artwork" value={artwork} onChange={setArtwork} />
 
             <div>
               <label htmlFor="release-artist" className={labelClass}>
@@ -182,7 +182,7 @@ export default function CreateReleasePage() {
               </div>
               <div>
                 <label htmlFor="release-slug" className={labelClass}>
-                  Catalog Slug
+                  Slug
                 </label>
                 <input
                   id="release-slug"
@@ -201,7 +201,7 @@ export default function CreateReleasePage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="release-year" className={labelClass}>
-                  Release Year
+                  Year
                 </label>
                 <input
                   id="release-year"
@@ -217,7 +217,7 @@ export default function CreateReleasePage() {
 
               <fieldset>
                 <legend className={labelClass}>Formats</legend>
-                <div className="flex flex-wrap gap-2 pt-1">
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
                   {FORMATS.map((f) => {
                     const selected = formats.includes(f);
                     return (
@@ -226,10 +226,10 @@ export default function CreateReleasePage() {
                         type="button"
                         aria-pressed={selected}
                         onClick={() => toggleFormat(f)}
-                        className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition ${
+                        className={`h-9 rounded-md border px-3 font-display text-[13.5px] font-semibold transition-colors duration-[120ms] ${
                           selected
-                            ? "bg-admin-forest text-admin-lime shadow-sm"
-                            : "bg-admin-muted text-admin-sub hover:bg-admin-sage/60 hover:text-admin-ink"
+                            ? "border-admin-forest bg-admin-forest-soft text-[#F1F2EE]"
+                            : "border-admin-border-strong bg-admin-canvas text-admin-ink hover:bg-admin-elevated"
                         }`}
                       >
                         {f}
@@ -242,14 +242,14 @@ export default function CreateReleasePage() {
 
             <div>
               <label htmlFor="release-description" className={labelClass}>
-                Liner Notes & Description
+                Description
               </label>
               <textarea
                 id="release-description"
                 required
-                rows={5}
-                placeholder="Write release credits, pressing notes, and story..."
-                className={inputClass}
+                rows={4}
+                placeholder="Release credits and notes…"
+                className={textareaClass}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -257,12 +257,7 @@ export default function CreateReleasePage() {
           </div>
 
           <div className={formSectionClass}>
-            <div>
-              <h2 className={formSectionTitleClass}>Streaming & DSP Links</h2>
-              <p className="mt-0.5 text-[12.5px] text-admin-sub">
-                Direct listening destinations embedded on the release page
-              </p>
-            </div>
+            <h2 className={formSectionTitleClass}>Streaming links</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {(
                 [
@@ -292,28 +287,24 @@ export default function CreateReleasePage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Release summary"
-            subtitle={slug ? `/${slug}` : "Draft catalog entry"}
+            title="Summary"
+            subtitle={slug ? `/${slug}` : undefined}
             rows={[
-              { label: "Artist", value: selectedArtist?.name || "Unassigned" },
+              { label: "Artist", value: selectedArtist?.name || "—" },
               { label: "Year", value: String(year) },
-              { label: "Formats", value: formats.join(" · ") || "None" },
-              { label: "DSP Links", value: `${streamingCount} / 4 connected` },
+              { label: "Formats", value: formats.join(", ") || "—" },
+              { label: "Links", value: `${streamingCount} / 4` },
             ]}
-            highlightLabel="Publish state"
-            highlightValue={status === "published" ? "Live Release" : "Draft Mode"}
-            warningText={
-              !artwork
-                ? "Cover artwork is not attached yet. Add artwork before publishing."
-                : undefined
-            }
-            submitLabel={saving ? "Creating..." : "Create Release"}
+            highlightLabel="Status"
+            highlightValue={status === "published" ? "Published" : "Draft"}
+            warningText={!artwork ? "No artwork uploaded yet." : undefined}
+            submitLabel={saving ? "Saving…" : "Create release"}
             saving={saving}
             checks={[
-              { label: "Cover artwork uploaded", done: Boolean(artwork) },
-              { label: "Title & artist selected", done: Boolean(title.trim() && artistId) },
-              { label: "Liner notes written", done: description.trim().length > 10 },
-              { label: "At least 1 DSP link", done: streamingCount > 0 },
+              { label: "Artwork", done: Boolean(artwork) },
+              { label: "Title & artist", done: Boolean(title.trim() && artistId) },
+              { label: "Description", done: description.trim().length > 10 },
+              { label: "Streaming link", done: streamingCount > 0 },
             ]}
           />
         </div>

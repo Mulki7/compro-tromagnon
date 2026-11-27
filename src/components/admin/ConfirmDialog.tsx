@@ -74,7 +74,7 @@ export default function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-admin-forest-deep/50 backdrop-blur-[3px]"
+        className="absolute inset-0 bg-[#111111]/45"
         onClick={loading ? undefined : onCancel}
         aria-hidden="true"
       />
@@ -84,41 +84,41 @@ export default function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={messageId}
-        className="relative w-full max-w-md rounded-[26px] border border-admin-border bg-white p-6 shadow-admin-float"
+        className="relative w-full max-w-md rounded-xl border border-admin-border-strong bg-admin-surface p-6 shadow-admin-pop"
       >
         <div className="flex items-start gap-3.5">
           <div
-            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${
               danger
                 ? "bg-admin-danger-soft text-admin-danger"
-                : "bg-admin-lime-soft text-admin-forest"
+                : "bg-admin-success-soft text-admin-forest-soft"
             }`}
           >
-            <AlertTriangle size={20} aria-hidden="true" />
+            <AlertTriangle size={19} aria-hidden="true" />
           </div>
           <div className="min-w-0">
             <h2
               id={titleId}
-              className="text-[19px] font-bold tracking-[-0.02em] text-admin-ink"
+              className="font-display text-[20px] font-bold tracking-[-0.015em] text-admin-ink"
             >
               {title}
             </h2>
             <p
               id={messageId}
-              className="mt-1.5 text-[14px] leading-relaxed text-admin-sub"
+              className="mt-1 font-admin text-[14.5px] leading-[1.55] text-admin-sub"
             >
               {message}
             </p>
           </div>
         </div>
 
-        <div className="mt-6 flex justify-end gap-2.5">
+        <div className="mt-6 flex justify-end gap-2">
           <button
             ref={cancelBtnRef}
             type="button"
             disabled={loading}
             onClick={onCancel}
-            className="h-10 rounded-full border border-admin-border bg-white px-5 text-[13.5px] font-semibold text-admin-ink transition hover:bg-admin-muted disabled:opacity-50"
+            className="h-10 rounded-lg border border-admin-border-strong bg-admin-surface px-4 font-display text-[14px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled"
           >
             {cancelLabel}
           </button>
@@ -126,10 +126,10 @@ export default function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={onConfirm}
-            className={`inline-flex h-10 items-center gap-2 rounded-full px-5 text-[13.5px] font-semibold text-white transition disabled:opacity-50 ${
+            className={`inline-flex h-10 items-center gap-2 rounded-lg px-4 font-display text-[14px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] disabled:bg-admin-elevated disabled:text-admin-disabled ${
               danger
-                ? "bg-admin-danger hover:bg-red-800"
-                : "bg-admin-forest hover:bg-admin-forest-deep"
+                ? "bg-admin-danger hover:bg-[#821C16]"
+                : "bg-admin-forest-soft hover:bg-admin-forest"
             }`}
           >
             {loading && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}

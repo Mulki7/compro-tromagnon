@@ -39,7 +39,7 @@ export default function AdminNewsPage() {
     try {
       setItems(await getAdminNews());
     } catch (err) {
-      setError(getErrorMessage(err, "Failed to load news"));
+      setError(getErrorMessage(err, "Failed to load articles"));
     } finally {
       setLoading(false);
     }
@@ -97,46 +97,45 @@ export default function AdminNewsPage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${items.length} journal dispatches · ${publishedCount} published`}
-        title="Journal & News"
+        title="Journal"
         actions={<PrimaryCtaPill href="/admin/news/create" label="Write article" />}
       />
 
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
       )}
 
-      <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
         <KpiFilterRow
           value={filter}
           onChange={setFilter}
           options={[
-            { key: "all", label: "All Dispatches", count: items.length },
+            { key: "all", label: "All", count: items.length },
             {
               key: "published",
               label: "Published",
               count: publishedCount,
-              dotColor: "bg-admin-forest",
+              dotColor: "bg-admin-success",
               tone: "lime",
             },
             {
               key: "draft",
               label: "Drafts",
               count: draftCount,
-              dotColor: "bg-amber-500",
+              dotColor: "bg-admin-amber",
             },
             {
               key: "with_cover",
-              label: "With Cover",
+              label: "With cover",
               count: coverCount,
-              dotColor: "bg-emerald-600",
+              dotColor: "bg-admin-forest-soft",
             },
           ]}
         />
@@ -148,13 +147,12 @@ export default function AdminNewsPage() {
           selectedIds={selectedIds}
           onToggleSelect={toggleSelect}
           onToggleAll={setSelectedIds}
-          bulkSummary="journal articles"
           bulkActions={
             <>
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-forest-soft px-3 text-[12.5px] font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -162,10 +160,10 @@ export default function AdminNewsPage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-admin-lime px-3.5 text-[12.5px] font-bold text-admin-forest transition hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
-                Delete selected
+                Delete
               </button>
             </>
           }
@@ -174,7 +172,7 @@ export default function AdminNewsPage() {
               <SearchField
                 value={query}
                 onChange={setQuery}
-                placeholder="Search headline or author..."
+                placeholder="Search title or author…"
               />
               {(filter !== "all" || query) && (
                 <button
@@ -183,20 +181,20 @@ export default function AdminNewsPage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-sub transition hover:bg-admin-sage/60 hover:text-admin-ink"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
-                  Reset filters
+                  Reset
                 </button>
               )}
             </>
           }
           emptyMessage={
-            items.length === 0 ? "No articles written yet." : "No articles match your filters."
+            items.length === 0 ? "No articles yet." : "No matching articles."
           }
           emptyAction={
             items.length === 0 && (
-              <PrimaryCtaPill href="/admin/news/create" label="Write first article" />
+              <PrimaryCtaPill href="/admin/news/create" label="Write article" />
             )
           }
           columns={[
@@ -211,15 +209,15 @@ export default function AdminNewsPage() {
                 >
                   <Thumb
                     src={n.cover_image_url}
-                    className="h-12 w-16 rounded-xl"
-                    fallback={<Newspaper size={16} aria-hidden="true" />}
+                    className="h-11 w-14 rounded-md"
+                    fallback={<Newspaper size={15} aria-hidden="true" />}
                   />
                   <div className="min-w-0">
-                    <p className="truncate text-[14.5px] font-bold text-admin-ink group-hover:text-admin-forest">
+                    <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
                       {n.title}
                     </p>
-                    <p className="truncate text-[12.5px] text-admin-sub">
-                      {n.author || "Tromagnon Records"}
+                    <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                      {n.author || "Tromagnon"}
                     </p>
                   </div>
                 </Link>
@@ -230,7 +228,7 @@ export default function AdminNewsPage() {
               header: "Date",
               sortValue: (n) => n.published_at || n.created_at || "",
               render: (n) => (
-                <span className="font-medium tabular-nums text-admin-sub">
+                <span className="font-admin text-[13.5px] tabular-nums text-admin-sub">
                   {formatDate(n.published_at || n.created_at) || "—"}
                 </span>
               ),
@@ -264,7 +262,7 @@ export default function AdminNewsPage() {
             ? `Delete ${deleteIds.length} articles?`
             : "Delete article?"
         }
-        message="This permanently removes the dispatch from the journal."
+        message="This removes the article from the journal."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteIds([])}

@@ -24,30 +24,30 @@ export default function AdminHeader({
   actions,
 }: AdminHeaderProps) {
   return (
-    <header className="flex shrink-0 flex-wrap items-end justify-between gap-4 px-4 pb-4 pt-5 sm:px-6 lg:px-7">
+    <header className="flex shrink-0 flex-wrap items-center justify-between gap-3 px-4 pb-3 pt-3.5 sm:px-5 lg:px-6">
       <div className="min-w-0">
         {(backHref || eyebrow || subtitle) && (
-          <div className="mb-1.5 flex flex-wrap items-center gap-2 text-[12.5px] font-medium text-admin-sub">
+          <div className="mb-1 flex flex-wrap items-center gap-1.5 font-admin text-[12.5px] font-medium text-admin-sub">
             {backHref && (
               <Link
                 href={backHref}
-                className="inline-flex items-center gap-1 rounded-full font-semibold text-admin-forest transition hover:text-admin-forest-deep hover:underline"
+                className="inline-flex items-center gap-0.5 font-semibold text-admin-forest-soft underline underline-offset-4 transition-colors duration-[120ms] hover:text-admin-forest"
               >
                 <ChevronLeft size={14} aria-hidden="true" />
                 {backLabel || "Back"}
               </Link>
             )}
             {backHref && (eyebrow || subtitle) && (
-              <span aria-hidden="true" className="text-admin-border">
-                •
+              <span aria-hidden="true" className="text-admin-border-strong">
+                ·
               </span>
             )}
             {(eyebrow || subtitle) && <span>{eyebrow || subtitle}</span>}
           </div>
         )}
 
-        <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-balance text-[26px] font-bold leading-[1.1] tracking-[-0.03em] text-admin-ink sm:text-[32px]">
+        <div className="flex flex-wrap items-center gap-2.5">
+          <h1 className="font-display text-balance text-[26px] font-bold leading-none tracking-[-0.02em] text-admin-ink sm:text-[30px]">
             {title}
           </h1>
           {badge}

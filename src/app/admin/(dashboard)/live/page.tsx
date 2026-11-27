@@ -38,7 +38,7 @@ export default function AdminLivePage() {
     try {
       setItems(await getAdminLiveEvents());
     } catch (err) {
-      setError(getErrorMessage(err, "Failed to load live events"));
+      setError(getErrorMessage(err, "Failed to load shows"));
     } finally {
       setLoading(false);
     }
@@ -58,7 +58,7 @@ export default function AdminLivePage() {
       await load();
       refreshShellData();
     } catch (err) {
-      setError(getErrorMessage(err, "Failed to delete event"));
+      setError(getErrorMessage(err, "Failed to delete show"));
       setDeleteIds([]);
     } finally {
       setDeleting(false);
@@ -99,38 +99,37 @@ export default function AdminLivePage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${items.length} scheduled dates · ${upcomingCount} upcoming shows`}
-        title="Live Shows"
+        title="Shows"
         actions={<PrimaryCtaPill href="/admin/live/create" label="Schedule show" />}
       />
 
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
       )}
 
-      <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
         <KpiFilterRow
           value={filter}
           onChange={setFilter}
           options={[
-            { key: "all", label: "All Shows", count: items.length },
+            { key: "all", label: "All", count: items.length },
             {
               key: "upcoming",
               label: "Upcoming",
               count: upcomingCount,
-              dotColor: "bg-admin-forest",
+              dotColor: "bg-admin-info",
               tone: "lime",
             },
             {
               key: "past",
-              label: "Completed",
+              label: "Past",
               count: pastCount,
               dotColor: "bg-admin-sub",
             },
@@ -138,7 +137,7 @@ export default function AdminLivePage() {
               key: "cancelled",
               label: "Cancelled",
               count: cancelledCount,
-              dotColor: "bg-red-500",
+              dotColor: "bg-admin-danger",
             },
           ]}
         />
@@ -151,13 +150,12 @@ export default function AdminLivePage() {
           onToggleSelect={toggleSelect}
           onToggleAll={setSelectedIds}
           rowTone={(e) => (e.status === "cancelled" ? "danger" : "default")}
-          bulkSummary="live dates"
           bulkActions={
             <>
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-forest-soft px-3 text-[12.5px] font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -165,10 +163,10 @@ export default function AdminLivePage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-admin-lime px-3.5 text-[12.5px] font-bold text-admin-forest transition hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
-                Delete selected
+                Delete
               </button>
             </>
           }
@@ -177,7 +175,7 @@ export default function AdminLivePage() {
               <SearchField
                 value={query}
                 onChange={setQuery}
-                placeholder="Search artist, venue, city..."
+                placeholder="Search artist, venue, city…"
               />
               {(filter !== "all" || query) && (
                 <button
@@ -186,20 +184,20 @@ export default function AdminLivePage() {
                     setFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-sub transition hover:bg-admin-sage/60 hover:text-admin-ink"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
-                  Reset filters
+                  Reset
                 </button>
               )}
             </>
           }
           emptyMessage={
-            items.length === 0 ? "No shows scheduled yet." : "No shows match your filters."
+            items.length === 0 ? "No shows scheduled." : "No matching shows."
           }
           emptyAction={
             items.length === 0 && (
-              <PrimaryCtaPill href="/admin/live/create" label="Schedule first show" />
+              <PrimaryCtaPill href="/admin/live/create" label="Schedule show" />
             )
           }
           columns={[
@@ -210,10 +208,10 @@ export default function AdminLivePage() {
               render: (e) => (
                 <Link
                   href={`/admin/live/${e.id}`}
-                  className="inline-flex items-center gap-2.5 font-bold tabular-nums text-admin-ink hover:text-admin-forest"
+                  className="inline-flex items-center gap-2.5 font-admin text-[13.5px] font-semibold tabular-nums text-admin-ink hover:text-admin-forest-soft"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-admin-forest shadow-sm ring-1 ring-admin-border/70">
-                    <CalendarDays size={15} aria-hidden="true" />
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-admin-border bg-admin-surface text-admin-forest-soft">
+                    <CalendarDays size={14} aria-hidden="true" />
                   </span>
                   <span>{formatDate(e.event_date) || e.event_date}</span>
                 </Link>
@@ -221,26 +219,26 @@ export default function AdminLivePage() {
             },
             {
               key: "artist",
-              header: "Artist / Bill",
+              header: "Artist",
               sortValue: (e) => e.artist?.name || "",
               render: (e) => (
-                <span className="font-bold text-admin-ink">
-                  {e.artist?.name || "Tromagnon Showcase"}
+                <span className="font-display text-[16px] font-semibold text-admin-ink">
+                  {e.artist?.name || "Showcase"}
                 </span>
               ),
             },
             {
               key: "venue",
-              header: "Venue & City",
+              header: "Venue",
               sortValue: (e) => e.city || "",
               render: (e) => (
                 <div className="flex items-start gap-1.5">
                   <MapPin size={14} className="mt-0.5 shrink-0 text-admin-sub" aria-hidden="true" />
                   <div className="min-w-0">
-                    <p className="truncate text-[14px] font-semibold text-admin-ink">
+                    <p className="truncate font-admin text-[14px] font-medium text-admin-ink">
                       {e.venue}
                     </p>
-                    <p className="truncate text-[12.5px] text-admin-sub">
+                    <p className="truncate font-admin text-[12.5px] text-admin-sub">
                       {e.city}, {e.country}
                     </p>
                   </div>
@@ -256,13 +254,13 @@ export default function AdminLivePage() {
                     href={e.ticket_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[12px] font-semibold text-admin-forest shadow-sm ring-1 ring-admin-border/70 transition hover:bg-admin-lime-soft"
+                    className="inline-flex items-center gap-1 rounded-md border border-admin-border-strong bg-admin-surface px-2.5 py-1 font-display text-[12.5px] font-semibold text-admin-forest-soft underline underline-offset-2 transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
                   >
                     <span>Link</span>
                     <ExternalLink size={11} aria-hidden="true" />
                   </a>
                 ) : (
-                  <span className="text-[12.5px] text-admin-sub">At door</span>
+                  <span className="font-admin text-[13px] text-admin-sub">Door</span>
                 ),
             },
             {
@@ -294,7 +292,7 @@ export default function AdminLivePage() {
             ? `Delete ${deleteIds.length} shows?`
             : "Delete show?"
         }
-        message="This permanently removes the show from the live calendar."
+        message="This removes the show from the schedule."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteIds([])}

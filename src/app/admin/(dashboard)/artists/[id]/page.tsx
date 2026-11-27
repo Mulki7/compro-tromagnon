@@ -20,6 +20,7 @@ import {
   inputClass,
   labelClass,
   parseStringArray,
+  textareaClass,
 } from "@/components/admin/formStyles";
 import { getAdminArtist, updateArtist } from "@/lib/api/admin/artists";
 import { slugify } from "@/lib/utils";
@@ -145,8 +146,7 @@ export default function EditArtistPage() {
       <AdminHeader
         backHref="/admin/artists"
         backLabel="Artists"
-        eyebrow={slug ? `/${slug}` : "Roster profile"}
-        title={name || "Edit Artist"}
+        title={name || "Edit artist"}
         badge={<StatusBadge status={status} />}
         actions={
           <Link href="/admin/artists" className={btnSecondary}>
@@ -157,9 +157,9 @@ export default function EditArtistPage() {
 
       <form
         onSubmit={handleSubmit}
-        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        <div className="space-y-5 lg:col-span-8">
+        <div className="space-y-4 lg:col-span-8">
           {error && (
             <div role="alert" className={formErrorClass}>
               {error}
@@ -168,7 +168,7 @@ export default function EditArtistPage() {
 
           <div className={formSectionClass}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className={formSectionTitleClass}>Artist profile & press photo</h2>
+              <h2 className={formSectionTitleClass}>Profile</h2>
               <SegmentedToggle
                 ariaLabel="Artist roster status"
                 value={status}
@@ -181,7 +181,7 @@ export default function EditArtistPage() {
             </div>
 
             <ImageUpload
-              label="Artist Photo"
+              label="Photo"
               value={photo}
               existingUrl={existingPhoto}
               onChange={setPhoto}
@@ -190,7 +190,7 @@ export default function EditArtistPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label htmlFor="artist-name" className={labelClass}>
-                  Artist / Band Name
+                  Name
                 </label>
                 <input
                   id="artist-name"
@@ -202,7 +202,7 @@ export default function EditArtistPage() {
               </div>
               <div>
                 <label htmlFor="artist-slug" className={labelClass}>
-                  URL Slug
+                  Slug
                 </label>
                 <input
                   id="artist-slug"
@@ -216,13 +216,13 @@ export default function EditArtistPage() {
 
             <div>
               <label htmlFor="artist-bio" className={labelClass}>
-                Artist Biography
+                Bio
               </label>
               <textarea
                 id="artist-bio"
                 required
-                rows={5}
-                className={inputClass}
+                rows={4}
+                className={textareaClass}
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
               />
@@ -230,14 +230,14 @@ export default function EditArtistPage() {
 
             <div>
               <label htmlFor="artist-genre" className={labelClass}>
-                Genres & Sound Tags
+                Genres
               </label>
               <div className="flex gap-2">
                 <input
                   id="artist-genre"
                   className={inputClass}
                   value={genreInput}
-                  placeholder="Type a genre and press Enter"
+                  placeholder="Type genre and press Enter"
                   onChange={(e) => setGenreInput(e.target.value)}
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -248,7 +248,7 @@ export default function EditArtistPage() {
                 />
                 <button
                   type="button"
-                  className={`${btnSecondary} h-auto px-5`}
+                  className={btnSecondary}
                   onClick={() => addGenre()}
                 >
                   Add
@@ -256,36 +256,33 @@ export default function EditArtistPage() {
               </div>
 
               {genres.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
+                <div className="mt-2.5 flex flex-wrap gap-1.5">
                   {genres.map((g) => (
                     <span
                       key={g}
-                      className="inline-flex items-center gap-1.5 rounded-full bg-admin-forest px-3 py-1 text-[12.5px] font-semibold text-admin-lime"
+                      className="inline-flex items-center gap-1.5 rounded-md bg-admin-forest-soft px-2.5 py-1 font-admin text-[12.5px] font-medium text-[#F1F2EE]"
                     >
                       {g}
                       <button
                         type="button"
                         onClick={() => setGenres(genres.filter((x) => x !== g))}
-                        className="rounded-full p-0.5 text-white/80 transition hover:text-white"
+                        className="rounded p-0.5 text-[#DCE5E1] transition-colors duration-[120ms] hover:bg-admin-forest hover:text-white"
                         aria-label={`Remove ${g}`}
                       >
-                        <X size={13} aria-hidden="true" />
+                        <X size={12} aria-hidden="true" />
                       </button>
                     </span>
                   ))}
                 </div>
               )}
 
-              <div className="mt-3 flex flex-wrap items-center gap-1.5">
-                <span className="mr-1 text-[12px] font-medium text-admin-sub">
-                  Quick add:
-                </span>
+              <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
                 {QUICK_GENRES.filter((g) => !genres.includes(g)).map((g) => (
                   <button
                     key={g}
                     type="button"
                     onClick={() => addGenre(g)}
-                    className="inline-flex items-center gap-1 rounded-full bg-admin-muted px-2.5 py-1 text-[12px] font-semibold text-admin-ink transition hover:bg-admin-lime-soft hover:text-admin-forest"
+                    className="inline-flex h-7 items-center gap-1 rounded-md border border-admin-border-strong bg-admin-canvas px-2.5 font-admin text-[12px] font-medium text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                   >
                     <span>{g}</span>
                     <Plus size={11} aria-hidden="true" />
@@ -296,12 +293,7 @@ export default function EditArtistPage() {
           </div>
 
           <div className={formSectionClass}>
-            <div>
-              <h2 className={formSectionTitleClass}>Social & Listening Channels</h2>
-              <p className="mt-0.5 text-[12.5px] text-admin-sub">
-                Displayed on the public artist page and press kit
-              </p>
-            </div>
+            <h2 className={formSectionTitleClass}>Social links</h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {(
                 [
@@ -332,28 +324,23 @@ export default function EditArtistPage() {
 
         <div className="lg:col-span-4">
           <FormSummaryCard
-            title="Roster summary"
-            subtitle={slug ? `/artists/${slug}` : "Roster profile"}
+            title="Summary"
+            subtitle={slug ? `/artists/${slug}` : undefined}
             rows={[
-              { label: "Name", value: name || "Untitled artist" },
-              { label: "Genres", value: genres.join(", ") || "Not tagged" },
-              { label: "Channels", value: `${socialCount} / 5 linked` },
-              { label: "Photo", value: hasPhoto ? "Attached" : "Missing" },
+              { label: "Name", value: name || "—" },
+              { label: "Genres", value: genres.join(", ") || "—" },
+              { label: "Links", value: `${socialCount} / 5` },
             ]}
-            highlightLabel="Roster status"
-            highlightValue={status === "active" ? "Active Roster" : "Archived"}
-            warningText={
-              !hasPhoto
-                ? "This artist profile currently has no photo."
-                : undefined
-            }
-            submitLabel={saving ? "Saving..." : "Save Changes"}
+            highlightLabel="Status"
+            highlightValue={status === "active" ? "Active" : "Archived"}
+            warningText={!hasPhoto ? "No artist photo uploaded." : undefined}
+            submitLabel={saving ? "Saving…" : "Save changes"}
             saving={saving}
             checks={[
-              { label: "Press photo attached", done: hasPhoto },
-              { label: "Name & slug set", done: Boolean(name.trim() && slug.trim()) },
-              { label: "Biography written", done: bio.trim().length > 10 },
-              { label: "Genre tags added", done: genres.length > 0 },
+              { label: "Photo", done: hasPhoto },
+              { label: "Name & slug", done: Boolean(name.trim() && slug.trim()) },
+              { label: "Bio", done: bio.trim().length > 10 },
+              { label: "Genres", done: genres.length > 0 },
             ]}
           />
         </div>

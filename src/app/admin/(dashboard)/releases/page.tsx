@@ -148,9 +148,8 @@ export default function AdminReleasesPage() {
   };
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col pb-8">
+    <div className="flex min-h-0 flex-1 flex-col pb-3 lg:overflow-hidden">
       <AdminHeader
-        eyebrow={`${items.length} catalog entries · ${publishedCount} live pressings`}
         title="Releases"
         actions={
           <>
@@ -161,7 +160,7 @@ export default function AdminReleasesPage() {
               className={btnSecondary}
             >
               <Download size={14} aria-hidden="true" />
-              Export CSV
+              Export
             </button>
             <PrimaryCtaPill href="/admin/releases/create" label="New release" />
           </>
@@ -171,42 +170,42 @@ export default function AdminReleasesPage() {
       {error && (
         <div
           role="alert"
-          className="mx-4 mb-4 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger sm:mx-6 lg:mx-7"
+          className="mx-4 mb-3 shrink-0 rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[13.5px] font-medium text-admin-danger sm:mx-5 lg:mx-6"
         >
           {error}
         </div>
       )}
 
-      <div className="space-y-4 px-4 sm:px-6 lg:px-7">
+      <div className="flex min-h-0 flex-1 flex-col gap-3.5 px-4 sm:px-5 lg:px-6">
         <KpiFilterRow
           value={filter}
           onChange={setFilter}
           options={[
-            { key: "all", label: "All Releases", count: items.length },
+            { key: "all", label: "All", count: items.length },
             {
               key: "published",
               label: "Published",
               count: publishedCount,
-              dotColor: "bg-admin-forest",
+              dotColor: "bg-admin-success",
               tone: "lime",
             },
             {
               key: "draft",
               label: "Drafts",
               count: draftCount,
-              dotColor: "bg-amber-500",
+              dotColor: "bg-admin-amber",
             },
             {
               key: "vinyl",
               label: "LP / EP",
               count: vinylCount,
-              dotColor: "bg-emerald-600",
+              dotColor: "bg-admin-forest-soft",
             },
             {
               key: "missing_art",
-              label: "Missing Art",
+              label: "No artwork",
               count: missingArtCount,
-              dotColor: "bg-red-500",
+              dotColor: "bg-admin-danger",
             },
           ]}
         />
@@ -219,13 +218,12 @@ export default function AdminReleasesPage() {
           onToggleSelect={toggleSelect}
           onToggleAll={setSelectedIds}
           rowTone={(r) => (!r.artwork_url ? "warning" : "default")}
-          bulkSummary="catalog items"
           bulkActions={
             <>
               <button
                 type="button"
                 onClick={() => setSelectedIds([])}
-                className="inline-flex h-8 items-center gap-1 rounded-full bg-admin-forest-soft px-3 text-[12.5px] font-semibold text-white transition hover:bg-white/15"
+                className="inline-flex h-8 items-center gap-1 rounded-md bg-admin-forest-soft px-3 font-display text-[13px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-forest-deep"
               >
                 <X size={13} aria-hidden="true" />
                 Clear
@@ -233,32 +231,32 @@ export default function AdminReleasesPage() {
               <button
                 type="button"
                 onClick={() => setDeleteIds(selectedIds)}
-                className="inline-flex h-8 items-center gap-1.5 rounded-full bg-admin-lime px-3.5 text-[12.5px] font-bold text-admin-forest transition hover:bg-admin-lime-hover"
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-admin-lime px-3 font-display text-[13px] font-semibold text-admin-on-lime transition-colors duration-[120ms] hover:bg-admin-lime-hover"
               >
                 <Trash2 size={13} aria-hidden="true" />
-                Delete selected
+                Delete
               </button>
             </>
           }
           toolbar={
             <>
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <SearchField
                   value={query}
                   onChange={setQuery}
-                  placeholder="Search title, artist, year..."
+                  placeholder="Search title, artist, year…"
                 />
                 {availableFormats.length > 0 && (
                   <select
-                    aria-label="Filter by release format"
+                    aria-label="Filter by format"
                     value={formatFilter}
                     onChange={(e) => setFormatFilter(e.target.value)}
-                    className="h-10 rounded-full border border-admin-border/70 bg-admin-muted px-4 text-[13px] font-semibold text-admin-ink focus:border-admin-forest focus:bg-white focus:outline-none"
+                    className="h-10 rounded-lg border border-admin-border-strong bg-admin-canvas px-3 font-admin text-[13.5px] font-medium text-admin-ink focus:border-admin-forest focus:bg-admin-surface focus:outline-none"
                   >
-                    <option value="all">Format: All</option>
+                    <option value="all">All formats</option>
                     {availableFormats.map((fmt) => (
                       <option key={fmt} value={fmt}>
-                        Format: {fmt}
+                        {fmt}
                       </option>
                     ))}
                   </select>
@@ -273,20 +271,20 @@ export default function AdminReleasesPage() {
                     setFormatFilter("all");
                     setQuery("");
                   }}
-                  className="inline-flex h-9 items-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[12.5px] font-semibold text-admin-sub transition hover:bg-admin-sage/60 hover:text-admin-ink"
+                  className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-admin-border-strong px-3 font-display text-[13px] font-semibold text-admin-ink transition-colors duration-[120ms] hover:bg-admin-elevated"
                 >
                   <X size={13} aria-hidden="true" />
-                  Reset filters
+                  Reset
                 </button>
               )}
             </>
           }
           emptyMessage={
-            items.length === 0 ? "No releases in catalog yet." : "No releases match your filters."
+            items.length === 0 ? "No releases yet." : "No matching releases."
           }
           emptyAction={
             items.length === 0 && (
-              <PrimaryCtaPill href="/admin/releases/create" label="Add first release" />
+              <PrimaryCtaPill href="/admin/releases/create" label="New release" />
             )
           }
           columns={[
@@ -299,13 +297,13 @@ export default function AdminReleasesPage() {
                   href={`/admin/releases/${r.id}`}
                   className="group flex items-center gap-3"
                 >
-                  <Thumb src={r.artwork_url} className="h-12 w-12 rounded-xl" />
+                  <Thumb src={r.artwork_url} className="aspect-square h-11 w-11 rounded-md" />
                   <div className="min-w-0">
-                    <p className="truncate text-[14.5px] font-bold text-admin-ink group-hover:text-admin-forest">
+                    <p className="truncate font-display text-[16px] font-semibold leading-tight text-admin-ink group-hover:text-admin-forest-soft">
                       {r.title}
                     </p>
-                    <p className="truncate text-[12.5px] text-admin-sub">
-                      {r.artist?.name || "Tromagnon"} · /{r.slug}
+                    <p className="mt-0.5 truncate font-admin text-[12.5px] text-admin-sub">
+                      {r.artist?.name || "Tromagnon"}
                     </p>
                   </div>
                 </Link>
@@ -318,14 +316,19 @@ export default function AdminReleasesPage() {
                 const fmts = parseStringArray(r.format);
                 return fmts.length ? (
                   <div className="flex flex-wrap gap-1">
-                    {fmts.map((f) => (
+                    {fmts.slice(0, 3).map((f) => (
                       <span
                         key={f}
-                        className="rounded-full bg-white px-2.5 py-0.5 text-[11.5px] font-semibold text-admin-ink shadow-sm ring-1 ring-admin-border/70"
+                        className="rounded-md border border-admin-border bg-admin-surface px-2 py-0.5 font-admin text-[12px] font-medium text-admin-ink"
                       >
                         {f}
                       </span>
                     ))}
+                    {fmts.length > 3 && (
+                      <span className="rounded-md bg-admin-muted px-1.5 py-0.5 font-admin text-[12px] font-semibold text-admin-sub">
+                        +{fmts.length - 3}
+                      </span>
+                    )}
                   </div>
                 ) : (
                   <span className="text-admin-sub">—</span>
@@ -337,7 +340,7 @@ export default function AdminReleasesPage() {
               header: "Year",
               sortValue: (r) => r.release_year || 0,
               render: (r) => (
-                <span className="font-bold tabular-nums text-admin-ink">
+                <span className="font-medium tabular-nums text-admin-ink">
                   {r.release_year}
                 </span>
               ),
@@ -371,11 +374,7 @@ export default function AdminReleasesPage() {
             ? `Delete ${deleteIds.length} releases?`
             : "Delete release?"
         }
-        message={
-          deleteIds.length > 1
-            ? "This permanently removes the selected releases from the label catalog."
-            : "This permanently removes the release from the label catalog."
-        }
+        message="This removes the selected release from the catalog."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteIds([])}

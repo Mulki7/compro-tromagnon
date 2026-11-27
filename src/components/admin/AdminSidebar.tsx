@@ -70,13 +70,13 @@ export default function AdminSidebar({
     },
     {
       href: "/admin/live",
-      label: "Live Shows",
+      label: "Shows",
       icon: CalendarDays,
       badge: counts.upcomingLive > 0 ? counts.upcomingLive : undefined,
     },
     {
       href: "/admin/hero",
-      label: "Hero Banners",
+      label: "Banners",
       icon: ImageIcon,
       badge: counts.totalHero > 0 ? counts.totalHero : undefined,
     },
@@ -89,7 +89,7 @@ export default function AdminSidebar({
     <>
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-admin-forest-deep/55 backdrop-blur-[2px] lg:hidden"
+          className="fixed inset-0 z-40 bg-[#111111]/45 lg:hidden"
           onClick={onClose}
           aria-hidden="true"
         />
@@ -98,32 +98,28 @@ export default function AdminSidebar({
       <aside
         aria-label="Primary admin navigation"
         className={cn(
-          "fixed inset-y-3 left-3 z-50 flex w-[248px] shrink-0 flex-col rounded-[26px] bg-admin-forest text-white shadow-admin-float transition-transform duration-200 ease-out lg:static lg:inset-auto lg:h-full lg:translate-x-0 lg:shadow-none",
-          mobileOpen ? "translate-x-0" : "-translate-x-[calc(100%+24px)]"
+          "fixed inset-y-2.5 left-2.5 z-50 flex w-[224px] shrink-0 flex-col rounded-xl border border-[#16302C] bg-admin-forest text-[#F1F2EE] shadow-admin-pop transition-transform duration-[200ms] ease-tromagnon lg:static lg:inset-auto lg:h-full lg:translate-x-0 lg:shadow-none",
+          mobileOpen ? "translate-x-0" : "-translate-x-[calc(100%+20px)]"
         )}
       >
-        {/* Brand header */}
-        <div className="flex items-center justify-between px-5 pb-6 pt-6">
+        {/* Brand lockup */}
+        <div className="flex items-center justify-between px-4 pb-4 pt-5">
           <Link
             href="/admin"
             onClick={onClose}
-            className="inline-flex items-center gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime"
+            className="inline-flex items-center gap-2.5 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
           >
-            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-admin-lime p-1.5 shadow-sm">
+            <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[#F1F2EE] p-1">
               <Image
                 src="/assets/logo-tromagnon-nobg.png"
                 alt=""
-                width={26}
-                height={26}
+                width={24}
+                height={24}
                 className="object-contain"
               />
             </span>
-            <span className="flex items-center gap-1.5 text-[19px] font-bold tracking-[-0.03em] text-white">
-              tromagnon
-              <span
-                aria-hidden="true"
-                className="h-1.5 w-1.5 rounded-full bg-admin-lime"
-              />
+            <span className="font-display text-[20px] font-bold tracking-[-0.01em] text-[#F1F2EE]">
+              tromagnon<span className="text-admin-lime">.</span>
             </span>
           </Link>
 
@@ -131,88 +127,76 @@ export default function AdminSidebar({
             type="button"
             onClick={onClose}
             aria-label="Close navigation menu"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-admin-forest-soft hover:text-white lg:hidden"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-[#E4ECE9] transition-colors duration-[120ms] hover:bg-admin-forest-soft hover:text-white lg:hidden"
           >
             <X size={18} aria-hidden="true" />
           </button>
         </div>
 
         {/* Main navigation */}
-        <div className="flex-1 overflow-y-auto px-3.5">
-          <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8EB09A]">
-            Catalog
-          </p>
-          <nav aria-label="Catalog sections" className="space-y-1">
-            {navItems.map(({ href, label, icon: Icon, exact, badge }) => {
-              const active = isActive(href, exact);
-              return (
-                <Link
-                  key={href}
-                  href={href}
-                  onClick={onClose}
-                  aria-current={active ? "page" : undefined}
-                  className={cn(
-                    "group flex h-11 items-center justify-between gap-3 rounded-full px-3.5 text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime",
-                    active
-                      ? "bg-admin-lime font-semibold text-admin-forest shadow-sm"
-                      : "text-[#D4E6DA] hover:bg-admin-forest-soft hover:text-white"
-                  )}
-                >
-                  <span className="flex min-w-0 items-center gap-3">
-                    <Icon
-                      size={18}
-                      strokeWidth={active ? 2.1 : 1.75}
-                      aria-hidden="true"
-                      className={cn(
-                        "shrink-0 transition-colors",
-                        active ? "text-admin-forest" : "text-[#9DC0A9] group-hover:text-white"
-                      )}
-                    />
-                    <span className="truncate">{label}</span>
-                  </span>
-                  {typeof badge === "number" && (
-                    <span
-                      className={cn(
-                        "flex h-5 min-w-[22px] shrink-0 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold tabular-nums",
-                        active
-                          ? "bg-admin-forest text-admin-lime"
-                          : "bg-admin-forest-soft text-[#D4E6DA]"
-                      )}
-                    >
-                      {badge}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="mt-7 border-t border-white/10 pt-5">
-            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8EB09A]">
-              Label
-            </p>
-            <div className="space-y-1">
+        <nav aria-label="Catalog sections" className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
+          {navItems.map(({ href, label, icon: Icon, exact, badge }) => {
+            const active = isActive(href, exact);
+            return (
               <Link
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-11 items-center gap-3 rounded-full px-3.5 text-[14px] font-medium text-[#D4E6DA] transition-colors hover:bg-admin-forest-soft hover:text-white"
+                key={href}
+                href={href}
+                onClick={onClose}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "group flex h-10 items-center justify-between gap-2.5 rounded-lg px-3 font-display text-[15px] font-semibold tracking-[0.01em] transition-colors duration-[120ms] ease-tromagnon focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime",
+                  active
+                    ? "bg-admin-lime text-admin-on-lime"
+                    : "text-[#ECEEE9] hover:bg-admin-forest-soft hover:text-white"
+                )}
               >
-                <ExternalLink size={17} strokeWidth={1.75} aria-hidden="true" className="text-[#9DC0A9]" />
-                <span>Public Website</span>
+                <span className="flex min-w-0 items-center gap-2.5">
+                  <Icon
+                    size={17}
+                    strokeWidth={active ? 2.1 : 1.75}
+                    aria-hidden="true"
+                    className={cn(
+                      "shrink-0",
+                      active ? "text-admin-on-lime" : "text-[#9CCBC1] group-hover:text-white"
+                    )}
+                  />
+                  <span className="truncate">{label}</span>
+                </span>
+                {typeof badge === "number" && (
+                  <span
+                    className={cn(
+                      "flex h-5 min-w-[22px] shrink-0 items-center justify-center rounded-md px-1.5 font-admin text-[11.5px] font-semibold tabular-nums",
+                      active
+                        ? "bg-admin-forest text-[#F1F2EE]"
+                        : "bg-admin-forest-soft text-[#ECEEE9]"
+                    )}
+                  >
+                    {badge}
+                  </span>
+                )}
               </Link>
-            </div>
-          </div>
-        </div>
+            );
+          })}
+        </nav>
 
-        {/* Separated destructive sign-out footer */}
-        <div className="mt-auto border-t border-white/10 p-3.5">
+        {/* Clean footer links */}
+        <div className="mt-auto space-y-1 border-t border-white/10 p-3">
+          <Link
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-10 items-center gap-2.5 rounded-lg px-3 font-display text-[14.5px] font-semibold text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-admin-forest-soft hover:text-white"
+          >
+            <ExternalLink size={16} strokeWidth={1.75} aria-hidden="true" className="text-[#9CCBC1]" />
+            <span>View site</span>
+          </Link>
+
           <button
             type="button"
             onClick={onLogout}
-            className="flex h-11 w-full items-center gap-3 rounded-full px-3.5 text-[14px] font-medium text-[#D4E6DA] transition-colors hover:bg-red-500/15 hover:text-[#FCA5A5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime"
+            className="flex h-10 w-full items-center gap-2.5 rounded-lg px-3 font-display text-[14.5px] font-semibold text-[#D6E6DF] transition-colors duration-[120ms] hover:bg-[#A3261F]/25 hover:text-[#F0A29B] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-lime"
           >
-            <LogOut size={17} strokeWidth={1.75} aria-hidden="true" />
+            <LogOut size={16} strokeWidth={1.75} aria-hidden="true" />
             <span>Sign out</span>
           </button>
         </div>

@@ -3,34 +3,50 @@
 @tailwind utilities;
 
 :root {
-  /* Satelit Light (DESIGN.md) */
+  /* Tromagnon Records Design System v1.1 (DESIGN.md) */
   --bg-primary: #F1F2EE;
   --bg-surface: #E4E6E0;
   --bg-elevated: #D8DBD3;
   --border-subtle: #CFD3CA;
+  --border-strong: #767D75;
 
   --text-primary: #111111;
   --text-secondary: #565B58;
+  --text-disabled: #8B908C;
 
   --accent-primary: #31605A;
   --accent-on-primary: #F1F2EE;
   --accent-hover: #224540;
+  --accent-dark-primary: #7DB4A9;
+  --accent-dark-hover: #9CCBC1;
+  --accent-dark-on-primary: #0B1A17;
 
-  --font-primary: var(--font-archivo-narrow), "Archivo Narrow", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-admin: var(--font-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --status-error: #A3261F;
+  --status-error-bg: #F3DEDB;
+  --status-warning: #7A4F00;
+  --status-warning-bg: #F4E8CC;
+  --status-success: #2B6B3A;
+  --status-success-bg: #DCEBDD;
+  --status-info: #2F5E8C;
+  --status-info-bg: #DCE6F0;
+
+  --font-primary: var(--font-archivo-narrow), "Archivo Narrow", "Arial Narrow", Arial, sans-serif;
+  --font-secondary: var(--font-archivo), "Archivo", "Helvetica Neue", Arial, system-ui, sans-serif;
   --tracking-display: -0.02em;
-  --tracking-label: 0.08em;
+  --tracking-label: 0.06em;
 
-  /* Admin Bento Theme Tokens */
-  --admin-canvas: #EEF2EA;
-  --admin-surface: #FFFFFF;
-  --admin-surface-muted: #F4F7F1;
-  --admin-sage: #D4DFC5;
-  --admin-border: #DCE3D6;
-  --admin-forest: #0D3B1E;
-  --admin-lime: #B8F23C;
-  --admin-ink: #112217;
-  --admin-sub: #526358;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-pop: 0 4px 16px rgb(17 17 17 / 0.12);
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --duration-slow: 320ms;
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html {
+  scroll-padding-top: 5rem;
 }
 
 body {
@@ -55,9 +71,11 @@ input[type="file"] {
   cursor: not-allowed;
 }
 
+/* WCAG 2.4.13 AAA Focus Appearance (9.37:1 on #F1F2EE) */
 :focus-visible {
-  outline: 2px solid var(--accent-primary);
+  outline: 2px solid var(--accent-hover);
   outline-offset: 2px;
+  border-radius: var(--radius-sm);
 }
 
 ::-webkit-scrollbar {
@@ -66,10 +84,10 @@ input[type="file"] {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--bg-elevated);
+  background: var(--border-strong);
 }
 
 @media (prefers-reduced-motion: reduce) {
