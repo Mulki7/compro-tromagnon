@@ -10,6 +10,8 @@ import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formSectionClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -59,7 +61,7 @@ export default function CreateReleasePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!artistId) {
-      setError("Select an artist");
+      setError("Please select an artist.");
       return;
     }
     setSaving(true);
@@ -98,24 +100,25 @@ export default function CreateReleasePage() {
         onMenuClick={onMenuClick}
         actions={
           <Link href="/admin/releases" className={btnSecondary}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={15} aria-hidden="true" />
             Back
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-6 p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
         {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className={formErrorClass}>
             {error}
           </div>
         )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
+        <div className={formSectionClass}>
           <ImageUpload label="Artwork" value={artwork} onChange={setArtwork} />
 
           <div>
-            <label className={labelClass}>Artist</label>
+            <label htmlFor="release-artist" className={labelClass}>Artist</label>
             <select
+              id="release-artist"
               required
               className={inputClass}
               value={artistId}
@@ -132,8 +135,9 @@ export default function CreateReleasePage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Title</label>
+              <label htmlFor="release-title" className={labelClass}>Title</label>
               <input
+                id="release-title"
                 required
                 className={inputClass}
                 value={title}
@@ -144,8 +148,9 @@ export default function CreateReleasePage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Slug</label>
+              <label htmlFor="release-slug" className={labelClass}>Slug</label>
               <input
+                id="release-slug"
                 required
                 className={inputClass}
                 value={slug}
@@ -159,8 +164,9 @@ export default function CreateReleasePage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Release Year</label>
+              <label htmlFor="release-year" className={labelClass}>Release Year</label>
               <input
+                id="release-year"
                 type="number"
                 required
                 min={1900}
@@ -171,8 +177,9 @@ export default function CreateReleasePage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Status</label>
+              <label htmlFor="release-status" className={labelClass}>Status</label>
               <select
+                id="release-status"
                 className={inputClass}
                 value={status}
                 onChange={(e) =>
@@ -185,29 +192,34 @@ export default function CreateReleasePage() {
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Format</label>
+          <fieldset>
+            <legend className={labelClass}>Format</legend>
             <div className="flex flex-wrap gap-2">
-              {FORMATS.map((f) => (
-                <button
-                  key={f}
-                  type="button"
-                  onClick={() => toggleFormat(f)}
-                  className={`border px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide ${
-                    formats.includes(f)
-                      ? "border-black bg-black text-white"
-                      : "border-neutral-300 text-neutral-600 hover:border-black"
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
+              {FORMATS.map((f) => {
+                const selected = formats.includes(f);
+                return (
+                  <button
+                    key={f}
+                    type="button"
+                    aria-pressed={selected}
+                    onClick={() => toggleFormat(f)}
+                    className={`rounded-lg border px-3.5 py-1.5 text-[13px] font-semibold uppercase tracking-[0.06em] transition ${
+                      selected
+                        ? "border-satelit-accent bg-satelit-accent text-satelit-on-accent"
+                        : "border-satelit-border bg-satelit-bg text-satelit-muted hover:border-satelit-accent hover:text-satelit-ink"
+                    }`}
+                  >
+                    {f}
+                  </button>
+                );
+              })}
             </div>
-          </div>
+          </fieldset>
 
           <div>
-            <label className={labelClass}>Description</label>
+            <label htmlFor="release-description" className={labelClass}>Description</label>
             <textarea
+              id="release-description"
               required
               rows={5}
               className={inputClass}
@@ -217,35 +229,40 @@ export default function CreateReleasePage() {
           </div>
         </div>
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
-          <p className={labelClass}>Streaming Links</p>
-          {(
-            [
-              ["Spotify", spotify, setSpotify],
-              ["Apple Music", apple, setApple],
-              ["Bandcamp", bandcamp, setBandcamp],
-              ["YouTube Music", youtube, setYoutube],
-            ] as const
-          ).map(([label, value, setter]) => (
-            <div key={label}>
-              <label className={labelClass}>{label}</label>
-              <input
-                type="url"
-                className={inputClass}
-                value={value}
-                onChange={(e) => setter(e.target.value)}
-                placeholder="https://"
-              />
-            </div>
-          ))}
+        <div className={formSectionClass}>
+          <h2 className="text-[15px] font-bold tracking-[-0.01em] text-satelit-ink">
+            Streaming Links
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {(
+              [
+                ["stream-spotify", "Spotify", spotify, setSpotify],
+                ["stream-apple", "Apple Music", apple, setApple],
+                ["stream-bandcamp", "Bandcamp", bandcamp, setBandcamp],
+                ["stream-youtube", "YouTube Music", youtube, setYoutube],
+              ] as const
+            ).map(([fieldId, label, value, setter]) => (
+              <div key={fieldId}>
+                <label htmlFor={fieldId} className={labelClass}>{label}</label>
+                <input
+                  id={fieldId}
+                  type="url"
+                  className={inputClass}
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  placeholder="https://"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2.5">
           <Link href="/admin/releases" className={btnSecondary}>
             Cancel
           </Link>
           <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Create Release
           </button>
         </div>

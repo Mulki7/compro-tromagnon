@@ -11,34 +11,33 @@ export default function AdminDashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { loading, authenticated, logout } = useAuth({ requireAuth: true });
+  const { user, loading, authenticated, logout } = useAuth({ requireAuth: true });
   const [mobileOpen, setMobileOpen] = useState(false);
 
   if (loading || !authenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F5F5F7]">
-        <div className="flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-neutral-500">
-          <Loader2 size={18} className="animate-spin" />
-          Verifying session…
-        </div>
+      <div className="flex min-h-screen items-center justify-center bg-satelit-bg text-satelit-muted">
+        <span className="flex items-center gap-2.5 text-[14px] font-medium">
+          <Loader2 size={16} className="animate-spin text-satelit-accent" />
+          Verifying session
+        </span>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-[#F5F5F7]">
+    <div className="flex min-h-screen bg-satelit-bg text-satelit-ink lg:h-screen lg:overflow-hidden">
       <AdminSidebar
+        userEmail={user?.email}
         onLogout={logout}
         mobileOpen={mobileOpen}
         onClose={() => setMobileOpen(false)}
       />
-      <div className="flex min-h-screen min-w-0 flex-1 flex-col">
-        <AdminShellContext.Provider
-          value={{ onMenuClick: () => setMobileOpen(true) }}
-        >
+      <main className="flex min-w-0 flex-1 flex-col lg:h-screen lg:overflow-y-auto">
+        <AdminShellContext.Provider value={{ onMenuClick: () => setMobileOpen(true) }}>
           {children}
         </AdminShellContext.Provider>
-      </div>
+      </main>
     </div>
   );
 }

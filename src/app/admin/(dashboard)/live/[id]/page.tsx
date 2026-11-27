@@ -9,6 +9,9 @@ import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formLoadingClass,
+  formSectionClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -93,9 +96,9 @@ export default function EditLivePage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-24 text-neutral-500">
-        <Loader2 size={18} className="animate-spin" />
-        <span className="font-mono text-xs uppercase">Loading…</span>
+      <div className={formLoadingClass}>
+        <Loader2 size={18} className="animate-spin text-satelit-accent" aria-hidden="true" />
+        <span>Loading event…</span>
       </div>
     );
   }
@@ -104,26 +107,27 @@ export default function EditLivePage() {
     <div>
       <AdminHeader
         title="Edit Live Event"
-        subtitle={`${venue || "Event"} — ${city}`}
+        subtitle={[venue || "Event", city].filter(Boolean).join(" — ")}
         onMenuClick={onMenuClick}
         actions={
           <Link href="/admin/live" className={btnSecondary}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={15} aria-hidden="true" />
             Back
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6 p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
         {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className={formErrorClass}>
             {error}
           </div>
         )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
+        <div className={formSectionClass}>
           <div>
-            <label className={labelClass}>Artist</label>
+            <label htmlFor="live-artist" className={labelClass}>Artist</label>
             <select
+              id="live-artist"
               className={inputClass}
               value={artistId}
               onChange={(e) => setArtistId(e.target.value)}
@@ -138,8 +142,9 @@ export default function EditLivePage() {
           </div>
 
           <div>
-            <label className={labelClass}>Event Date</label>
+            <label htmlFor="live-date" className={labelClass}>Event Date</label>
             <input
+              id="live-date"
               type="date"
               required
               className={inputClass}
@@ -150,8 +155,9 @@ export default function EditLivePage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>City</label>
+              <label htmlFor="live-city" className={labelClass}>City</label>
               <input
+                id="live-city"
                 required
                 className={inputClass}
                 value={city}
@@ -159,8 +165,9 @@ export default function EditLivePage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Country</label>
+              <label htmlFor="live-country" className={labelClass}>Country</label>
               <input
+                id="live-country"
                 required
                 className={inputClass}
                 value={country}
@@ -170,8 +177,9 @@ export default function EditLivePage() {
           </div>
 
           <div>
-            <label className={labelClass}>Venue</label>
+            <label htmlFor="live-venue" className={labelClass}>Venue</label>
             <input
+              id="live-venue"
               required
               className={inputClass}
               value={venue}
@@ -180,18 +188,21 @@ export default function EditLivePage() {
           </div>
 
           <div>
-            <label className={labelClass}>Ticket URL</label>
+            <label htmlFor="live-ticket" className={labelClass}>Ticket URL</label>
             <input
+              id="live-ticket"
               type="url"
               className={inputClass}
               value={ticketUrl}
               onChange={(e) => setTicketUrl(e.target.value)}
+              placeholder="https://"
             />
           </div>
 
           <div>
-            <label className={labelClass}>Status</label>
+            <label htmlFor="live-status" className={labelClass}>Status</label>
             <select
+              id="live-status"
               className={inputClass}
               value={status}
               onChange={(e) =>
@@ -205,12 +216,12 @@ export default function EditLivePage() {
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2.5">
           <Link href="/admin/live" className={btnSecondary}>
             Cancel
           </Link>
           <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Save Changes
           </button>
         </div>

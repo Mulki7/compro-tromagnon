@@ -1,15 +1,15 @@
 import { cn } from "@/lib/utils";
 
-const STYLES: Record<string, string> = {
-  active: "bg-black text-white",
-  inactive: "bg-neutral-200 text-neutral-600",
-  published: "bg-black text-white",
-  draft: "bg-neutral-200 text-neutral-600",
-  upcoming: "bg-black text-white",
-  past: "bg-neutral-200 text-neutral-600",
-  cancelled: "bg-red-100 text-red-700",
-  true: "bg-black text-white",
-  false: "bg-neutral-200 text-neutral-600",
+const DOT: Record<string, string> = {
+  active: "bg-satelit-accent",
+  published: "bg-satelit-accent",
+  upcoming: "bg-satelit-accent",
+  true: "bg-satelit-accent",
+  inactive: "bg-satelit-muted/50",
+  draft: "bg-satelit-muted/50",
+  past: "bg-satelit-muted/50",
+  false: "bg-satelit-muted/50",
+  cancelled: "bg-satelit-danger",
 };
 
 interface StatusBadgeProps {
@@ -19,17 +19,19 @@ interface StatusBadgeProps {
 
 export default function StatusBadge({ status, className }: StatusBadgeProps) {
   const key = String(status).toLowerCase();
-  const label =
-    key === "true" ? "Active" : key === "false" ? "Inactive" : status;
+  const label = key === "true" ? "Active" : key === "false" ? "Inactive" : status;
 
   return (
     <span
       className={cn(
-        "inline-block px-2 py-0.5 font-mono text-[10px] uppercase tracking-wider",
-        STYLES[key] || "bg-neutral-100 text-neutral-700",
+        "inline-flex items-center gap-2 text-[14px] font-medium capitalize text-satelit-ink",
         className
       )}
     >
+      <span
+        aria-hidden="true"
+        className={cn("h-2 w-2 rounded-full", DOT[key] || "bg-satelit-muted/50")}
+      />
       {label}
     </span>
   );

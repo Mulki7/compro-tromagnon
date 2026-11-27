@@ -1,3 +1,72 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Satelit Light (DESIGN.md) */
+  --bg-primary: #F1F2EE;
+  --bg-surface: #E4E6E0;
+  --bg-elevated: #D8DBD3;
+  --border-subtle: #CFD3CA;
+
+  --text-primary: #111111;
+  --text-secondary: #565B58;
+
+  --accent-primary: #31605A;
+  --accent-on-primary: #F1F2EE;
+  --accent-hover: #224540;
+
+  --font-primary: var(--font-archivo-narrow), "Archivo Narrow", -apple-system, BlinkMacSystemFont, sans-serif;
+  --tracking-display: -0.02em;
+  --tracking-label: 0.08em;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-primary);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a[href],
+button,
+[role="tab"],
+select,
+summary,
+input[type="file"] {
+  cursor: pointer;
+}
+
+:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 2px;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-subtle);
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-elevated);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

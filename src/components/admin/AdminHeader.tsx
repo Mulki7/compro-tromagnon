@@ -16,26 +16,24 @@ export default function AdminHeader({
   actions,
 }: AdminHeaderProps) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-200 bg-white px-4 py-4 sm:px-6">
+    <header className="flex shrink-0 flex-wrap items-end justify-between gap-4 px-5 pb-5 pt-6 sm:px-7">
       <div className="flex items-center gap-3">
         {onMenuClick && (
           <button
             type="button"
             onClick={onMenuClick}
-            className="border border-neutral-200 p-2 text-black lg:hidden"
-            aria-label="Open menu"
+            aria-label="Open navigation menu"
+            className="flex h-11 w-11 items-center justify-center rounded-lg border border-satelit-border text-satelit-ink transition hover:bg-satelit-surface lg:hidden"
           >
             <Menu size={18} />
           </button>
         )}
         <div>
-          <h1 className="text-xl font-semibold tracking-tight text-black sm:text-2xl">
+          <h1 className="text-[32px] font-bold leading-none tracking-[-0.02em] text-satelit-ink">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-neutral-500">
-              {subtitle}
-            </p>
+            <p className="mt-2 text-[14px] text-satelit-muted">{subtitle}</p>
           )}
         </div>
       </div>

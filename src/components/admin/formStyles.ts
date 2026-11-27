@@ -1,20 +1,32 @@
 export const inputClass =
-  "w-full border border-neutral-200 bg-white px-3 py-2.5 text-sm font-mono focus:border-black focus:outline-none";
+  "w-full rounded-lg border border-satelit-border bg-satelit-bg px-3.5 py-2.5 text-[15px] text-satelit-ink placeholder:text-satelit-muted/70 transition focus:border-satelit-accent focus:outline-none focus:ring-2 focus:ring-satelit-accent/20";
 
 export const labelClass =
-  "mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-wider text-neutral-600";
+  "mb-1.5 block text-[13px] font-semibold uppercase tracking-[0.07em] text-satelit-muted";
+
+export const formSectionClass =
+  "space-y-4 rounded-xl border border-satelit-border bg-satelit-surface/45 p-5 sm:p-6";
+
+export const formErrorClass =
+  "rounded-xl border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-3 text-[14px] font-medium text-satelit-danger";
+
+export const formLoadingClass =
+  "flex items-center justify-center gap-2.5 py-24 text-[14px] font-medium text-satelit-muted";
 
 export const btnPrimary =
-  "inline-flex items-center justify-center gap-2 bg-black px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-white transition hover:bg-neutral-800 disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-satelit-accent px-4 py-2.5 text-[14px] font-semibold text-satelit-on-accent transition hover:bg-satelit-accent-hover disabled:opacity-50";
+
+export const btnPrimarySm =
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-satelit-accent px-3.5 text-[14px] font-semibold text-satelit-on-accent transition hover:bg-satelit-accent-hover";
 
 export const btnSecondary =
-  "inline-flex items-center justify-center gap-2 border border-neutral-300 bg-white px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-neutral-700 transition hover:border-black hover:text-black disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-lg border border-satelit-border bg-transparent px-4 py-2.5 text-[14px] font-semibold text-satelit-ink transition hover:bg-satelit-surface disabled:opacity-50";
 
 export const btnDanger =
-  "inline-flex items-center justify-center gap-2 border border-red-200 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide text-red-600 transition hover:bg-red-50";
+  "inline-flex items-center justify-center gap-1.5 rounded-lg border border-satelit-danger/40 bg-transparent px-3 py-2 text-[13px] font-semibold text-satelit-danger transition hover:bg-satelit-danger/10";
 
 export const btnEdit =
-  "inline-flex items-center justify-center gap-2 border border-neutral-200 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide text-neutral-700 transition hover:border-black hover:text-black";
+  "inline-flex items-center justify-center gap-1.5 rounded-lg bg-satelit-surface px-3 py-2 text-[13px] font-semibold text-satelit-ink transition hover:bg-satelit-elevated";
 
 export function parseStringArray(value: string | string[] | null | undefined): string[] {
   if (!value) return [];

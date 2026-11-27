@@ -10,6 +10,9 @@ import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formLoadingClass,
+  formSectionClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -113,9 +116,9 @@ export default function EditArtistPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-24 text-neutral-500">
-        <Loader2 size={18} className="animate-spin" />
-        <span className="font-mono text-xs uppercase">Loading…</span>
+      <div className={formLoadingClass}>
+        <Loader2 size={18} className="animate-spin text-satelit-accent" aria-hidden="true" />
+        <span>Loading artist…</span>
       </div>
     );
   }
@@ -128,19 +131,19 @@ export default function EditArtistPage() {
         onMenuClick={onMenuClick}
         actions={
           <Link href="/admin/artists" className={btnSecondary}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={15} aria-hidden="true" />
             Back
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-6 p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
         {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className={formErrorClass}>
             {error}
           </div>
         )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
+        <div className={formSectionClass}>
           <ImageUpload
             label="Photo"
             value={photo}
@@ -150,8 +153,9 @@ export default function EditArtistPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Name</label>
+              <label htmlFor="artist-name" className={labelClass}>Name</label>
               <input
+                id="artist-name"
                 required
                 className={inputClass}
                 value={name}
@@ -159,8 +163,9 @@ export default function EditArtistPage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Slug</label>
+              <label htmlFor="artist-slug" className={labelClass}>Slug</label>
               <input
+                id="artist-slug"
                 required
                 className={inputClass}
                 value={slug}
@@ -170,8 +175,9 @@ export default function EditArtistPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Bio</label>
+            <label htmlFor="artist-bio" className={labelClass}>Bio</label>
             <textarea
+              id="artist-bio"
               required
               rows={5}
               className={inputClass}
@@ -181,9 +187,10 @@ export default function EditArtistPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Genre</label>
+            <label htmlFor="artist-genre" className={labelClass}>Genre</label>
             <div className="flex gap-2">
               <input
+                id="artist-genre"
                 className={inputClass}
                 value={genreInput}
                 placeholder="Type genre and press Enter"
@@ -200,18 +207,20 @@ export default function EditArtistPage() {
               </button>
             </div>
             {genres.length > 0 && (
-              <div className="mt-2 flex flex-wrap gap-2">
+              <div className="mt-2.5 flex flex-wrap gap-2">
                 {genres.map((g) => (
                   <span
                     key={g}
-                    className="inline-flex items-center gap-1 border border-neutral-200 bg-neutral-50 px-2 py-1 font-mono text-[10px] uppercase"
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-satelit-border bg-satelit-bg px-2.5 py-1 text-[13px] font-semibold text-satelit-ink"
                   >
                     {g}
                     <button
                       type="button"
                       onClick={() => setGenres(genres.filter((x) => x !== g))}
+                      className="rounded p-0.5 text-satelit-muted transition hover:text-satelit-danger"
+                      aria-label={`Remove ${g}`}
                     >
-                      <X size={12} />
+                      <X size={13} aria-hidden="true" />
                     </button>
                   </span>
                 ))}
@@ -220,8 +229,9 @@ export default function EditArtistPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Status</label>
+            <label htmlFor="artist-status" className={labelClass}>Status</label>
             <select
+              id="artist-status"
               className={inputClass}
               value={status}
               onChange={(e) =>
@@ -234,36 +244,41 @@ export default function EditArtistPage() {
           </div>
         </div>
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
-          <p className={labelClass}>Social Links</p>
-          {(
-            [
-              ["Instagram", instagram, setInstagram],
-              ["Spotify", spotify, setSpotify],
-              ["YouTube", youtube, setYoutube],
-              ["Twitter / X", twitter, setTwitter],
-              ["Bandcamp", bandcamp, setBandcamp],
-            ] as const
-          ).map(([label, value, setter]) => (
-            <div key={label}>
-              <label className={labelClass}>{label}</label>
-              <input
-                type="url"
-                className={inputClass}
-                value={value}
-                onChange={(e) => setter(e.target.value)}
-                placeholder="https://"
-              />
-            </div>
-          ))}
+        <div className={formSectionClass}>
+          <h2 className="text-[15px] font-bold tracking-[-0.01em] text-satelit-ink">
+            Social Links
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {(
+              [
+                ["social-instagram", "Instagram", instagram, setInstagram],
+                ["social-spotify", "Spotify", spotify, setSpotify],
+                ["social-youtube", "YouTube", youtube, setYoutube],
+                ["social-twitter", "Twitter / X", twitter, setTwitter],
+                ["social-bandcamp", "Bandcamp", bandcamp, setBandcamp],
+              ] as const
+            ).map(([fieldId, label, value, setter]) => (
+              <div key={fieldId}>
+                <label htmlFor={fieldId} className={labelClass}>{label}</label>
+                <input
+                  id={fieldId}
+                  type="url"
+                  className={inputClass}
+                  value={value}
+                  onChange={(e) => setter(e.target.value)}
+                  placeholder="https://"
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2.5">
           <Link href="/admin/artists" className={btnSecondary}>
             Cancel
           </Link>
           <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Save Changes
           </button>
         </div>

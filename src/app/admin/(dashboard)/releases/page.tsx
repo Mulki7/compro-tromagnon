@@ -1,29 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge from "@/components/admin/StatusBadge";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { FilterTabs, RowActions, SearchField, Thumb } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
-import {
-  btnDanger,
-  btnEdit,
-  btnPrimary,
-  getErrorMessage,
-  parseStringArray,
-} from "@/components/admin/formStyles";
+import { btnPrimarySm, getErrorMessage, parseStringArray } from "@/components/admin/formStyles";
 import { deleteRelease, getAdminReleases } from "@/lib/api/admin/releases";
 import { Release } from "@/types/models";
-import { getMediaUrl } from "@/lib/utils";
+
+type Filter = "all" | "published" | "draft";
 
 export default function AdminReleasesPage() {
   const { onMenuClick } = useAdminShell();
   const [items, setItems] = useState<Release[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [query, setQuery] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -59,106 +56,126 @@ export default function AdminReleasesPage() {
     }
   };
 
+  const published = items.filter((r) => r.status === "published").length;
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((r) => {
+      if (filter !== "all" && r.status !== filter) return false;
+      if (!q) return true;
+      return (
+        r.title.toLowerCase().includes(q) ||
+        (r.artist?.name || "").toLowerCase().includes(q) ||
+        String(r.release_year).includes(q)
+      );
+    });
+  }, [items, filter, query]);
+
   return (
-    <div>
+    <div className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
       <AdminHeader
         title="Releases"
-        subtitle="Catalog management"
+        subtitle="Catalog and physical pressings"
         onMenuClick={onMenuClick}
         actions={
-          <Link href="/admin/releases/create" className={btnPrimary}>
-            <Plus size={14} />
-            Add Release
+          <Link href="/admin/releases/create" className={btnPrimarySm}>
+            <Plus size={15} aria-hidden="true" />
+            Add release
           </Link>
         }
       />
-      <div className="space-y-4 p-4 sm:p-6">
-        {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-        <AdminTable
-          loading={loading}
-          data={items}
-          rowKey={(r) => r.id}
-          emptyMessage="No releases yet. Add your first catalog entry."
-          columns={[
-            {
-              key: "art",
-              header: "Artwork",
-              render: (r) => (
-                <div className="relative h-12 w-12 overflow-hidden bg-neutral-100">
-                  <Image
-                    src={getMediaUrl(r.artwork_url)}
-                    alt={r.title}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                </div>
-              ),
-            },
-            {
-              key: "title",
-              header: "Title",
-              render: (r) => (
-                <div>
-                  <p className="font-medium text-black">{r.title}</p>
-                  <p className="text-xs text-neutral-500">
-                    {r.artist?.name || "—"}
-                  </p>
-                </div>
-              ),
-            },
-            {
-              key: "year",
-              header: "Year",
-              render: (r) => (
-                <span className="font-mono text-xs">{r.release_year}</span>
-              ),
-            },
-            {
-              key: "format",
-              header: "Format",
-              render: (r) => (
-                <span className="font-mono text-[10px] uppercase text-neutral-600">
-                  {parseStringArray(r.format).join(" · ") || "—"}
-                </span>
-              ),
-            },
-            {
-              key: "status",
-              header: "Status",
-              render: (r) => <StatusBadge status={r.status} />,
-            },
-            {
-              key: "actions",
-              header: "Actions",
-              render: (r) => (
-                <div className="flex gap-2">
-                  <Link href={`/admin/releases/${r.id}`} className={btnEdit}>
-                    <Pencil size={12} />
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    className={btnDanger}
-                    onClick={() => setDeleteId(r.id)}
-                  >
-                    <Trash2 size={12} />
-                    Delete
-                  </button>
-                </div>
-              ),
-            },
+
+      {error && (
+        <div role="alert" className="mx-5 mb-3 rounded-lg border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-2.5 text-[14px] text-satelit-danger sm:mx-7">
+          {error}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-satelit-border px-5 sm:px-7">
+        <FilterTabs
+          value={filter}
+          onChange={setFilter}
+          options={[
+            { key: "all", label: "All", count: items.length },
+            { key: "published", label: "Published", count: published },
+            { key: "draft", label: "Drafts", count: items.length - published },
           ]}
         />
+        <div className="pb-2.5">
+          <SearchField value={query} onChange={setQuery} placeholder="Search title, artist, year" />
+        </div>
       </div>
+
+      <AdminTable
+        loading={loading}
+        data={rows}
+        rowKey={(r) => r.id}
+        emptyMessage={items.length === 0 ? "No releases yet." : "No releases match."}
+        emptyAction={
+          items.length === 0 && (
+            <Link href="/admin/releases/create" className={btnPrimarySm}>
+              <Plus size={15} aria-hidden="true" />
+              Add the first release
+            </Link>
+          )
+        }
+        columns={[
+          {
+            key: "title",
+            header: "Release",
+            sortValue: (r) => r.title,
+            render: (r) => (
+              <div className="flex items-center gap-3">
+                <Thumb src={r.artwork_url} className="h-11 w-11 rounded-md" />
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-semibold">{r.title}</p>
+                  <p className="truncate text-[13px] text-satelit-muted">
+                    {r.artist?.name || "Tromagnon"}
+                  </p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: "year",
+            header: "Year",
+            sortValue: (r) => r.release_year || 0,
+            render: (r) => <span className="tabular-nums">{r.release_year}</span>,
+          },
+          {
+            key: "format",
+            header: "Format",
+            render: (r) => (
+              <span className="text-satelit-muted">
+                {parseStringArray(r.format).join(" · ") || "-"}
+              </span>
+            ),
+          },
+          {
+            key: "status",
+            header: "Status",
+            sortValue: (r) => r.status,
+            render: (r) => <StatusBadge status={r.status} />,
+          },
+          {
+            key: "actions",
+            header: "",
+            className: "w-24 pr-0 text-right",
+            render: (r) => (
+              <RowActions
+                editHref={`/admin/releases/${r.id}`}
+                onDelete={() => setDeleteId(r.id)}
+                label={r.title}
+              />
+            ),
+          },
+        ]}
+      />
+
       <ConfirmDialog
         open={!!deleteId}
         title="Delete release?"
-        message="This will remove the release from the catalog."
+        message="This removes the release from the catalog."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}

@@ -10,6 +10,9 @@ import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formLoadingClass,
+  formSectionClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -76,11 +79,15 @@ export default function EditNewsPage() {
   }, [id]);
 
   const submit = async (nextStatus: "draft" | "published") => {
+    if (!title.trim() || !content.trim()) {
+      setError("Title and content are required before saving.");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
       const res = await updateNews(id, {
-        title,
+        title: title.trim(),
         slug: slug || slugify(title),
         content,
         author,
@@ -100,9 +107,9 @@ export default function EditNewsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-24 text-neutral-500">
-        <Loader2 size={18} className="animate-spin" />
-        <span className="font-mono text-xs uppercase">Loading…</span>
+      <div className={formLoadingClass}>
+        <Loader2 size={18} className="animate-spin text-satelit-accent" aria-hidden="true" />
+        <span>Loading article…</span>
       </div>
     );
   }
@@ -115,7 +122,7 @@ export default function EditNewsPage() {
         onMenuClick={onMenuClick}
         actions={
           <Link href="/admin/news" className={btnSecondary}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={15} aria-hidden="true" />
             Back
           </Link>
         }
@@ -125,15 +132,15 @@ export default function EditNewsPage() {
           e.preventDefault();
           submit(status);
         }}
-        className="mx-auto max-w-3xl space-y-6 p-4 sm:p-6"
+        className="mx-auto max-w-3xl space-y-5 px-5 pb-12 pt-5 sm:px-7"
       >
         {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className={formErrorClass}>
             {error}
           </div>
         )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
+        <div className={formSectionClass}>
           <ImageUpload
             label="Cover Image"
             value={cover}
@@ -143,8 +150,9 @@ export default function EditNewsPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Title</label>
+              <label htmlFor="news-title" className={labelClass}>Title</label>
               <input
+                id="news-title"
                 required
                 className={inputClass}
                 value={title}
@@ -152,8 +160,9 @@ export default function EditNewsPage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Slug</label>
+              <label htmlFor="news-slug" className={labelClass}>Slug</label>
               <input
+                id="news-slug"
                 required
                 className={inputClass}
                 value={slug}
@@ -163,8 +172,9 @@ export default function EditNewsPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Author</label>
+            <label htmlFor="news-author" className={labelClass}>Author</label>
             <input
+              id="news-author"
               className={inputClass}
               value={author}
               onChange={(e) => setAuthor(e.target.value)}
@@ -172,10 +182,11 @@ export default function EditNewsPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Content</label>
+            <label htmlFor="news-content" className={labelClass}>Content</label>
             <textarea
+              id="news-content"
               required
-              rows={12}
+              rows={11}
               className={inputClass}
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -184,8 +195,9 @@ export default function EditNewsPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Related Artist</label>
+              <label htmlFor="news-artist" className={labelClass}>Related Artist</label>
               <select
+                id="news-artist"
                 className={inputClass}
                 value={relatedArtistId}
                 onChange={(e) => setRelatedArtistId(e.target.value)}
@@ -199,8 +211,9 @@ export default function EditNewsPage() {
               </select>
             </div>
             <div>
-              <label className={labelClass}>Related Release</label>
+              <label htmlFor="news-release" className={labelClass}>Related Release</label>
               <select
+                id="news-release"
                 className={inputClass}
                 value={relatedReleaseId}
                 onChange={(e) => setRelatedReleaseId(e.target.value)}
@@ -216,8 +229,9 @@ export default function EditNewsPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Status</label>
+            <label htmlFor="news-status" className={labelClass}>Status</label>
             <select
+              id="news-status"
               className={inputClass}
               value={status}
               onChange={(e) =>
@@ -230,7 +244,7 @@ export default function EditNewsPage() {
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap justify-end gap-2.5">
           <Link href="/admin/news" className={btnSecondary}>
             Cancel
           </Link>
@@ -240,7 +254,7 @@ export default function EditNewsPage() {
             className={btnSecondary}
             onClick={() => submit("draft")}
           >
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Save as Draft
           </button>
           <button
@@ -249,7 +263,7 @@ export default function EditNewsPage() {
             className={btnPrimary}
             onClick={() => submit("published")}
           >
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Publish
           </button>
         </div>

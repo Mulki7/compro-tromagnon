@@ -4,9 +4,10 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 import { useAuth } from "@/hooks/useAuth";
+import { btnPrimary, inputClass, labelClass } from "@/components/admin/formStyles";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -19,16 +20,13 @@ export default function AdminLoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && authenticated) {
-      router.replace("/admin");
-    }
+    if (!authLoading && authenticated) router.replace("/admin");
   }, [authLoading, authenticated, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
     try {
       const res = await apiClient.post("/admin/login", { email, password });
       if (res.data?.success && res.data?.data?.token) {
@@ -38,12 +36,10 @@ export default function AdminLoginPage() {
         setError(res.data?.message || "Invalid credentials");
       }
     } catch (err: unknown) {
-      const axiosErr = err as {
-        response?: { data?: { message?: string } };
-      };
+      const axiosErr = err as { response?: { data?: { message?: string } } };
       setError(
         axiosErr.response?.data?.message ||
-          "Could not connect to backend server. Make sure the API is running on port 8080."
+          "Could not reach the API. Make sure the backend is running on port 8080."
       );
     } finally {
       setLoading(false);
@@ -52,98 +48,83 @@ export default function AdminLoginPage() {
 
   if (authLoading || authenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#F5F5F7]">
-        <Loader2 size={20} className="animate-spin text-neutral-400" />
+      <div className="flex min-h-screen items-center justify-center bg-satelit-bg">
+        <Loader2 size={20} className="animate-spin text-satelit-accent" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#F5F5F7] px-4 py-12">
-      <div className="w-full max-w-md space-y-6 border border-neutral-200 bg-white p-8 shadow-sm sm:p-10">
-        <div className="flex flex-col items-center text-center">
-          <div className="relative mb-3 h-20 w-20">
+    <div className="flex min-h-screen items-center justify-center bg-satelit-bg px-4 py-12 text-satelit-ink">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 flex items-center gap-3">
+          <span className="relative h-12 w-12 shrink-0">
             <Image
-              src="/assets/logo-tromagnon.png"
-              alt="Tromagnon Logo"
+              src="/assets/logo-tromagnon-nobg.png"
+              alt="Tromagnon Records"
               fill
+              sizes="48px"
               className="object-contain"
             />
+          </span>
+          <div>
+            <h1 className="text-[28px] font-bold leading-none tracking-[-0.02em]">
+              Sign in
+            </h1>
+            <p className="mt-1.5 text-[14px] text-satelit-muted">Tromagnon CMS</p>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-black">
-            CMS Admin Control
-          </h1>
-          <p className="mt-1 font-mono text-xs text-neutral-500">
-            TROMAGNON RECORDS MANAGEMENT SYSTEM
-          </p>
         </div>
 
         {error && (
-          <div className="border border-red-200 bg-red-50 p-3 text-xs font-medium text-red-600">
+          <div
+            role="alert"
+            className="mb-4 rounded-lg border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-2.5 text-[14px] text-satelit-danger"
+          >
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1.5 block font-mono text-xs font-semibold uppercase text-neutral-600">
-              Email Address
+            <label htmlFor="email" className={labelClass}>
+              Email
             </label>
-            <div className="relative flex items-center">
-              <Mail size={16} className="absolute left-3 text-neutral-400" />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full border border-neutral-200 bg-neutral-50 py-2.5 pl-9 pr-3 font-mono text-sm focus:border-black focus:outline-none"
-              />
-            </div>
+            <input
+              id="email"
+              type="email"
+              required
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className={inputClass}
+            />
           </div>
-
           <div>
-            <label className="mb-1.5 block font-mono text-xs font-semibold uppercase text-neutral-600">
+            <label htmlFor="password" className={labelClass}>
               Password
             </label>
-            <div className="relative flex items-center">
-              <Lock size={16} className="absolute left-3 text-neutral-400" />
-              <input
-                type="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full border border-neutral-200 bg-neutral-50 py-2.5 pl-9 pr-3 font-mono text-sm focus:border-black focus:outline-none"
-              />
-            </div>
+            <input
+              id="password"
+              type="password"
+              required
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className={inputClass}
+            />
           </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full items-center justify-center gap-2 bg-black py-3 font-mono text-xs font-bold uppercase text-white transition hover:bg-neutral-800 disabled:opacity-50"
-          >
-            {loading ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                <span>Authenticating...</span>
-              </>
-            ) : (
-              <>
-                <span>Enter CMS Dashboard</span>
-                <ArrowRight size={14} />
-              </>
-            )}
+          <button type="submit" disabled={loading} className={`${btnPrimary} w-full`}>
+            {loading && <Loader2 size={15} className="animate-spin" />}
+            {loading ? "Signing in" : "Sign in"}
           </button>
         </form>
 
-        <div className="pt-2 text-center">
-          <Link
-            href="/"
-            className="font-mono text-xs text-neutral-500 transition hover:text-black"
-          >
-            ← Return to Tromagnon Records Public Site
-          </Link>
-        </div>
+        <Link
+          href="/"
+          className="mt-6 inline-block text-[14px] text-satelit-muted transition hover:text-satelit-accent"
+        >
+          Back to site
+        </Link>
       </div>
     </div>
   );

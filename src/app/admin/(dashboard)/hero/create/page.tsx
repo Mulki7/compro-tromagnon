@@ -10,6 +10,8 @@ import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
   btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formSectionClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -60,19 +62,19 @@ export default function CreateHeroPage() {
         onMenuClick={onMenuClick}
         actions={
           <Link href="/admin/hero" className={btnSecondary}>
-            <ArrowLeft size={14} />
+            <ArrowLeft size={15} aria-hidden="true" />
             Back
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6 p-4 sm:p-6">
+      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
         {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className={formErrorClass}>
             {error}
           </div>
         )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
+        <div className={formSectionClass}>
           <ImageUpload
             label="Banner Image"
             value={bannerImage}
@@ -80,8 +82,9 @@ export default function CreateHeroPage() {
           />
 
           <div>
-            <label className={labelClass}>Title</label>
+            <label htmlFor="hero-title" className={labelClass}>Title</label>
             <input
+              id="hero-title"
               required
               className={inputClass}
               value={title}
@@ -90,8 +93,9 @@ export default function CreateHeroPage() {
           </div>
 
           <div>
-            <label className={labelClass}>Subtitle</label>
+            <label htmlFor="hero-subtitle" className={labelClass}>Subtitle</label>
             <input
+              id="hero-subtitle"
               className={inputClass}
               value={subtitle}
               onChange={(e) => setSubtitle(e.target.value)}
@@ -100,8 +104,9 @@ export default function CreateHeroPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>CTA Text</label>
+              <label htmlFor="hero-cta-text" className={labelClass}>CTA Text</label>
               <input
+                id="hero-cta-text"
                 className={inputClass}
                 value={ctaText}
                 onChange={(e) => setCtaText(e.target.value)}
@@ -109,8 +114,9 @@ export default function CreateHeroPage() {
               />
             </div>
             <div>
-              <label className={labelClass}>CTA Link</label>
+              <label htmlFor="hero-cta-link" className={labelClass}>CTA Link</label>
               <input
+                id="hero-cta-link"
                 className={inputClass}
                 value={ctaLink}
                 onChange={(e) => setCtaLink(e.target.value)}
@@ -121,8 +127,9 @@ export default function CreateHeroPage() {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>Order</label>
+              <label htmlFor="hero-order" className={labelClass}>Order</label>
               <input
+                id="hero-order"
                 type="number"
                 min={0}
                 className={inputClass}
@@ -131,28 +138,30 @@ export default function CreateHeroPage() {
               />
             </div>
             <div>
-              <label className={labelClass}>Active</label>
-              <label className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2.5">
+              <span className={labelClass}>Visibility</span>
+              <label
+                htmlFor="hero-active"
+                className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-satelit-border bg-satelit-bg px-3.5 py-2.5 text-[14px] font-medium text-satelit-ink transition hover:border-satelit-accent"
+              >
                 <input
+                  id="hero-active"
                   type="checkbox"
                   checked={isActive}
                   onChange={(e) => setIsActive(e.target.checked)}
-                  className="h-4 w-4 accent-black"
+                  className="h-4 w-4 rounded border-satelit-border accent-satelit-accent"
                 />
-                <span className="font-mono text-xs uppercase">
-                  Show on homepage
-                </span>
+                <span>Show on homepage</span>
               </label>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2.5">
           <Link href="/admin/hero" className={btnSecondary}>
             Cancel
           </Link>
           <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
             Create Banner
           </button>
         </div>

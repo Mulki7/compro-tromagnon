@@ -1,29 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import Image from "next/image";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Plus, Pencil, Trash2 } from "lucide-react";
+import { Plus } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminTable from "@/components/admin/AdminTable";
 import StatusBadge from "@/components/admin/StatusBadge";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
+import { FilterTabs, RowActions, SearchField, Thumb } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
-import {
-  btnDanger,
-  btnEdit,
-  btnPrimary,
-  getErrorMessage,
-  parseStringArray,
-} from "@/components/admin/formStyles";
+import { btnPrimarySm, getErrorMessage, parseStringArray } from "@/components/admin/formStyles";
 import { deleteArtist, getAdminArtists } from "@/lib/api/admin/artists";
 import { Artist } from "@/types/models";
-import { formatGenre, getMediaUrl } from "@/lib/utils";
+
+type Filter = "all" | "active" | "inactive";
 
 export default function AdminArtistsPage() {
   const { onMenuClick } = useAdminShell();
-  const [artists, setArtists] = useState<Artist[]>([]);
+  const [items, setItems] = useState<Artist[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [query, setQuery] = useState("");
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,7 +29,7 @@ export default function AdminArtistsPage() {
     setLoading(true);
     setError(null);
     try {
-      setArtists(await getAdminArtists());
+      setItems(await getAdminArtists());
     } catch (err) {
       setError(getErrorMessage(err, "Failed to load artists"));
     } finally {
@@ -59,99 +56,121 @@ export default function AdminArtistsPage() {
     }
   };
 
+  const active = items.filter((a) => a.status === "active").length;
+
+  const rows = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return items.filter((a) => {
+      if (filter !== "all" && a.status !== filter) return false;
+      if (!q) return true;
+      return (
+        a.name.toLowerCase().includes(q) ||
+        parseStringArray(a.genre).some((g) => g.toLowerCase().includes(q))
+      );
+    });
+  }, [items, filter, query]);
+
   return (
-    <div>
+    <div className="flex min-h-0 flex-1 flex-col lg:overflow-hidden">
       <AdminHeader
         title="Artists"
-        subtitle="Roster management"
+        subtitle="The roster"
         onMenuClick={onMenuClick}
         actions={
-          <Link href="/admin/artists/create" className={btnPrimary}>
-            <Plus size={14} />
-            Add Artist
+          <Link href="/admin/artists/create" className={btnPrimarySm}>
+            <Plus size={15} aria-hidden="true" />
+            Add artist
           </Link>
         }
       />
-      <div className="space-y-4 p-4 sm:p-6">
-        {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-        <AdminTable
-          loading={loading}
-          data={artists}
-          rowKey={(a) => a.id}
-          emptyMessage="No artists yet. Add your first roster member."
-          columns={[
-            {
-              key: "photo",
-              header: "Photo",
-              render: (a) => (
-                <div className="relative h-12 w-12 overflow-hidden bg-neutral-100">
-                  <Image
-                    src={getMediaUrl(a.photo_url)}
-                    alt={a.name}
-                    fill
-                    unoptimized
-                    className="object-cover"
-                  />
-                </div>
-              ),
-            },
-            {
-              key: "name",
-              header: "Name",
-              render: (a) => (
-                <div>
-                  <p className="font-medium text-black">{a.name}</p>
-                  <p className="font-mono text-[10px] text-neutral-400">
-                    /{a.slug}
-                  </p>
-                </div>
-              ),
-            },
-            {
-              key: "genre",
-              header: "Genre",
-              render: (a) => (
-                <span className="text-xs text-neutral-600">
-                  {formatGenre(parseStringArray(a.genre))}
-                </span>
-              ),
-            },
-            {
-              key: "status",
-              header: "Status",
-              render: (a) => <StatusBadge status={a.status} />,
-            },
-            {
-              key: "actions",
-              header: "Actions",
-              render: (a) => (
-                <div className="flex gap-2">
-                  <Link href={`/admin/artists/${a.id}`} className={btnEdit}>
-                    <Pencil size={12} />
-                    Edit
-                  </Link>
-                  <button
-                    type="button"
-                    className={btnDanger}
-                    onClick={() => setDeleteId(a.id)}
-                  >
-                    <Trash2 size={12} />
-                    Delete
-                  </button>
-                </div>
-              ),
-            },
+
+      {error && (
+        <div role="alert" className="mx-5 mb-3 rounded-lg border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-2.5 text-[14px] text-satelit-danger sm:mx-7">
+          {error}
+        </div>
+      )}
+
+      <div className="flex flex-wrap items-end justify-between gap-x-4 gap-y-2 border-b border-satelit-border px-5 sm:px-7">
+        <FilterTabs
+          value={filter}
+          onChange={setFilter}
+          options={[
+            { key: "all", label: "All", count: items.length },
+            { key: "active", label: "Active", count: active },
+            { key: "inactive", label: "Inactive", count: items.length - active },
           ]}
         />
+        <div className="pb-2.5">
+          <SearchField value={query} onChange={setQuery} placeholder="Search name or genre" />
+        </div>
       </div>
+
+      <AdminTable
+        loading={loading}
+        data={rows}
+        rowKey={(a) => a.id}
+        emptyMessage={items.length === 0 ? "No artists yet." : "No artists match."}
+        emptyAction={
+          items.length === 0 && (
+            <Link href="/admin/artists/create" className={btnPrimarySm}>
+              <Plus size={15} aria-hidden="true" />
+              Add the first artist
+            </Link>
+          )
+        }
+        columns={[
+          {
+            key: "name",
+            header: "Artist",
+            sortValue: (a) => a.name,
+            render: (a) => (
+              <div className="flex items-center gap-3">
+                <Thumb
+                  src={a.photo_url}
+                  className="h-11 w-11 rounded-full"
+                  fallback={a.name[0]?.toUpperCase()}
+                />
+                <div className="min-w-0">
+                  <p className="truncate text-[15px] font-semibold">{a.name}</p>
+                  <p className="truncate text-[13px] text-satelit-muted">/{a.slug}</p>
+                </div>
+              </div>
+            ),
+          },
+          {
+            key: "genre",
+            header: "Genre",
+            render: (a) => (
+              <span className="text-satelit-muted">
+                {parseStringArray(a.genre).join(" · ") || "-"}
+              </span>
+            ),
+          },
+          {
+            key: "status",
+            header: "Status",
+            sortValue: (a) => a.status,
+            render: (a) => <StatusBadge status={a.status} />,
+          },
+          {
+            key: "actions",
+            header: "",
+            className: "w-24 pr-0 text-right",
+            render: (a) => (
+              <RowActions
+                editHref={`/admin/artists/${a.id}`}
+                onDelete={() => setDeleteId(a.id)}
+                label={a.name}
+              />
+            ),
+          },
+        ]}
+      />
+
       <ConfirmDialog
         open={!!deleteId}
         title="Delete artist?"
-        message="This will soft-delete the artist from the roster. This action can be irreversible depending on the API."
+        message="This removes the artist from the roster."
         loading={deleting}
         onConfirm={handleDelete}
         onCancel={() => setDeleteId(null)}
