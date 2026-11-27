@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUpload from "@/components/admin/ImageUpload";
+import StatusBadge from "@/components/admin/StatusBadge";
+import FormSummaryCard from "@/components/admin/FormSummaryCard";
+import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
-  btnPrimary,
   btnSecondary,
   formErrorClass,
   formLoadingClass,
   formSectionClass,
+  formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -22,7 +25,7 @@ import { getAdminHeroBanner, updateHeroBanner } from "@/lib/api/admin/hero";
 export default function EditHeroPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { onMenuClick } = useAdminShell();
+  const { refreshShellData } = useAdminShell();
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -64,6 +67,8 @@ export default function EditHeroPage() {
     };
   }, [id]);
 
+  const hasImage = Boolean(bannerImage || existingImage);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -78,8 +83,12 @@ export default function EditHeroPage() {
         is_active: isActive,
         banner_image: bannerImage,
       });
-      if (res.success) router.push("/admin/hero");
-      else setError(res.message || "Failed to update banner");
+      if (res.success) {
+        refreshShellData();
+        router.push("/admin/hero");
+      } else {
+        setError(res.message || "Failed to update banner");
+      }
     } catch (err) {
       setError(getErrorMessage(err, "Failed to update banner"));
     } finally {
@@ -90,123 +99,151 @@ export default function EditHeroPage() {
   if (loading) {
     return (
       <div className={formLoadingClass}>
-        <Loader2 size={18} className="animate-spin text-satelit-accent" aria-hidden="true" />
+        <Loader2 size={18} className="animate-spin text-admin-forest" aria-hidden="true" />
         <span>Loading banner…</span>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="pb-12">
       <AdminHeader
-        title="Edit Banner"
-        subtitle={title || "Update hero slide"}
-        onMenuClick={onMenuClick}
+        backHref="/admin/hero"
+        backLabel="Hero Banners"
+        eyebrow={`Slide order #${order}`}
+        title={title || "Edit Banner"}
+        badge={<StatusBadge status={String(isActive)} />}
         actions={
           <Link href="/admin/hero" className={btnSecondary}>
-            <ArrowLeft size={15} aria-hidden="true" />
-            Back
+            Cancel
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
-        {error && (
-          <div role="alert" className={formErrorClass}>
-            {error}
-          </div>
-        )}
 
-        <div className={formSectionClass}>
-          <ImageUpload
-            label="Banner Image"
-            value={bannerImage}
-            existingUrl={existingImage}
-            onChange={setBannerImage}
-          />
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+      >
+        <div className="space-y-5 lg:col-span-8">
+          {error && (
+            <div role="alert" className={formErrorClass}>
+              {error}
+            </div>
+          )}
 
-          <div>
-            <label htmlFor="hero-title" className={labelClass}>Title</label>
-            <input
-              id="hero-title"
-              required
-              className={inputClass}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+          <div className={formSectionClass}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className={formSectionTitleClass}>Hero visual & copy</h2>
+              <SegmentedToggle
+                ariaLabel="Banner homepage visibility"
+                value={isActive ? "active" : "hidden"}
+                onChange={(v) => setIsActive(v === "active")}
+                options={[
+                  { value: "active", label: "Visible" },
+                  { value: "hidden", label: "Hidden" },
+                ]}
+              />
+            </div>
+
+            <ImageUpload
+              label="Banner Image"
+              value={bannerImage}
+              existingUrl={existingImage}
+              onChange={setBannerImage}
             />
-          </div>
 
-          <div>
-            <label htmlFor="hero-subtitle" className={labelClass}>Subtitle</label>
-            <input
-              id="hero-subtitle"
-              className={inputClass}
-              value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label htmlFor="hero-cta-text" className={labelClass}>CTA Text</label>
-              <input
-                id="hero-cta-text"
-                className={inputClass}
-                value={ctaText}
-                onChange={(e) => setCtaText(e.target.value)}
-                placeholder="Explore Artists"
-              />
-            </div>
-            <div>
-              <label htmlFor="hero-cta-link" className={labelClass}>CTA Link</label>
-              <input
-                id="hero-cta-link"
-                className={inputClass}
-                value={ctaLink}
-                onChange={(e) => setCtaLink(e.target.value)}
-                placeholder="/artists"
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="hero-order" className={labelClass}>Order</label>
-              <input
-                id="hero-order"
-                type="number"
-                min={0}
-                className={inputClass}
-                value={order}
-                onChange={(e) => setOrder(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <span className={labelClass}>Visibility</span>
-              <label
-                htmlFor="hero-active"
-                className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-satelit-border bg-satelit-bg px-3.5 py-2.5 text-[14px] font-medium text-satelit-ink transition hover:border-satelit-accent"
-              >
-                <input
-                  id="hero-active"
-                  type="checkbox"
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
-                  className="h-4 w-4 rounded border-satelit-border accent-satelit-accent"
-                />
-                <span>Show on homepage</span>
+              <label htmlFor="hero-title" className={labelClass}>
+                Headline
               </label>
+              <input
+                id="hero-title"
+                required
+                className={inputClass}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="hero-subtitle" className={labelClass}>
+                Subtitle / Caption
+              </label>
+              <input
+                id="hero-subtitle"
+                className={inputClass}
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label htmlFor="hero-cta-text" className={labelClass}>
+                  CTA Label
+                </label>
+                <input
+                  id="hero-cta-text"
+                  className={inputClass}
+                  value={ctaText}
+                  onChange={(e) => setCtaText(e.target.value)}
+                  placeholder="Explore Releases"
+                />
+              </div>
+              <div>
+                <label htmlFor="hero-cta-link" className={labelClass}>
+                  CTA Destination
+                </label>
+                <input
+                  id="hero-cta-link"
+                  className={inputClass}
+                  value={ctaLink}
+                  onChange={(e) => setCtaLink(e.target.value)}
+                  placeholder="/releases"
+                />
+              </div>
+              <div>
+                <label htmlFor="hero-order" className={labelClass}>
+                  Slide Order
+                </label>
+                <input
+                  id="hero-order"
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={order}
+                  onChange={(e) => setOrder(Number(e.target.value))}
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2.5">
-          <Link href="/admin/hero" className={btnSecondary}>
-            Cancel
-          </Link>
-          <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
-            Save Changes
-          </button>
+        <div className="lg:col-span-4">
+          <FormSummaryCard
+            title="Slide summary"
+            subtitle={`Homepage slot #${order}`}
+            rows={[
+              { label: "Headline", value: title || "Untitled slide" },
+              { label: "CTA Button", value: ctaText || "None" },
+              { label: "Target Link", value: ctaLink || "None" },
+              { label: "Sort Order", value: `#${order}` },
+            ]}
+            highlightLabel="Visibility"
+            highlightValue={isActive ? "Live on Home" : "Hidden"}
+            warningText={
+              !hasImage
+                ? "This banner currently has no image attached."
+                : undefined
+            }
+            submitLabel={saving ? "Saving..." : "Save Changes"}
+            saving={saving}
+            checks={[
+              { label: "Hero image attached", done: hasImage },
+              { label: "Headline entered", done: Boolean(title.trim()) },
+              { label: "CTA text & link set", done: Boolean(ctaText.trim() && ctaLink.trim()) },
+            ]}
+          />
         </div>
       </form>
     </div>

@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Disc3, Eye, EyeOff, Loader2, Radio } from "lucide-react";
 import { apiClient } from "@/lib/api/client";
 import { useAuth } from "@/hooks/useAuth";
-import { btnPrimary, inputClass, labelClass } from "@/components/admin/formStyles";
+import { btnPrimaryPill, inputClass, labelClass } from "@/components/admin/formStyles";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -16,6 +16,7 @@ export default function AdminLoginPage() {
   });
   const [email, setEmail] = useState("admin@tromagnon.com");
   const [password, setPassword] = useState("admin123");
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -48,83 +49,150 @@ export default function AdminLoginPage() {
 
   if (authLoading || authenticated) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-satelit-bg">
-        <Loader2 size={20} className="animate-spin text-satelit-accent" />
+      <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas">
+        <Loader2 size={22} className="animate-spin text-admin-forest" aria-hidden="true" />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-satelit-bg px-4 py-12 text-satelit-ink">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 flex items-center gap-3">
-          <span className="relative h-12 w-12 shrink-0">
-            <Image
-              src="/assets/logo-tromagnon-nobg.png"
-              alt="Tromagnon Records"
-              fill
-              sizes="48px"
-              className="object-contain"
-            />
-          </span>
-          <div>
-            <h1 className="text-[28px] font-bold leading-none tracking-[-0.02em]">
-              Sign in
+    <div className="font-admin flex min-h-dvh items-center justify-center bg-admin-canvas px-4 py-10 text-admin-ink selection:bg-admin-lime selection:text-admin-forest">
+      <div className="grid w-full max-w-4xl overflow-hidden rounded-[30px] border border-admin-border/80 bg-white shadow-admin-float md:grid-cols-12">
+        {/* Left Forest Brand Panel */}
+        <div className="relative flex flex-col justify-between bg-admin-forest p-7 text-white md:col-span-5 md:p-9">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-admin-lime p-1.5">
+              <Image
+                src="/assets/logo-tromagnon-nobg.png"
+                alt="Tromagnon Records"
+                width={28}
+                height={28}
+                className="object-contain"
+              />
+            </span>
+            <span className="flex items-center gap-1.5 text-[20px] font-bold tracking-[-0.03em]">
+              tromagnon
+              <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-admin-lime" />
+            </span>
+          </div>
+
+          <div className="my-10 space-y-4">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-admin-forest-soft px-3 py-1 text-[12px] font-semibold text-admin-lime">
+              <Radio size={13} aria-hidden="true" />
+              Record Label Console
+            </span>
+            <h1 className="text-[28px] font-bold leading-[1.12] tracking-[-0.03em]">
+              Manage releases, roster, and live archives.
             </h1>
-            <p className="mt-1.5 text-[14px] text-satelit-muted">Tromagnon CMS</p>
+            <p className="text-[13.5px] leading-relaxed text-[#B2D0BC]">
+              Centralized catalog control for Tromagnon Records pressings, artist
+              profiles, dispatches, and tour schedules.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2.5 rounded-2xl bg-admin-forest-soft/80 p-3.5 text-[12.5px] text-[#CBE2D3]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-admin-lime text-admin-forest">
+              <Disc3 size={17} aria-hidden="true" />
+            </span>
+            <span>Satelit Archive & Independent Audio Catalog</span>
           </div>
         </div>
 
-        {error && (
-          <div
-            role="alert"
-            className="mb-4 rounded-lg border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-2.5 text-[14px] text-satelit-danger"
-          >
-            {error}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Right Sign-In Form */}
+        <div className="flex flex-col justify-center p-7 sm:p-10 md:col-span-7">
           <div>
-            <label htmlFor="email" className={labelClass}>
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className={inputClass}
-            />
+            <p className="text-[12.5px] font-semibold text-admin-sub">
+              Admin authentication
+            </p>
+            <h2 className="mt-1 text-[28px] font-bold tracking-[-0.03em] text-admin-ink">
+              Sign in to Tromagnon
+            </h2>
           </div>
-          <div>
-            <label htmlFor="password" className={labelClass}>
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              required
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className={inputClass}
-            />
-          </div>
-          <button type="submit" disabled={loading} className={`${btnPrimary} w-full`}>
-            {loading && <Loader2 size={15} className="animate-spin" />}
-            {loading ? "Signing in" : "Sign in"}
-          </button>
-        </form>
 
-        <Link
-          href="/"
-          className="mt-6 inline-block text-[14px] text-satelit-muted transition hover:text-satelit-accent"
-        >
-          Back to site
-        </Link>
+          {error && (
+            <div
+              role="alert"
+              className="mt-5 rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger"
+            >
+              {error}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+            <div>
+              <label htmlFor="email" className={labelClass}>
+                Email address
+              </label>
+              <input
+                id="email"
+                type="email"
+                required
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="password" className={labelClass}>
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={`${inputClass} pr-11`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full text-admin-sub transition hover:bg-admin-muted hover:text-admin-ink"
+                >
+                  {showPassword ? (
+                    <EyeOff size={16} aria-hidden="true" />
+                  ) : (
+                    <Eye size={16} aria-hidden="true" />
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`${btnPrimaryPill} mt-2 h-12 w-full justify-between px-2 pl-5`}
+            >
+              <span className="flex items-center gap-2">
+                {loading && (
+                  <Loader2 size={15} className="animate-spin" aria-hidden="true" />
+                )}
+                {loading ? "Signing in..." : "Sign in to console"}
+              </span>
+              <span
+                aria-hidden="true"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-admin-lime text-admin-forest transition-transform group-hover:translate-x-0.5"
+              >
+                <ArrowRight size={15} strokeWidth={2.2} />
+              </span>
+            </button>
+          </form>
+
+          <div className="mt-7 border-t border-admin-border/70 pt-5">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-1.5 text-[13.5px] font-semibold text-admin-sub transition hover:text-admin-forest"
+            >
+              <ArrowLeft size={15} aria-hidden="true" />
+              Back to public website
+            </Link>
+          </div>
+        </div>
       </div>
     </div>
   );

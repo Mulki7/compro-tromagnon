@@ -17,8 +17,20 @@
   --accent-hover: #224540;
 
   --font-primary: var(--font-archivo-narrow), "Archivo Narrow", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-admin: var(--font-jakarta), "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
   --tracking-display: -0.02em;
   --tracking-label: 0.08em;
+
+  /* Admin Bento Theme Tokens */
+  --admin-canvas: #EEF2EA;
+  --admin-surface: #FFFFFF;
+  --admin-surface-muted: #F4F7F1;
+  --admin-sage: #D4DFC5;
+  --admin-border: #DCE3D6;
+  --admin-forest: #0D3B1E;
+  --admin-lime: #B8F23C;
+  --admin-ink: #112217;
+  --admin-sub: #526358;
 }
 
 body {

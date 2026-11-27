@@ -3,15 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUpload from "@/components/admin/ImageUpload";
+import StatusBadge from "@/components/admin/StatusBadge";
+import FormSummaryCard from "@/components/admin/FormSummaryCard";
+import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
-  btnPrimary,
   btnSecondary,
   formErrorClass,
   formSectionClass,
+  formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -25,7 +27,7 @@ const FORMATS = ["LP", "EP", "CD", "Digital", "Cassette"];
 
 export default function CreateReleasePage() {
   const router = useRouter();
-  const { onMenuClick } = useAdminShell();
+  const { refreshShellData } = useAdminShell();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [artistId, setArtistId] = useState("");
   const [title, setTitle] = useState("");
@@ -58,10 +60,13 @@ export default function CreateReleasePage() {
     );
   };
 
+  const selectedArtist = artists.find((a) => a.id === artistId);
+  const streamingCount = [spotify, apple, bandcamp, youtube].filter(Boolean).length;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!artistId) {
-      setError("Please select an artist.");
+      setError("Please select an artist before saving.");
       return;
     }
     setSaving(true);
@@ -83,8 +88,12 @@ export default function CreateReleasePage() {
         status,
         artwork,
       });
-      if (res.success) router.push("/admin/releases");
-      else setError(res.message || "Failed to create release");
+      if (res.success) {
+        refreshShellData();
+        router.push("/admin/releases");
+      } else {
+        setError(res.message || "Failed to create release");
+      }
     } catch (err) {
       setError(getErrorMessage(err, "Failed to create release"));
     } finally {
@@ -93,178 +102,220 @@ export default function CreateReleasePage() {
   };
 
   return (
-    <div>
+    <div className="pb-12">
       <AdminHeader
-        title="Add Release"
-        subtitle="Create catalog entry"
-        onMenuClick={onMenuClick}
+        backHref="/admin/releases"
+        backLabel="Releases"
+        eyebrow="New catalog pressing"
+        title={title.trim() || "New Release"}
+        badge={<StatusBadge status={status} />}
         actions={
-          <Link href="/admin/releases" className={btnSecondary}>
-            <ArrowLeft size={15} aria-hidden="true" />
-            Back
-          </Link>
-        }
-      />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-3xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
-        {error && (
-          <div role="alert" className={formErrorClass}>
-            {error}
-          </div>
-        )}
-
-        <div className={formSectionClass}>
-          <ImageUpload label="Artwork" value={artwork} onChange={setArtwork} />
-
-          <div>
-            <label htmlFor="release-artist" className={labelClass}>Artist</label>
-            <select
-              id="release-artist"
-              required
-              className={inputClass}
-              value={artistId}
-              onChange={(e) => setArtistId(e.target.value)}
-            >
-              <option value="">Select artist…</option>
-              {artists.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="release-title" className={labelClass}>Title</label>
-              <input
-                id="release-title"
-                required
-                className={inputClass}
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (!slugTouched) setSlug(slugify(e.target.value));
-                }}
-              />
-            </div>
-            <div>
-              <label htmlFor="release-slug" className={labelClass}>Slug</label>
-              <input
-                id="release-slug"
-                required
-                className={inputClass}
-                value={slug}
-                onChange={(e) => {
-                  setSlugTouched(true);
-                  setSlug(slugify(e.target.value));
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="release-year" className={labelClass}>Release Year</label>
-              <input
-                id="release-year"
-                type="number"
-                required
-                min={1900}
-                max={2100}
-                className={inputClass}
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <label htmlFor="release-status" className={labelClass}>Status</label>
-              <select
-                id="release-status"
-                className={inputClass}
-                value={status}
-                onChange={(e) =>
-                  setStatus(e.target.value as "published" | "draft")
-                }
-              >
-                <option value="draft">Draft</option>
-                <option value="published">Published</option>
-              </select>
-            </div>
-          </div>
-
-          <fieldset>
-            <legend className={labelClass}>Format</legend>
-            <div className="flex flex-wrap gap-2">
-              {FORMATS.map((f) => {
-                const selected = formats.includes(f);
-                return (
-                  <button
-                    key={f}
-                    type="button"
-                    aria-pressed={selected}
-                    onClick={() => toggleFormat(f)}
-                    className={`rounded-lg border px-3.5 py-1.5 text-[13px] font-semibold uppercase tracking-[0.06em] transition ${
-                      selected
-                        ? "border-satelit-accent bg-satelit-accent text-satelit-on-accent"
-                        : "border-satelit-border bg-satelit-bg text-satelit-muted hover:border-satelit-accent hover:text-satelit-ink"
-                    }`}
-                  >
-                    {f}
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-
-          <div>
-            <label htmlFor="release-description" className={labelClass}>Description</label>
-            <textarea
-              id="release-description"
-              required
-              rows={5}
-              className={inputClass}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className={formSectionClass}>
-          <h2 className="text-[15px] font-bold tracking-[-0.01em] text-satelit-ink">
-            Streaming Links
-          </h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {(
-              [
-                ["stream-spotify", "Spotify", spotify, setSpotify],
-                ["stream-apple", "Apple Music", apple, setApple],
-                ["stream-bandcamp", "Bandcamp", bandcamp, setBandcamp],
-                ["stream-youtube", "YouTube Music", youtube, setYoutube],
-              ] as const
-            ).map(([fieldId, label, value, setter]) => (
-              <div key={fieldId}>
-                <label htmlFor={fieldId} className={labelClass}>{label}</label>
-                <input
-                  id={fieldId}
-                  type="url"
-                  className={inputClass}
-                  value={value}
-                  onChange={(e) => setter(e.target.value)}
-                  placeholder="https://"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2.5">
           <Link href="/admin/releases" className={btnSecondary}>
             Cancel
           </Link>
-          <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
-            Create Release
-          </button>
+        }
+      />
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+      >
+        <div className="space-y-5 lg:col-span-8">
+          {error && (
+            <div role="alert" className={formErrorClass}>
+              {error}
+            </div>
+          )}
+
+          <div className={formSectionClass}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className={formSectionTitleClass}>Release identity & artwork</h2>
+              <SegmentedToggle
+                ariaLabel="Release publish status"
+                value={status}
+                onChange={setStatus}
+                options={[
+                  { value: "draft", label: "Draft" },
+                  { value: "published", label: "Published" },
+                ]}
+              />
+            </div>
+
+            <ImageUpload label="Cover Artwork" value={artwork} onChange={setArtwork} />
+
+            <div>
+              <label htmlFor="release-artist" className={labelClass}>
+                Artist
+              </label>
+              <select
+                id="release-artist"
+                required
+                className={inputClass}
+                value={artistId}
+                onChange={(e) => setArtistId(e.target.value)}
+              >
+                <option value="">Select artist…</option>
+                {artists.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="release-title" className={labelClass}>
+                  Title
+                </label>
+                <input
+                  id="release-title"
+                  required
+                  placeholder="e.g. Satelit Vol. 1"
+                  className={inputClass}
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (!slugTouched) setSlug(slugify(e.target.value));
+                  }}
+                />
+              </div>
+              <div>
+                <label htmlFor="release-slug" className={labelClass}>
+                  Catalog Slug
+                </label>
+                <input
+                  id="release-slug"
+                  required
+                  placeholder="satelit-vol-1"
+                  className={inputClass}
+                  value={slug}
+                  onChange={(e) => {
+                    setSlugTouched(true);
+                    setSlug(slugify(e.target.value));
+                  }}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="release-year" className={labelClass}>
+                  Release Year
+                </label>
+                <input
+                  id="release-year"
+                  type="number"
+                  required
+                  min={1900}
+                  max={2100}
+                  className={inputClass}
+                  value={year}
+                  onChange={(e) => setYear(Number(e.target.value))}
+                />
+              </div>
+
+              <fieldset>
+                <legend className={labelClass}>Formats</legend>
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {FORMATS.map((f) => {
+                    const selected = formats.includes(f);
+                    return (
+                      <button
+                        key={f}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => toggleFormat(f)}
+                        className={`rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition ${
+                          selected
+                            ? "bg-admin-forest text-admin-lime shadow-sm"
+                            : "bg-admin-muted text-admin-sub hover:bg-admin-sage/60 hover:text-admin-ink"
+                        }`}
+                      >
+                        {f}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            </div>
+
+            <div>
+              <label htmlFor="release-description" className={labelClass}>
+                Liner Notes & Description
+              </label>
+              <textarea
+                id="release-description"
+                required
+                rows={5}
+                placeholder="Write release credits, pressing notes, and story..."
+                className={inputClass}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className={formSectionClass}>
+            <div>
+              <h2 className={formSectionTitleClass}>Streaming & DSP Links</h2>
+              <p className="mt-0.5 text-[12.5px] text-admin-sub">
+                Direct listening destinations embedded on the release page
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {(
+                [
+                  ["stream-spotify", "Spotify", spotify, setSpotify],
+                  ["stream-apple", "Apple Music", apple, setApple],
+                  ["stream-bandcamp", "Bandcamp", bandcamp, setBandcamp],
+                  ["stream-youtube", "YouTube Music", youtube, setYoutube],
+                ] as const
+              ).map(([fieldId, label, value, setter]) => (
+                <div key={fieldId}>
+                  <label htmlFor={fieldId} className={labelClass}>
+                    {label}
+                  </label>
+                  <input
+                    id={fieldId}
+                    type="url"
+                    className={inputClass}
+                    value={value}
+                    onChange={(e) => setter(e.target.value)}
+                    placeholder="https://"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-4">
+          <FormSummaryCard
+            title="Release summary"
+            subtitle={slug ? `/${slug}` : "Draft catalog entry"}
+            rows={[
+              { label: "Artist", value: selectedArtist?.name || "Unassigned" },
+              { label: "Year", value: String(year) },
+              { label: "Formats", value: formats.join(" · ") || "None" },
+              { label: "DSP Links", value: `${streamingCount} / 4 connected` },
+            ]}
+            highlightLabel="Publish state"
+            highlightValue={status === "published" ? "Live Release" : "Draft Mode"}
+            warningText={
+              !artwork
+                ? "Cover artwork is not attached yet. Add artwork before publishing."
+                : undefined
+            }
+            submitLabel={saving ? "Creating..." : "Create Release"}
+            saving={saving}
+            checks={[
+              { label: "Cover artwork uploaded", done: Boolean(artwork) },
+              { label: "Title & artist selected", done: Boolean(title.trim() && artistId) },
+              { label: "Liner notes written", done: description.trim().length > 10 },
+              { label: "At least 1 DSP link", done: streamingCount > 0 },
+            ]}
+          />
         </div>
       </form>
     </div>

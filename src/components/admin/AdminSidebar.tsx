@@ -1,130 +1,220 @@
 "use client";
 
+import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard,
-  Image as ImageIcon,
-  Users,
+  LayoutGrid,
   Disc3,
+  Users,
   Newspaper,
   CalendarDays,
-  LogOut,
+  Image as ImageIcon,
   ExternalLink,
+  LogOut,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const NAV = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/releases", label: "Releases", icon: Disc3 },
-  { href: "/admin/artists", label: "Artists", icon: Users },
-  { href: "/admin/news", label: "News", icon: Newspaper },
-  { href: "/admin/live", label: "Live", icon: CalendarDays },
-  { href: "/admin/hero", label: "Banners", icon: ImageIcon },
-];
+import type { AdminNavCounts } from "@/components/admin/AdminShellContext";
 
 interface AdminSidebarProps {
-  userEmail?: string;
+  counts: AdminNavCounts;
   onLogout: () => void;
   mobileOpen?: boolean;
   onClose?: () => void;
 }
 
 export default function AdminSidebar({
-  userEmail,
+  counts,
   onLogout,
   mobileOpen = false,
   onClose,
 }: AdminSidebarProps) {
   const pathname = usePathname();
 
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose?.();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [mobileOpen, onClose]);
+
+  const navItems = [
+    {
+      href: "/admin",
+      label: "Overview",
+      icon: LayoutGrid,
+      exact: true,
+      badge: undefined as number | undefined,
+    },
+    {
+      href: "/admin/releases",
+      label: "Releases",
+      icon: Disc3,
+      badge: counts.releases > 0 ? counts.releases : undefined,
+    },
+    {
+      href: "/admin/artists",
+      label: "Artists",
+      icon: Users,
+      badge: counts.artists > 0 ? counts.artists : undefined,
+    },
+    {
+      href: "/admin/news",
+      label: "Journal",
+      icon: Newspaper,
+      badge: counts.news > 0 ? counts.news : undefined,
+    },
+    {
+      href: "/admin/live",
+      label: "Live Shows",
+      icon: CalendarDays,
+      badge: counts.upcomingLive > 0 ? counts.upcomingLive : undefined,
+    },
+    {
+      href: "/admin/hero",
+      label: "Hero Banners",
+      icon: ImageIcon,
+      badge: counts.totalHero > 0 ? counts.totalHero : undefined,
+    },
+  ];
+
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
-
-  const itemBase =
-    "flex h-10 items-center gap-3 rounded-lg px-3 text-[15px] font-medium transition-colors";
 
   return (
     <>
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-satelit-ink/30 lg:hidden"
+          className="fixed inset-0 z-40 bg-admin-forest-deep/55 backdrop-blur-[2px] lg:hidden"
           onClick={onClose}
-          aria-hidden
+          aria-hidden="true"
         />
       )}
+
       <aside
+        aria-label="Primary admin navigation"
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex w-60 shrink-0 flex-col border-r border-satelit-border bg-satelit-bg transition-transform duration-200 lg:static lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-3 left-3 z-50 flex w-[248px] shrink-0 flex-col rounded-[26px] bg-admin-forest text-white shadow-admin-float transition-transform duration-200 ease-out lg:static lg:inset-auto lg:h-full lg:translate-x-0 lg:shadow-none",
+          mobileOpen ? "translate-x-0" : "-translate-x-[calc(100%+24px)]"
         )}
       >
-        <div className="px-5 pb-6 pt-6">
-          <Link href="/admin" className="inline-flex items-center gap-2.5">
-            <span className="relative h-9 w-9 shrink-0">
+        {/* Brand header */}
+        <div className="flex items-center justify-between px-5 pb-6 pt-6">
+          <Link
+            href="/admin"
+            onClick={onClose}
+            className="inline-flex items-center gap-2.5 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime"
+          >
+            <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-admin-lime p-1.5 shadow-sm">
               <Image
                 src="/assets/logo-tromagnon-nobg.png"
                 alt=""
-                fill
-                sizes="36px"
+                width={26}
+                height={26}
                 className="object-contain"
               />
             </span>
-            <span className="text-[21px] font-bold tracking-[-0.02em] text-satelit-ink">
-              tromagnon<span className="text-satelit-accent">.</span>
+            <span className="flex items-center gap-1.5 text-[19px] font-bold tracking-[-0.03em] text-white">
+              tromagnon
+              <span
+                aria-hidden="true"
+                className="h-1.5 w-1.5 rounded-full bg-admin-lime"
+              />
             </span>
           </Link>
+
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Close navigation menu"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-admin-forest-soft hover:text-white lg:hidden"
+          >
+            <X size={18} aria-hidden="true" />
+          </button>
         </div>
 
-        <nav aria-label="Admin" className="flex-1 space-y-0.5 px-3">
-          {NAV.map(({ href, label, icon: Icon, exact }) => {
-            const active = isActive(href, exact);
-            return (
-              <Link
-                key={href}
-                href={href}
-                onClick={onClose}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  itemBase,
-                  active
-                    ? "bg-satelit-accent text-satelit-on-accent"
-                    : "text-satelit-ink/80 hover:bg-satelit-surface hover:text-satelit-ink"
-                )}
-              >
-                <Icon size={17} strokeWidth={1.75} aria-hidden="true" />
-                {label}
-              </Link>
-            );
-          })}
-        </nav>
+        {/* Main navigation */}
+        <div className="flex-1 overflow-y-auto px-3.5">
+          <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8EB09A]">
+            Catalog
+          </p>
+          <nav aria-label="Catalog sections" className="space-y-1">
+            {navItems.map(({ href, label, icon: Icon, exact, badge }) => {
+              const active = isActive(href, exact);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  onClick={onClose}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "group flex h-11 items-center justify-between gap-3 rounded-full px-3.5 text-[14px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime",
+                    active
+                      ? "bg-admin-lime font-semibold text-admin-forest shadow-sm"
+                      : "text-[#D4E6DA] hover:bg-admin-forest-soft hover:text-white"
+                  )}
+                >
+                  <span className="flex min-w-0 items-center gap-3">
+                    <Icon
+                      size={18}
+                      strokeWidth={active ? 2.1 : 1.75}
+                      aria-hidden="true"
+                      className={cn(
+                        "shrink-0 transition-colors",
+                        active ? "text-admin-forest" : "text-[#9DC0A9] group-hover:text-white"
+                      )}
+                    />
+                    <span className="truncate">{label}</span>
+                  </span>
+                  {typeof badge === "number" && (
+                    <span
+                      className={cn(
+                        "flex h-5 min-w-[22px] shrink-0 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold tabular-nums",
+                        active
+                          ? "bg-admin-forest text-admin-lime"
+                          : "bg-admin-forest-soft text-[#D4E6DA]"
+                      )}
+                    >
+                      {badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
 
-        <div className="space-y-0.5 px-3 pb-4">
-          <Link
-            href="/"
-            target="_blank"
-            className={cn(itemBase, "text-satelit-muted hover:bg-satelit-surface hover:text-satelit-ink")}
-          >
-            <ExternalLink size={17} strokeWidth={1.75} aria-hidden="true" />
-            View site
-          </Link>
-          <div className="mt-2 flex items-center gap-2.5 border-t border-satelit-border px-1 pt-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-satelit-ink text-[13px] font-bold uppercase text-satelit-on-accent">
-              {(userEmail?.[0] || "A").toUpperCase()}
-            </span>
-            <span className="min-w-0 flex-1 truncate text-[14px] text-satelit-ink">
-              {userEmail || "admin"}
-            </span>
-            <button
-              type="button"
-              onClick={onLogout}
-              aria-label="Log out"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-satelit-muted transition hover:bg-satelit-surface hover:text-satelit-danger"
-            >
-              <LogOut size={16} />
-            </button>
+          <div className="mt-7 border-t border-white/10 pt-5">
+            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-[#8EB09A]">
+              Label
+            </p>
+            <div className="space-y-1">
+              <Link
+                href="/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-11 items-center gap-3 rounded-full px-3.5 text-[14px] font-medium text-[#D4E6DA] transition-colors hover:bg-admin-forest-soft hover:text-white"
+              >
+                <ExternalLink size={17} strokeWidth={1.75} aria-hidden="true" className="text-[#9DC0A9]" />
+                <span>Public Website</span>
+              </Link>
+            </div>
           </div>
+        </div>
+
+        {/* Separated destructive sign-out footer */}
+        <div className="mt-auto border-t border-white/10 p-3.5">
+          <button
+            type="button"
+            onClick={onLogout}
+            className="flex h-11 w-full items-center gap-3 rounded-full px-3.5 text-[14px] font-medium text-[#D4E6DA] transition-colors hover:bg-red-500/15 hover:text-[#FCA5A5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime"
+          >
+            <LogOut size={17} strokeWidth={1.75} aria-hidden="true" />
+            <span>Sign out</span>
+          </button>
         </div>
       </aside>
     </>

@@ -3,15 +3,18 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
+import StatusBadge from "@/components/admin/StatusBadge";
+import FormSummaryCard from "@/components/admin/FormSummaryCard";
+import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
-  btnPrimary,
   btnSecondary,
   formErrorClass,
   formLoadingClass,
   formSectionClass,
+  formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -19,11 +22,12 @@ import {
 import { getAdminArtists } from "@/lib/api/admin/artists";
 import { getAdminLiveEvent, updateLiveEvent } from "@/lib/api/admin/live";
 import { Artist } from "@/types/models";
+import { formatDate } from "@/lib/utils";
 
 export default function EditLivePage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { onMenuClick } = useAdminShell();
+  const { refreshShellData } = useAdminShell();
   const [loading, setLoading] = useState(true);
   const [artists, setArtists] = useState<Artist[]>([]);
   const [artistId, setArtistId] = useState("");
@@ -71,6 +75,8 @@ export default function EditLivePage() {
     };
   }, [id]);
 
+  const selectedArtist = artists.find((a) => a.id === artistId);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -85,8 +91,12 @@ export default function EditLivePage() {
         ticket_url: ticketUrl,
         status,
       });
-      if (res.success) router.push("/admin/live");
-      else setError(res.message || "Failed to update event");
+      if (res.success) {
+        refreshShellData();
+        router.push("/admin/live");
+      } else {
+        setError(res.message || "Failed to update event");
+      }
     } catch (err) {
       setError(getErrorMessage(err, "Failed to update event"));
     } finally {
@@ -97,133 +107,172 @@ export default function EditLivePage() {
   if (loading) {
     return (
       <div className={formLoadingClass}>
-        <Loader2 size={18} className="animate-spin text-satelit-accent" aria-hidden="true" />
-        <span>Loading event…</span>
+        <Loader2 size={18} className="animate-spin text-admin-forest" aria-hidden="true" />
+        <span>Loading live event…</span>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="pb-12">
       <AdminHeader
-        title="Edit Live Event"
-        subtitle={[venue || "Event", city].filter(Boolean).join(" — ")}
-        onMenuClick={onMenuClick}
+        backHref="/admin/live"
+        backLabel="Live Shows"
+        eyebrow={[venue || "Event", city].filter(Boolean).join(" · ")}
+        title={selectedArtist?.name ? `${selectedArtist.name} Live` : "Edit Live Event"}
+        badge={<StatusBadge status={status} />}
         actions={
-          <Link href="/admin/live" className={btnSecondary}>
-            <ArrowLeft size={15} aria-hidden="true" />
-            Back
-          </Link>
-        }
-      />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-5 px-5 pb-12 pt-5 sm:px-7">
-        {error && (
-          <div role="alert" className={formErrorClass}>
-            {error}
-          </div>
-        )}
-
-        <div className={formSectionClass}>
-          <div>
-            <label htmlFor="live-artist" className={labelClass}>Artist</label>
-            <select
-              id="live-artist"
-              className={inputClass}
-              value={artistId}
-              onChange={(e) => setArtistId(e.target.value)}
-            >
-              <option value="">Select artist…</option>
-              {artists.map((a) => (
-                <option key={a.id} value={a.id}>
-                  {a.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label htmlFor="live-date" className={labelClass}>Event Date</label>
-            <input
-              id="live-date"
-              type="date"
-              required
-              className={inputClass}
-              value={eventDate}
-              onChange={(e) => setEventDate(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="live-city" className={labelClass}>City</label>
-              <input
-                id="live-city"
-                required
-                className={inputClass}
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-            <div>
-              <label htmlFor="live-country" className={labelClass}>Country</label>
-              <input
-                id="live-country"
-                required
-                className={inputClass}
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <label htmlFor="live-venue" className={labelClass}>Venue</label>
-            <input
-              id="live-venue"
-              required
-              className={inputClass}
-              value={venue}
-              onChange={(e) => setVenue(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="live-ticket" className={labelClass}>Ticket URL</label>
-            <input
-              id="live-ticket"
-              type="url"
-              className={inputClass}
-              value={ticketUrl}
-              onChange={(e) => setTicketUrl(e.target.value)}
-              placeholder="https://"
-            />
-          </div>
-
-          <div>
-            <label htmlFor="live-status" className={labelClass}>Status</label>
-            <select
-              id="live-status"
-              className={inputClass}
-              value={status}
-              onChange={(e) =>
-                setStatus(e.target.value as "upcoming" | "past" | "cancelled")
-              }
-            >
-              <option value="upcoming">Upcoming</option>
-              <option value="past">Past</option>
-              <option value="cancelled">Cancelled</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2.5">
           <Link href="/admin/live" className={btnSecondary}>
             Cancel
           </Link>
-          <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}
-            Save Changes
-          </button>
+        }
+      />
+
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-5 px-4 sm:px-6 lg:grid-cols-12 lg:px-7"
+      >
+        <div className="space-y-5 lg:col-span-8">
+          {error && (
+            <div role="alert" className={formErrorClass}>
+              {error}
+            </div>
+          )}
+
+          <div className={formSectionClass}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className={formSectionTitleClass}>Show details & routing</h2>
+              <SegmentedToggle
+                ariaLabel="Show status"
+                value={status}
+                onChange={setStatus}
+                options={[
+                  { value: "upcoming", label: "Upcoming" },
+                  { value: "past", label: "Past" },
+                  { value: "cancelled", label: "Cancelled" },
+                ]}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="live-artist" className={labelClass}>
+                  Performing Artist
+                </label>
+                <select
+                  id="live-artist"
+                  className={inputClass}
+                  value={artistId}
+                  onChange={(e) => setArtistId(e.target.value)}
+                >
+                  <option value="">Label Showcase / Various</option>
+                  {artists.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label htmlFor="live-date" className={labelClass}>
+                  Event Date
+                </label>
+                <input
+                  id="live-date"
+                  type="date"
+                  required
+                  className={inputClass}
+                  value={eventDate}
+                  onChange={(e) => setEventDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="live-venue" className={labelClass}>
+                Venue Name
+              </label>
+              <input
+                id="live-venue"
+                required
+                className={inputClass}
+                value={venue}
+                onChange={(e) => setVenue(e.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="live-city" className={labelClass}>
+                  City
+                </label>
+                <input
+                  id="live-city"
+                  required
+                  className={inputClass}
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                />
+              </div>
+              <div>
+                <label htmlFor="live-country" className={labelClass}>
+                  Country
+                </label>
+                <input
+                  id="live-country"
+                  required
+                  className={inputClass}
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="live-ticket" className={labelClass}>
+                Ticket / RSVP Link
+              </label>
+              <input
+                id="live-ticket"
+                type="url"
+                className={inputClass}
+                value={ticketUrl}
+                onChange={(e) => setTicketUrl(e.target.value)}
+                placeholder="https://"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="lg:col-span-4">
+          <FormSummaryCard
+            title="Show summary"
+            subtitle="Live calendar listing"
+            rows={[
+              { label: "Bill", value: selectedArtist?.name || "Label Showcase" },
+              { label: "Venue", value: venue || "TBD" },
+              {
+                label: "Location",
+                value: [city, country].filter(Boolean).join(", ") || "TBD",
+              },
+              { label: "Tickets", value: ticketUrl ? "Online link set" : "At door / free" },
+            ]}
+            highlightLabel="Scheduled date"
+            highlightValue={eventDate ? formatDate(eventDate) : "Pick date"}
+            warningText={
+              status === "cancelled"
+                ? "This show is marked as cancelled on the public schedule."
+                : undefined
+            }
+            submitLabel={saving ? "Saving..." : "Save Changes"}
+            saving={saving}
+            checks={[
+              { label: "Event date chosen", done: Boolean(eventDate) },
+              { label: "Venue & city entered", done: Boolean(venue.trim() && city.trim()) },
+              { label: "Ticket / RSVP URL added", done: Boolean(ticketUrl.trim()) },
+            ]}
+          />
         </div>
       </form>
     </div>

@@ -4,6 +4,7 @@ import { useCallback, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { Upload, X } from "lucide-react";
 import { getMediaUrl } from "@/lib/utils";
+import { labelClass } from "@/components/admin/formStyles";
 
 interface ImageUploadProps {
   label?: string;
@@ -63,10 +64,7 @@ export default function ImageUpload({
 
   return (
     <div>
-      <label
-        htmlFor={inputId}
-        className="mb-1.5 block text-[13px] font-semibold uppercase tracking-[0.07em] text-satelit-muted"
-      >
+      <label htmlFor={inputId} className={labelClass}>
         {label}
       </label>
       <div
@@ -76,14 +74,14 @@ export default function ImageUpload({
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`relative overflow-hidden rounded-xl border border-dashed transition ${
+        className={`relative overflow-hidden rounded-[20px] border-2 border-dashed transition-colors ${
           dragOver
-            ? "border-satelit-accent bg-satelit-surface"
-            : "border-satelit-border bg-satelit-bg"
+            ? "border-admin-forest bg-admin-lime-soft/40"
+            : "border-admin-border bg-admin-muted/60"
         }`}
       >
         {displayUrl ? (
-          <div className="relative aspect-video w-full bg-satelit-surface">
+          <div className="relative aspect-video w-full bg-admin-muted">
             <Image
               src={displayUrl}
               alt={`${label} preview`}
@@ -97,13 +95,13 @@ export default function ImageUpload({
                 handleFile(null);
                 if (inputRef.current) inputRef.current.value = "";
               }}
-              className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-lg bg-satelit-ink/80 text-satelit-on-accent transition hover:bg-satelit-danger"
+              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-admin-forest/85 text-white backdrop-blur-sm transition hover:bg-admin-danger"
               aria-label={`Remove ${label.toLowerCase()}`}
             >
               <X size={15} aria-hidden="true" />
             </button>
             {value && (
-              <span className="absolute bottom-3 left-3 rounded-lg bg-satelit-ink/80 px-2.5 py-1 text-[13px] font-medium text-satelit-on-accent">
+              <span className="absolute bottom-3 left-3 rounded-full bg-admin-forest/85 px-3 py-1 text-[12px] font-medium text-white backdrop-blur-sm">
                 {value.name}
               </span>
             )}
@@ -112,15 +110,15 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center gap-2 px-4 py-9 text-satelit-muted transition hover:text-satelit-accent"
+            className="flex w-full flex-col items-center justify-center gap-2.5 px-4 py-10 text-admin-sub transition hover:text-admin-forest"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-satelit-surface text-satelit-accent">
-              <Upload size={18} strokeWidth={1.8} aria-hidden="true" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-admin-lime text-admin-forest shadow-sm">
+              <Upload size={19} strokeWidth={2} aria-hidden="true" />
             </div>
-            <span className="text-[14px] font-semibold text-satelit-ink">
-              Drop image or click to upload
+            <span className="text-[14px] font-semibold text-admin-ink">
+              Drop artwork here or click to browse
             </span>
-            <span className="text-[13px] text-satelit-muted">{hint}</span>
+            <span className="text-[12.5px] text-admin-sub">{hint}</span>
           </button>
         )}
         <input
@@ -135,14 +133,14 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="w-full border-t border-satelit-border py-2.5 text-[13px] font-semibold uppercase tracking-[0.06em] text-satelit-muted transition hover:bg-satelit-surface hover:text-satelit-ink"
+            className="w-full border-t border-admin-border/80 bg-white py-2.5 text-[12.5px] font-semibold text-admin-forest transition hover:bg-admin-muted"
           >
-            Replace image
+            Replace {label.toLowerCase()}
           </button>
         )}
       </div>
       {fileError && (
-        <p role="alert" className="mt-1.5 text-[13px] font-semibold text-satelit-danger">
+        <p role="alert" className="mt-1.5 text-[12.5px] font-semibold text-admin-danger">
           {fileError}
         </p>
       )}

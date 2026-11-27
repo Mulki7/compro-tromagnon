@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useId, useRef } from "react";
-import { Loader2 } from "lucide-react";
+import { AlertTriangle, Loader2 } from "lucide-react";
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -74,7 +74,7 @@ export default function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-satelit-ink/45 backdrop-blur-[2px]"
+        className="absolute inset-0 bg-admin-forest-deep/50 backdrop-blur-[3px]"
         onClick={loading ? undefined : onCancel}
         aria-hidden="true"
       />
@@ -84,27 +84,41 @@ export default function ConfirmDialog({
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={messageId}
-        className="relative w-full max-w-md rounded-xl border border-satelit-border bg-satelit-bg p-6 shadow-xl"
+        className="relative w-full max-w-md rounded-[26px] border border-admin-border bg-white p-6 shadow-admin-float"
       >
-        <h2
-          id={titleId}
-          className="text-[20px] font-bold tracking-[-0.015em] text-satelit-ink"
-        >
-          {title}
-        </h2>
-        <p
-          id={messageId}
-          className="mt-2 text-[15px] leading-relaxed text-satelit-muted"
-        >
-          {message}
-        </p>
+        <div className="flex items-start gap-3.5">
+          <div
+            className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl ${
+              danger
+                ? "bg-admin-danger-soft text-admin-danger"
+                : "bg-admin-lime-soft text-admin-forest"
+            }`}
+          >
+            <AlertTriangle size={20} aria-hidden="true" />
+          </div>
+          <div className="min-w-0">
+            <h2
+              id={titleId}
+              className="text-[19px] font-bold tracking-[-0.02em] text-admin-ink"
+            >
+              {title}
+            </h2>
+            <p
+              id={messageId}
+              className="mt-1.5 text-[14px] leading-relaxed text-admin-sub"
+            >
+              {message}
+            </p>
+          </div>
+        </div>
+
         <div className="mt-6 flex justify-end gap-2.5">
           <button
             ref={cancelBtnRef}
             type="button"
             disabled={loading}
             onClick={onCancel}
-            className="rounded-lg border border-satelit-border bg-transparent px-4 py-2 text-[14px] font-semibold text-satelit-ink transition hover:bg-satelit-surface disabled:opacity-50"
+            className="h-10 rounded-full border border-admin-border bg-white px-5 text-[13.5px] font-semibold text-admin-ink transition hover:bg-admin-muted disabled:opacity-50"
           >
             {cancelLabel}
           </button>
@@ -112,10 +126,10 @@ export default function ConfirmDialog({
             type="button"
             disabled={loading}
             onClick={onConfirm}
-            className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-[14px] font-semibold text-satelit-on-accent transition disabled:opacity-50 ${
+            className={`inline-flex h-10 items-center gap-2 rounded-full px-5 text-[13.5px] font-semibold text-white transition disabled:opacity-50 ${
               danger
-                ? "bg-satelit-danger hover:bg-satelit-danger/90"
-                : "bg-satelit-accent hover:bg-satelit-accent-hover"
+                ? "bg-admin-danger hover:bg-red-800"
+                : "bg-admin-forest hover:bg-admin-forest-deep"
             }`}
           >
             {loading && <Loader2 size={14} className="animate-spin" aria-hidden="true" />}

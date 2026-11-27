@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Archivo_Narrow } from "next/font/google";
+import { Archivo_Narrow, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 const archivoNarrow = Archivo_Narrow({
@@ -7,6 +7,13 @@ const archivoNarrow = Archivo_Narrow({
   weight: ["400", "500", "600", "700"],
   style: ["normal", "italic"],
   variable: "--font-archivo-narrow",
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -21,7 +28,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={archivoNarrow.variable}>
+    <html lang="en" className={`${archivoNarrow.variable} ${plusJakartaSans.variable}`}>
       <body className="min-h-screen bg-[#F1F2EE] text-[#111111] font-sans antialiased selection:bg-[#31605A] selection:text-[#F1F2EE]">
         {children}
       </body>

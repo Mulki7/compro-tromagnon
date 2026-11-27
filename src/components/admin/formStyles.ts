@@ -1,32 +1,41 @@
 export const inputClass =
-  "w-full rounded-lg border border-satelit-border bg-satelit-bg px-3.5 py-2.5 text-[15px] text-satelit-ink placeholder:text-satelit-muted/70 transition focus:border-satelit-accent focus:outline-none focus:ring-2 focus:ring-satelit-accent/20";
+  "w-full rounded-2xl border border-admin-border bg-admin-muted/70 px-4 py-2.5 text-[14px] text-admin-ink placeholder:text-admin-sub/70 transition-colors hover:border-admin-forest/30 focus:border-admin-forest focus:bg-white focus:outline-none focus:ring-2 focus:ring-admin-forest/15";
 
 export const labelClass =
-  "mb-1.5 block text-[13px] font-semibold uppercase tracking-[0.07em] text-satelit-muted";
+  "mb-1.5 block text-[12px] font-semibold tracking-[0.02em] text-admin-sub";
 
 export const formSectionClass =
-  "space-y-4 rounded-xl border border-satelit-border bg-satelit-surface/45 p-5 sm:p-6";
+  "space-y-5 rounded-[24px] border border-admin-border/80 bg-white p-5 shadow-admin-card sm:p-6";
+
+export const formSectionTitleClass =
+  "text-[16px] font-bold tracking-[-0.015em] text-admin-ink";
 
 export const formErrorClass =
-  "rounded-xl border border-satelit-danger/30 bg-satelit-danger/10 px-4 py-3 text-[14px] font-medium text-satelit-danger";
+  "rounded-2xl border border-admin-danger/25 bg-admin-danger-soft px-4 py-3 text-[13.5px] font-medium text-admin-danger";
 
 export const formLoadingClass =
-  "flex items-center justify-center gap-2.5 py-24 text-[14px] font-medium text-satelit-muted";
+  "flex flex-1 items-center justify-center gap-2.5 py-24 text-[14px] font-medium text-admin-sub";
 
 export const btnPrimary =
-  "inline-flex items-center justify-center gap-2 rounded-lg bg-satelit-accent px-4 py-2.5 text-[14px] font-semibold text-satelit-on-accent transition hover:bg-satelit-accent-hover disabled:opacity-50";
+  "inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-forest px-5 text-[14px] font-semibold text-white transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+
+export const btnPrimaryPill =
+  "group inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-forest pl-4 pr-1.5 text-[13.5px] font-semibold text-white shadow-sm transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
 
 export const btnPrimarySm =
-  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg bg-satelit-accent px-3.5 text-[14px] font-semibold text-satelit-on-accent transition hover:bg-satelit-accent-hover";
+  "group inline-flex h-10 items-center justify-center gap-2 rounded-full bg-admin-forest pl-4 pr-1.5 text-[13.5px] font-semibold text-white shadow-sm transition hover:bg-admin-forest-deep focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
+
+export const btnLime =
+  "group inline-flex h-11 items-center justify-center gap-2.5 rounded-full bg-admin-lime pl-5 pr-2 text-[14px] font-bold text-admin-forest transition hover:bg-admin-lime-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-lime focus-visible:ring-offset-2 focus-visible:ring-offset-admin-forest disabled:opacity-50";
 
 export const btnSecondary =
-  "inline-flex items-center justify-center gap-2 rounded-lg border border-satelit-border bg-transparent px-4 py-2.5 text-[14px] font-semibold text-satelit-ink transition hover:bg-satelit-surface disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-full border border-admin-border bg-white px-4 text-[13.5px] font-semibold text-admin-ink transition hover:border-admin-forest/30 hover:bg-admin-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-admin-forest focus-visible:ring-offset-2 disabled:opacity-50";
 
 export const btnDanger =
-  "inline-flex items-center justify-center gap-1.5 rounded-lg border border-satelit-danger/40 bg-transparent px-3 py-2 text-[13px] font-semibold text-satelit-danger transition hover:bg-satelit-danger/10";
+  "inline-flex h-10 items-center justify-center gap-1.5 rounded-full border border-admin-danger/25 bg-admin-danger-soft px-4 text-[13.5px] font-semibold text-admin-danger transition hover:bg-admin-danger hover:text-white disabled:opacity-50";
 
 export const btnEdit =
-  "inline-flex items-center justify-center gap-1.5 rounded-lg bg-satelit-surface px-3 py-2 text-[13px] font-semibold text-satelit-ink transition hover:bg-satelit-elevated";
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-full bg-admin-muted px-3.5 text-[13px] font-semibold text-admin-ink transition hover:bg-admin-lime-soft";
 
 export function parseStringArray(value: string | string[] | null | undefined): string[] {
   if (!value) return [];
@@ -53,4 +62,22 @@ export function parseStringArray(value: string | string[] | null | undefined): s
 export function getErrorMessage(err: unknown, fallback = "Something went wrong"): string {
   const e = err as { response?: { data?: { message?: string } }; message?: string };
   return e?.response?.data?.message || e?.message || fallback;
+}
+
+export function downloadCsv(filename: string, headers: string[], rows: (string | number | undefined | null)[][]) {
+  const escape = (val: string | number | undefined | null) => {
+    const s = String(val ?? "");
+    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  };
+  const csv = [headers.map(escape).join(","), ...rows.map((r) => r.map(escape).join(","))].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }
