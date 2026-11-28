@@ -98,7 +98,7 @@ export default function AdminSidebar({
       <aside
         aria-label="Primary admin navigation"
         className={cn(
-          "fixed inset-y-2.5 left-2.5 z-50 flex w-[224px] shrink-0 flex-col rounded-xl border border-[#16302C] bg-admin-forest text-[#F1F2EE] shadow-admin-pop transition-transform duration-[200ms] ease-tromagnon lg:static lg:inset-auto lg:h-full lg:translate-x-0 lg:shadow-none",
+          "fixed inset-y-2.5 left-2.5 z-50 flex w-[224px] shrink-0 flex-col rounded-xl border border-[#16302C] bg-admin-forest text-[#F1F2EE] shadow-admin-pop transition-transform duration-[200ms] ease-tromagnon lg:static lg:inset-auto lg:mt-2 lg:mb-3 lg:h-[calc(100%-1.25rem)] lg:translate-x-0 lg:shadow-none",
           mobileOpen ? "translate-x-0" : "-translate-x-[calc(100%+20px)]"
         )}
       >
