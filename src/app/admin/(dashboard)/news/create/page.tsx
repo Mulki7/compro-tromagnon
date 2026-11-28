@@ -3,13 +3,17 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUpload from "@/components/admin/ImageUpload";
+import StatusBadge from "@/components/admin/StatusBadge";
+import FormSummaryCard from "@/components/admin/FormSummaryCard";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
-  btnPrimary,
   btnSecondary,
+  editorialTextareaClass,
+  formErrorClass,
+  formSectionClass,
+  formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -22,7 +26,7 @@ import { slugify } from "@/lib/utils";
 
 export default function CreateNewsPage() {
   const router = useRouter();
-  const { onMenuClick } = useAdminShell();
+  const { refreshShellData } = useAdminShell();
   const [artists, setArtists] = useState<Artist[]>([]);
   const [releases, setReleases] = useState<Release[]>([]);
   const [title, setTitle] = useState("");
@@ -45,12 +49,18 @@ export default function CreateNewsPage() {
       .catch(() => setError("Failed to load related entities"));
   }, []);
 
+  const wordCount = content.trim() ? content.trim().split(/\s+/).length : 0;
+
   const submit = async (nextStatus: "draft" | "published") => {
+    if (!title.trim() || !content.trim()) {
+      setError("Title and content are required before saving.");
+      return;
+    }
     setSaving(true);
     setError(null);
     try {
       const res = await createNews({
-        title,
+        title: title.trim(),
         slug: slug || slugify(title),
         content,
         author,
@@ -59,8 +69,12 @@ export default function CreateNewsPage() {
         status: nextStatus,
         cover,
       });
-      if (res.success) router.push("/admin/news");
-      else setError(res.message || "Failed to create article");
+      if (res.success) {
+        refreshShellData();
+        router.push("/admin/news");
+      } else {
+        setError(res.message || "Failed to create article");
+      }
     } catch (err) {
       setError(getErrorMessage(err, "Failed to create article"));
     } finally {
@@ -69,137 +83,173 @@ export default function CreateNewsPage() {
   };
 
   return (
-    <div>
+    <div className="pb-12">
       <AdminHeader
-        title="Create News"
-        subtitle="Write a dispatch"
-        onMenuClick={onMenuClick}
+        backHref="/admin/news"
+        backLabel="Journal"
+        title={title.trim() || "Write article"}
+        badge={<StatusBadge status="draft" />}
         actions={
           <Link href="/admin/news" className={btnSecondary}>
-            <ArrowLeft size={14} />
-            Back
+            Cancel
           </Link>
         }
       />
+
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          submit("draft");
+          submit("published");
         }}
-        className="mx-auto max-w-3xl space-y-6 p-4 sm:p-6"
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
       >
-        {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
+        <div className="space-y-4 lg:col-span-8">
+          {error && (
+            <div role="alert" className={formErrorClass}>
+              {error}
+            </div>
+          )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
-          <ImageUpload label="Cover Image" value={cover} onChange={setCover} />
+          <div className={formSectionClass}>
+            <h2 className={formSectionTitleClass}>Article</h2>
+            <ImageUpload label="Cover image" value={cover} onChange={setCover} />
 
-          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="news-title" className={labelClass}>
+                  Headline
+                </label>
+                <input
+                  id="news-title"
+                  required
+                  placeholder="Article title"
+                  className={inputClass}
+                  value={title}
+                  onChange={(e) => {
+                    setTitle(e.target.value);
+                    if (!slugTouched) setSlug(slugify(e.target.value));
+                  }}
+                />
+              </div>
+              <div>
+                <label htmlFor="news-slug" className={labelClass}>
+                  Slug
+                </label>
+                <input
+                  id="news-slug"
+                  required
+                  className={inputClass}
+                  value={slug}
+                  onChange={(e) => {
+                    setSlugTouched(true);
+                    setSlug(slugify(e.target.value));
+                  }}
+                />
+              </div>
+            </div>
+
             <div>
-              <label className={labelClass}>Title</label>
+              <label htmlFor="news-author" className={labelClass}>
+                Author
+              </label>
               <input
-                required
+                id="news-author"
                 className={inputClass}
-                value={title}
-                onChange={(e) => {
-                  setTitle(e.target.value);
-                  if (!slugTouched) setSlug(slugify(e.target.value));
-                }}
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
               />
             </div>
+
             <div>
-              <label className={labelClass}>Slug</label>
-              <input
+              <label htmlFor="news-content" className={labelClass}>
+                Content
+              </label>
+              <textarea
+                id="news-content"
                 required
-                className={inputClass}
-                value={slug}
-                onChange={(e) => {
-                  setSlugTouched(true);
-                  setSlug(slugify(e.target.value));
-                }}
+                rows={9}
+                placeholder="Write article…"
+                className={editorialTextareaClass}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
               />
             </div>
           </div>
 
-          <div>
-            <label className={labelClass}>Author</label>
-            <input
-              className={inputClass}
-              value={author}
-              onChange={(e) => setAuthor(e.target.value)}
-            />
-          </div>
-
-          <div>
-            <label className={labelClass}>Content</label>
-            <textarea
-              required
-              rows={12}
-              className={inputClass}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Related Artist</label>
-              <select
-                className={inputClass}
-                value={relatedArtistId}
-                onChange={(e) => setRelatedArtistId(e.target.value)}
-              >
-                <option value="">None</option>
-                {artists.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className={labelClass}>Related Release</label>
-              <select
-                className={inputClass}
-                value={relatedReleaseId}
-                onChange={(e) => setRelatedReleaseId(e.target.value)}
-              >
-                <option value="">None</option>
-                {releases.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.title}
-                  </option>
-                ))}
-              </select>
+          <div className={formSectionClass}>
+            <h2 className={formSectionTitleClass}>Related</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label htmlFor="news-artist" className={labelClass}>
+                  Artist
+                </label>
+                <select
+                  id="news-artist"
+                  className={inputClass}
+                  value={relatedArtistId}
+                  onChange={(e) => setRelatedArtistId(e.target.value)}
+                >
+                  <option value="">None</option>
+                  {artists.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="news-release" className={labelClass}>
+                  Release
+                </label>
+                <select
+                  id="news-release"
+                  className={inputClass}
+                  value={relatedReleaseId}
+                  onChange={(e) => setRelatedReleaseId(e.target.value)}
+                >
+                  <option value="">None</option>
+                  {releases.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap justify-end gap-2">
-          <Link href="/admin/news" className={btnSecondary}>
-            Cancel
-          </Link>
-          <button
-            type="button"
-            disabled={saving || !title || !content}
-            className={btnSecondary}
-            onClick={() => submit("draft")}
-          >
-            {saving && <Loader2 size={14} className="animate-spin" />}
-            Save as Draft
-          </button>
-          <button
-            type="button"
-            disabled={saving || !title || !content}
-            className={btnPrimary}
-            onClick={() => submit("published")}
-          >
-            {saving && <Loader2 size={14} className="animate-spin" />}
-            Publish
-          </button>
+        <div className="lg:col-span-4">
+          <FormSummaryCard
+            title="Summary"
+            subtitle={slug ? `/news/${slug}` : undefined}
+            rows={[
+              { label: "Author", value: author || "Tromagnon" },
+              { label: "Words", value: String(wordCount) },
+              {
+                label: "Artist",
+                value: artists.find((a) => a.id === relatedArtistId)?.name || "—",
+              },
+              {
+                label: "Release",
+                value: releases.find((r) => r.id === relatedReleaseId)?.title || "—",
+              },
+            ]}
+            highlightLabel="Read time"
+            highlightValue={`${Math.max(1, Math.ceil(wordCount / 200))} min`}
+            warningText={!cover ? "No cover image yet." : undefined}
+            submitLabel={saving ? "Publishing…" : "Publish"}
+            saving={saving}
+            onSecondaryAction={{
+              label: "Save draft",
+              onClick: () => submit("draft"),
+            }}
+            checks={[
+              { label: "Cover image", done: Boolean(cover) },
+              { label: "Headline & slug", done: Boolean(title.trim() && slug.trim()) },
+              { label: "Content", done: wordCount >= 15 },
+            ]}
+          />
         </div>
       </form>
     </div>

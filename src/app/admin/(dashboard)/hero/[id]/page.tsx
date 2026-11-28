@@ -3,13 +3,19 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import AdminHeader from "@/components/admin/AdminHeader";
 import ImageUpload from "@/components/admin/ImageUpload";
+import StatusBadge from "@/components/admin/StatusBadge";
+import FormSummaryCard from "@/components/admin/FormSummaryCard";
+import { SegmentedToggle } from "@/components/admin/ListControls";
 import { useAdminShell } from "@/components/admin/AdminShellContext";
 import {
-  btnPrimary,
   btnSecondary,
+  formErrorClass,
+  formLoadingClass,
+  formSectionClass,
+  formSectionTitleClass,
   getErrorMessage,
   inputClass,
   labelClass,
@@ -19,7 +25,7 @@ import { getAdminHeroBanner, updateHeroBanner } from "@/lib/api/admin/hero";
 export default function EditHeroPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
-  const { onMenuClick } = useAdminShell();
+  const { refreshShellData } = useAdminShell();
   const [loading, setLoading] = useState(true);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
@@ -61,6 +67,8 @@ export default function EditHeroPage() {
     };
   }, [id]);
 
+  const hasImage = Boolean(bannerImage || existingImage);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -75,8 +83,12 @@ export default function EditHeroPage() {
         is_active: isActive,
         banner_image: bannerImage,
       });
-      if (res.success) router.push("/admin/hero");
-      else setError(res.message || "Failed to update banner");
+      if (res.success) {
+        refreshShellData();
+        router.push("/admin/hero");
+      } else {
+        setError(res.message || "Failed to update banner");
+      }
     } catch (err) {
       setError(getErrorMessage(err, "Failed to update banner"));
     } finally {
@@ -86,115 +98,146 @@ export default function EditHeroPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center gap-2 py-24 text-neutral-500">
-        <Loader2 size={18} className="animate-spin" />
-        <span className="font-mono text-xs uppercase">Loading…</span>
+      <div className={formLoadingClass}>
+        <Loader2 size={18} className="animate-spin text-admin-forest" aria-hidden="true" />
+        <span>Loading banner…</span>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="pb-12">
       <AdminHeader
-        title="Edit Banner"
-        subtitle={title || "Update hero slide"}
-        onMenuClick={onMenuClick}
+        backHref="/admin/hero"
+        backLabel="Banners"
+        title={title || "Edit banner"}
+        badge={<StatusBadge status={String(isActive)} />}
         actions={
           <Link href="/admin/hero" className={btnSecondary}>
-            <ArrowLeft size={14} />
-            Back
+            Cancel
           </Link>
         }
       />
-      <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-6 p-4 sm:p-6">
-        {error && (
-          <div className="border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
 
-        <div className="space-y-4 border border-neutral-200 bg-white p-5">
-          <ImageUpload
-            label="Banner Image"
-            value={bannerImage}
-            existingUrl={existingImage}
-            onChange={setBannerImage}
-          />
+      <form
+        onSubmit={handleSubmit}
+        className="grid gap-4 px-4 sm:px-5 lg:grid-cols-12 lg:px-6"
+      >
+        <div className="space-y-4 lg:col-span-8">
+          {error && (
+            <div role="alert" className={formErrorClass}>
+              {error}
+            </div>
+          )}
 
-          <div>
-            <label className={labelClass}>Title</label>
-            <input
-              required
-              className={inputClass}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+          <div className={formSectionClass}>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className={formSectionTitleClass}>Slide</h2>
+              <SegmentedToggle
+                ariaLabel="Banner homepage visibility"
+                value={isActive ? "active" : "hidden"}
+                onChange={(v) => setIsActive(v === "active")}
+                options={[
+                  { value: "active", label: "Visible" },
+                  { value: "hidden", label: "Hidden" },
+                ]}
+              />
+            </div>
+
+            <ImageUpload
+              label="Image"
+              value={bannerImage}
+              existingUrl={existingImage}
+              onChange={setBannerImage}
             />
-          </div>
 
-          <div>
-            <label className={labelClass}>Subtitle</label>
-            <input
-              className={inputClass}
-              value={subtitle}
-              onChange={(e) => setSubtitle(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className={labelClass}>CTA Text</label>
-              <input
-                className={inputClass}
-                value={ctaText}
-                onChange={(e) => setCtaText(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>CTA Link</label>
-              <input
-                className={inputClass}
-                value={ctaLink}
-                onChange={(e) => setCtaLink(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div>
-              <label className={labelClass}>Order</label>
-              <input
-                type="number"
-                min={0}
-                className={inputClass}
-                value={order}
-                onChange={(e) => setOrder(Number(e.target.value))}
-              />
-            </div>
-            <div>
-              <label className={labelClass}>Active</label>
-              <label className="flex items-center gap-2 border border-neutral-200 bg-white px-3 py-2.5">
-                <input
-                  type="checkbox"
-                  checked={isActive}
-                  onChange={(e) => setIsActive(e.target.checked)}
-                  className="h-4 w-4 accent-black"
-                />
-                <span className="font-mono text-xs uppercase">
-                  Show on homepage
-                </span>
+              <label htmlFor="hero-title" className={labelClass}>
+                Title
               </label>
+              <input
+                id="hero-title"
+                required
+                className={inputClass}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="hero-subtitle" className={labelClass}>
+                Subtitle
+              </label>
+              <input
+                id="hero-subtitle"
+                className={inputClass}
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div>
+                <label htmlFor="hero-cta-text" className={labelClass}>
+                  Button text
+                </label>
+                <input
+                  id="hero-cta-text"
+                  className={inputClass}
+                  value={ctaText}
+                  onChange={(e) => setCtaText(e.target.value)}
+                  placeholder="Explore"
+                />
+              </div>
+              <div>
+                <label htmlFor="hero-cta-link" className={labelClass}>
+                  Button link
+                </label>
+                <input
+                  id="hero-cta-link"
+                  className={inputClass}
+                  value={ctaLink}
+                  onChange={(e) => setCtaLink(e.target.value)}
+                  placeholder="/releases"
+                />
+              </div>
+              <div>
+                <label htmlFor="hero-order" className={labelClass}>
+                  Order
+                </label>
+                <input
+                  id="hero-order"
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={order}
+                  onChange={(e) => setOrder(Number(e.target.value))}
+                />
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Link href="/admin/hero" className={btnSecondary}>
-            Cancel
-          </Link>
-          <button type="submit" disabled={saving} className={btnPrimary}>
-            {saving && <Loader2 size={14} className="animate-spin" />}
-            Save Changes
-          </button>
+        <div className="lg:col-span-4">
+          <FormSummaryCard
+            title="Summary"
+            rows={[
+              { label: "Title", value: title || "—" },
+              { label: "Button", value: ctaText || "—" },
+              { label: "Link", value: ctaLink || "—" },
+              { label: "Order", value: `#${order}` },
+            ]}
+            highlightLabel="Visibility"
+            highlightValue={isActive ? "Visible" : "Hidden"}
+            warningText={!hasImage ? "No banner image uploaded." : undefined}
+            submitLabel={saving ? "Saving…" : "Save changes"}
+            saving={saving}
+            checks={[
+              { label: "Image", done: hasImage },
+              { label: "Title", done: Boolean(title.trim()) },
+              { label: "Button & link", done: Boolean(ctaText.trim() && ctaLink.trim()) },
+            ]}
+          />
         </div>
       </form>
     </div>

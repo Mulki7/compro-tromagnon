@@ -1,20 +1,53 @@
+/* DESIGN.md v1.6 aligned Admin primitives:
+   - Two-font Admin Console only: Salmont (font-display) + Plus Jakarta Sans (font-admin); no Collisio in Admin
+   - Salmont (font-display) reserved strictly for >=24px Page Title (H1) & sidebar/cover Brand Mark
+   - Plus Jakarta Sans (font-admin) across all operational controls, inputs, card titles, badges, KPI numbers, and tables
+   - Subtle rounded corners: 6px (chips/badges), 8px (inputs/buttons), 12px (cards/panels)
+   - Strong 1px borders (#767D75) on interactive inputs & secondary controls */
+
 export const inputClass =
-  "w-full border border-neutral-200 bg-white px-3 py-2.5 text-sm font-mono focus:border-black focus:outline-none";
+  "h-10 w-full rounded-lg border border-admin-border-strong bg-admin-canvas px-3.5 py-2 font-admin text-[16px] leading-[1.45] text-admin-ink placeholder:text-admin-sub/70 transition-colors duration-[120ms] ease-tromagnon hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-forest sm:text-[14.5px]";
+
+export const textareaClass =
+  "w-full rounded-lg border border-admin-border-strong bg-admin-canvas px-3.5 py-2.5 font-admin text-[16px] leading-[1.6] text-admin-ink placeholder:text-admin-sub/70 transition-colors duration-[120ms] ease-tromagnon hover:border-admin-forest focus:border-admin-forest focus:bg-admin-surface focus:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-admin-forest sm:text-[15px]";
+
+export const editorialTextareaClass = textareaClass;
 
 export const labelClass =
-  "mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-wider text-neutral-600";
+  "mb-1.5 block font-admin text-[13px] font-medium leading-[1.35] text-admin-sub";
+
+export const formSectionClass =
+  "space-y-4 rounded-xl border border-admin-border bg-admin-surface p-5";
+
+export const formSectionTitleClass =
+  "font-admin text-[18px] font-bold leading-[1.2] tracking-[-0.015em] text-admin-ink";
+
+export const formErrorClass =
+  "rounded-lg border border-admin-danger bg-admin-danger-soft px-4 py-2.5 font-admin text-[14px] font-medium text-admin-danger";
+
+export const formLoadingClass =
+  "flex flex-1 items-center justify-center gap-2.5 py-20 font-admin text-[14.5px] font-medium text-admin-sub";
 
 export const btnPrimary =
-  "inline-flex items-center justify-center gap-2 bg-black px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-white transition hover:bg-neutral-800 disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-admin-forest-soft px-4 font-admin text-[13.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
+
+export const btnPrimaryPill =
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-forest-soft pl-3.5 pr-1.5 font-admin text-[13.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
+
+export const btnPrimarySm =
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-forest-soft pl-3.5 pr-1.5 font-admin text-[13.5px] font-semibold text-[#F1F2EE] transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-forest disabled:bg-admin-elevated disabled:text-admin-disabled";
+
+export const btnLime =
+  "group inline-flex h-10 items-center justify-center gap-2.5 rounded-lg bg-admin-lime pl-4 pr-1.5 font-admin text-[13.5px] font-semibold text-admin-on-lime transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-lime-hover disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnSecondary =
-  "inline-flex items-center justify-center gap-2 border border-neutral-300 bg-white px-4 py-2.5 font-mono text-xs uppercase tracking-wide text-neutral-700 transition hover:border-black hover:text-black disabled:opacity-50";
+  "inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-admin-border-strong bg-admin-surface px-3.5 font-admin text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-elevated disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnDanger =
-  "inline-flex items-center justify-center gap-2 border border-red-200 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide text-red-600 transition hover:bg-red-50";
+  "inline-flex h-10 items-center justify-center gap-1.5 rounded-lg border border-admin-danger bg-admin-danger-soft px-3.5 font-admin text-[13.5px] font-semibold text-admin-danger transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-danger hover:text-[#F1F2EE] disabled:border-admin-border disabled:bg-admin-elevated disabled:text-admin-disabled";
 
 export const btnEdit =
-  "inline-flex items-center justify-center gap-2 border border-neutral-200 bg-white px-3 py-1.5 font-mono text-[10px] uppercase tracking-wide text-neutral-700 transition hover:border-black hover:text-black";
+  "inline-flex h-9 items-center justify-center gap-1.5 rounded-lg border border-admin-border-strong bg-admin-muted px-3 font-admin text-[13.5px] font-semibold text-admin-ink transition-colors duration-[120ms] ease-tromagnon hover:bg-admin-elevated";
 
 export function parseStringArray(value: string | string[] | null | undefined): string[] {
   if (!value) return [];
@@ -41,4 +74,29 @@ export function parseStringArray(value: string | string[] | null | undefined): s
 export function getErrorMessage(err: unknown, fallback = "Something went wrong"): string {
   const e = err as { response?: { data?: { message?: string } }; message?: string };
   return e?.response?.data?.message || e?.message || fallback;
+}
+
+export function downloadCsv(
+  filename: string,
+  headers: string[],
+  rows: (string | number | undefined | null)[][]
+) {
+  const escape = (val: string | number | undefined | null) => {
+    const s = String(val ?? "");
+    if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+    return s;
+  };
+  const csv = [
+    headers.map(escape).join(","),
+    ...rows.map((r) => r.map(escape).join(",")),
+  ].join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
 }

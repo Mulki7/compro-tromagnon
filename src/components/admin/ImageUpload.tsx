@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useId, useRef, useState } from "react";
 import Image from "next/image";
 import { Upload, X } from "lucide-react";
 import { getMediaUrl } from "@/lib/utils";
+import { labelClass } from "@/components/admin/formStyles";
 
 interface ImageUploadProps {
   label?: string;
@@ -21,9 +22,10 @@ export default function ImageUpload({
   existingUrl,
   onChange,
   accept = "image/jpeg,image/png,image/webp,image/gif",
-  hint = "JPG, PNG, WebP — max 20 MB",
+  hint = "JPG, PNG, WebP · up to 20 MB",
   maxSizeMB = 20,
 }: ImageUploadProps) {
+  const inputId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [dragOver, setDragOver] = useState(false);
@@ -38,7 +40,7 @@ export default function ImageUpload({
 
       if (file) {
         if (file.size > maxSizeMB * 1024 * 1024) {
-          setFileError(`File size exceeds the ${maxSizeMB} MB limit.`);
+          setFileError(`File exceeds ${maxSizeMB} MB.`);
           return;
         }
         setPreview(URL.createObjectURL(file));
@@ -62,7 +64,7 @@ export default function ImageUpload({
 
   return (
     <div>
-      <label className="mb-1.5 block font-mono text-[10px] font-semibold uppercase tracking-wider text-neutral-600">
+      <label htmlFor={inputId} className={labelClass}>
         {label}
       </label>
       <div
@@ -72,16 +74,17 @@ export default function ImageUpload({
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
-        className={`relative border border-dashed transition ${dragOver
-            ? "border-black bg-neutral-50"
-            : "border-neutral-300 bg-neutral-50/50"
-          }`}
+        className={`relative overflow-hidden rounded-xl border border-dashed transition-colors duration-[120ms] ${
+          dragOver
+            ? "border-admin-forest bg-admin-elevated"
+            : "border-admin-border-strong bg-admin-canvas"
+        }`}
       >
         {displayUrl ? (
-          <div className="relative aspect-video w-full">
+          <div className="relative aspect-video w-full bg-admin-muted">
             <Image
               src={displayUrl}
-              alt="Preview"
+              alt={`${label} preview`}
               fill
               unoptimized
               className="object-cover"
@@ -92,13 +95,13 @@ export default function ImageUpload({
                 handleFile(null);
                 if (inputRef.current) inputRef.current.value = "";
               }}
-              className="absolute right-2 top-2 bg-black p-1.5 text-white hover:bg-neutral-800"
-              aria-label="Remove image"
+              className="absolute right-3 top-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-admin-ink/85 text-[#F1F2EE] transition-colors duration-[120ms] hover:bg-admin-danger"
+              aria-label={`Remove ${label.toLowerCase()}`}
             >
-              <X size={14} />
+              <X size={15} aria-hidden="true" />
             </button>
             {value && (
-              <span className="absolute bottom-2 left-2 bg-black/80 px-2 py-1 font-mono text-[10px] text-white">
+              <span className="absolute bottom-3 left-3 rounded-md bg-admin-ink/85 px-2.5 py-1 font-admin text-[12.5px] font-medium text-[#F1F2EE]">
                 {value.name}
               </span>
             )}
@@ -107,34 +110,37 @@ export default function ImageUpload({
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center gap-2 px-4 py-10 text-neutral-500 transition hover:text-black"
+            className="flex w-full flex-col items-center justify-center gap-2 px-4 py-8 text-admin-sub transition-colors duration-[120ms] hover:bg-admin-elevated/60 hover:text-admin-forest"
           >
-            <Upload size={22} strokeWidth={1.5} />
-            <span className="font-mono text-xs uppercase tracking-wide">
-              Drop image or click to upload
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-admin-forest-soft text-[#F1F2EE]">
+              <Upload size={17} strokeWidth={2} aria-hidden="true" />
+            </div>
+            <span className="font-admin text-[14px] font-semibold text-admin-ink">
+              Drop image or click to browse
             </span>
-            <span className="text-[11px] text-neutral-400">{hint}</span>
+            <span className="font-admin text-[12.5px] text-admin-sub">{hint}</span>
           </button>
         )}
         <input
+          id={inputId}
           ref={inputRef}
           type="file"
           accept={accept}
-          className="hidden"
+          className="sr-only"
           onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
         />
         {displayUrl && (
           <button
             type="button"
             onClick={() => inputRef.current?.click()}
-            className="w-full border-t border-neutral-200 py-2 font-mono text-[10px] uppercase tracking-wide text-neutral-600 hover:bg-neutral-100 hover:text-black"
+            className="h-10 w-full border-t border-admin-border bg-admin-surface font-admin text-[13px] font-semibold text-admin-forest-soft transition-colors duration-[120ms] hover:bg-admin-elevated hover:text-admin-forest"
           >
             Replace image
           </button>
         )}
       </div>
       {fileError && (
-        <p className="mt-1.5 font-mono text-[11px] font-semibold text-red-600">
+        <p role="alert" className="mt-1.5 font-admin text-[12.5px] font-medium text-admin-danger">
           {fileError}
         </p>
       )}

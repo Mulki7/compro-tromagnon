@@ -1,30 +1,35 @@
 import type { Metadata } from "next";
-import { Inter, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import localFont from "next/font/local";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
+const salmont = localFont({
+  src: "./fonts/Salmont.woff2",
   weight: "400",
-  variable: "--font-serif",
+  style: "normal",
+  variable: "--font-salmont",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const collisio = localFont({
+  src: "./fonts/Collisio_Beta.otf",
+  weight: "400",
+  style: "normal",
+  variable: "--font-collisio",
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-mono",
+  weight: ["300", "400", "500", "600", "700"],
+  style: ["normal", "italic"],
+  variable: "--font-plus-jakarta-sans",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Tromagnon Records — Independent Record Label & Audio Archive",
-  description:
-    "Independent record label and music publisher based in Bogor, Indonesia. Preserving post-punk, modular ambient, avant-jazz, and mechanical minimalism pressed on high-fidelity wax.",
+  title: "Tromagnon Records",
+  description: "Tromagnon Records — Independent Record Label & Audio Archive",
 };
 
 export default function RootLayout({
@@ -35,9 +40,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${instrumentSerif.variable} ${jetbrainsMono.variable}`}
+      className={`${salmont.variable} ${collisio.variable} ${plusJakartaSans.variable}`}
     >
-      <body className="min-h-screen bg-white text-[#0A0A0A] font-sans antialiased selection:bg-black selection:text-white">
+      <body className="min-h-screen bg-[#F1F2EE] text-[#111111] font-sans antialiased selection:bg-[#31605A] selection:text-[#F1F2EE]">
         {children}
       </body>
     </html>
